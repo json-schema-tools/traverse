@@ -1,5 +1,5 @@
 {
-  "name": "@etclabscore/pristine-typescript",
+  "name": "@json-schema-tools/traverse",
   "version": "0.0.0-development",
   "description": "",
   "main": "build/index.js",
@@ -7,19 +7,50 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc && typedoc --out docs &&  touch docs/.nojekyll ",
+    "build": "tsc && typedoc --out docs && touch docs/.nojekyll ",
     "lint": "tslint --fix -p .",
     "test": "npm run lint && jest --coverage"
   },
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@open-rpc/meta-schema": "^1.6.0",
     "@types/jest": "^24.0.13",
+    "@types/lodash.merge": "^4.6.6",
     "@types/node": "^12.12.17",
     "jest": "^24.8.0",
     "ts-jest": "^24.1.0",
-    "tslint": "^5.17.0",
+    "tslint": "^5.20.1",
     "typedoc": "^0.15.5",
     "typescript": "^3.7.3"
+  },
+  "dependencies": {
+    "lodash.merge": "^4.6.2"
+  },
+  "typedocOptions": {
+    "name": "@json-schema-tools/traverse",
+    "mode": "file",
+    "src": [
+      "./src/index.ts"
+    ],
+    "out": "docs",
+    "includeDeclarations": true,
+    "excludeNotExported": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": true,
+    "listInvalidSymbolLinks": true,
+    "readme": "./README.md",
+    "exclude": [
+      "node_modules",
+      "lib",
+      "docs",
+      "build",
+      "jest.config.js",
+      "src/*.test.ts"
+    ],
+    "toc": [
+      "traverse"
+    ]
   }
 }
