@@ -70,7 +70,7 @@ describe("traverse", () => {
       // const mockMutation = jest.fn((s) => s);
       const mockMutation = jest.fn((s) => {
         // tslint:disable-next-line:no-console
-        console.log("cycle detect", 1, util.inspect(s, {depth: Infinity})); return s;
+        console.log("cycle detect: basic", 1, util.inspect(s, {depth: Infinity})); return s;
       });
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(1);
@@ -96,7 +96,7 @@ describe("traverse", () => {
       schema.properties.foo.items[0].items = schema;
       const mockMutation = jest.fn((s) => {
         // tslint:disable-next-line:no-console
-        console.log("chained", 3, util.inspect(s, {depth: Infinity})); return s;
+        console.log("cycle detect: chained", 3, util.inspect(s, {depth: Infinity})); return s;
       });
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
