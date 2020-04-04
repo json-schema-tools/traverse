@@ -1,5 +1,5 @@
 import merge from "lodash.merge";
-import JSONMetaSchema from "@json-schema-tools/meta-schema";
+import { CoreSchemaMetaSchema as JSONMetaSchema } from "@json-schema-tools/meta-schema/build/src/generated-typings";
 
 /**
  * Signature of the mutation method passed to traverse.

@@ -22,7 +22,7 @@
     "typescript": "^3.7.3"
   },
   "dependencies": {
-    "@json-schema-tools/meta-schema": "^1.0.1",
+    "@json-schema-tools/meta-schema": "^1.0.3",
     "lodash.merge": "^4.6.2"
   }
 }
