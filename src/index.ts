@@ -9,14 +9,14 @@ export type MutationFunction = (schema: JSONMetaSchema) => JSONMetaSchema;
 /**
  * The options you can use when traversing.
  */
-export interface ITraverseOptions {
+export interface TraverseOptions {
   /**
    * Set this to true if you don't want to call the mutator function on the root schema.
    */
   skipFirstMutation: boolean;
 }
 
-export const defaultOptions: ITraverseOptions = {
+export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
 };
 
