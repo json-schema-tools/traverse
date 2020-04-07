@@ -71,6 +71,13 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(1);
     });
 
+    it("does not handle $ref", () => {
+      const schema = { type: "object", properties: { foo: { $ref: "#"} } };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+    });
+    
     it("handles chained cycles", () => {
       const schema = {
         title: "1",
