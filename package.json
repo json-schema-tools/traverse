@@ -7,9 +7,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc && typedoc --out docs && touch docs/.nojekyll ",
-    "lint": "tslint --fix -p .",
-    "test": "npm run lint && jest --coverage"
+    "build": "tsc",
+    "test": "jest --coverage"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -20,11 +19,10 @@
     "@types/node": "^12.12.17",
     "jest": "^24.8.0",
     "ts-jest": "^24.1.0",
-    "tslint": "^5.20.1",
-    "typedoc": "^0.15.5",
     "typescript": "^3.7.3"
   },
   "dependencies": {
+    "@json-schema-tools/meta-schema": "^1.0.3",
     "lodash.merge": "^4.6.2"
   }
 }
