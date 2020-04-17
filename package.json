@@ -16,7 +16,7 @@
     "@open-rpc/meta-schema": "^1.6.0",
     "@types/jest": "^24.0.13",
     "@types/lodash.merge": "^4.6.6",
-    "@types/node": "^12.12.17",
+    "@types/node": "^13.11.1",
     "jest": "^24.8.0",
     "ts-jest": "^24.1.0",
     "typescript": "^3.7.3"
