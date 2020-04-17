@@ -14,7 +14,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@open-rpc/meta-schema": "^1.6.0",
-    "@types/jest": "^24.0.13",
+    "@types/jest": "^25.2.1",
     "@types/lodash.merge": "^4.6.6",
     "@types/node": "^12.12.17",
     "jest": "^24.8.0",
