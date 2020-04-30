@@ -32,6 +32,28 @@ describe("traverse", () => {
       it(`traverses ${prop}`, () => test(prop));
     });
 
+    it("anyOf and oneOf together", () => {
+      const testSchema: any = {
+        anyOf: [
+          {type: "object", title: "anyOf1"},
+          {type: "object", title: "anyOf2"}
+        ],
+        oneOf: [
+          {type: "object", title: "oneOf1"},
+          {type: "object", title: "oneOf2"}
+        ]
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.anyOf[0]);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.anyOf[1]);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.oneOf[0]);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.oneOf[1]);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(5);
+    });
+
     it("traverses items when items is ordered list", () => test("items"));
     it("traverses items when items constrained to single schema", () => test("items", { a: {}, b: {} }));
     it("traverses properties", () => {
