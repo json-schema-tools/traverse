@@ -125,7 +125,7 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(3);
     });
 
-    it("traverses additional properties as boolean", () => {
+    it("traverses additionalProperties as boolean", () => {
       const testSchema: any = {
         additionalProperties: true
       };
@@ -138,7 +138,7 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
 
-    it("traverses additional properties as schema", () => {
+    it("traverses additionalProperties as schema", () => {
       const testSchema: any = {
         additionalProperties: {
           properties: {
@@ -158,7 +158,7 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
 
-    it("traverses additional items as boolean", () => {
+    it("traverses additionalItems as boolean", () => {
       const testSchema: any = {
         additionalItems: true
       };
@@ -171,7 +171,7 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
 
-    it("traverses additional items as schema", () => {
+    it("traverses additionalItems as schema", () => {
       const testSchema: any = {
         additionalItems: {
           properties: {
@@ -190,7 +190,6 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledWith(testSchema);
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
-
 
     it("skips the first schema when the option skipFirstMutation is true", () => {
       const testSchema: any = { anyOf: [{}, {}] };
