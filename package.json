@@ -17,8 +17,8 @@
     "@types/jest": "^24.0.13",
     "@types/lodash.merge": "^4.6.6",
     "@types/node": "^12.12.17",
-    "jest": "^24.8.0",
-    "ts-jest": "^24.1.0",
+    "jest": "^25.5.2",
+    "ts-jest": "^25.3.1",
     "typescript": "^3.7.3"
   },
   "dependencies": {
