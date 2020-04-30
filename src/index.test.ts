@@ -125,6 +125,73 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(3);
     });
 
+    it("traverses additional properties as boolean", () => {
+      const testSchema: any = {
+        additionalProperties: true
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+    });
+
+    it("traverses additional properties as schema", () => {
+      const testSchema: any = {
+        additionalProperties: {
+          properties: {
+            c: {},
+            d: {},
+          },
+        },
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties.properties.c);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties.properties.d);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(4);
+    });
+
+    it("traverses additional items as boolean", () => {
+      const testSchema: any = {
+        additionalItems: true
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+    });
+
+    it("traverses additional items as schema", () => {
+      const testSchema: any = {
+        additionalItems: {
+          properties: {
+            c: {},
+            d: {},
+          },
+        },
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems.properties.c);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems.properties.d);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(4);
+    });
+
+
     it("skips the first schema when the option skipFirstMutation is true", () => {
       const testSchema: any = { anyOf: [{}, {}] };
       const mockMutation = jest.fn((mockS) => mockS);
