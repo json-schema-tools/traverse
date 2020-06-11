@@ -36,7 +36,7 @@ describe("traverse", () => {
     });
 
     it("traverses items when items is ordered list", () => {
-      test("items")
+      test("items");
     });
 
     it("traverses items when items constrained to single schema", () => {
