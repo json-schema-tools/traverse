@@ -86,9 +86,29 @@ describe("traverse", () => {
   });
 
 
-  // describe("schema.type being an array", () => {
-  //   it("");
-  // });
+  describe("schema.type being an array", () => {
+    it("allows type to be an array", () => {
+      const schema = { type: ["boolean", "string"], title: "gotimebucko" };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(1);
+    });
+
+    it("array and or object", () => {
+      const schema = {
+        type: ["object", "array"],
+        title: "gotimebucko",
+        properties: {
+          a: { type: "string" },
+          b: { type: "integer" }
+        },
+        items: { type: "string" }
+      };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(4);
+    });
+  });
 
   describe("cycle detection", () => {
     it("handles basic cycles", () => {
