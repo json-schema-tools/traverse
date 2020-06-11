@@ -63,6 +63,24 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenNthCalledWith(3, schema);
     });
 
+
+    it("allows booleans that are created via boolean class and new", () => {
+      const a = new Boolean(true);
+      const b = new Boolean(false);
+      const schema = { type: "object", properties: { a, b } };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(3);
+
+      expect(mockMutation).toHaveBeenNthCalledWith(1, a);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
+
+      expect(mockMutation).toHaveBeenNthCalledWith(2, b);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, false);
+
+      expect(mockMutation).toHaveBeenNthCalledWith(3, schema);
+    });
+
     it("when items is a boolean works fine", () => {
       const schema = { type: "array", items: true };
       const mockMutation = jest.fn((s) => s);
