@@ -1,5 +1,5 @@
 import traverse from "./";
-import { JSONSchema } from "@open-rpc/meta-schema";
+import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {

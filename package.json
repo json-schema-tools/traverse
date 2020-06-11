@@ -13,13 +13,13 @@
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@open-rpc/meta-schema": "^1.6.0",
-    "@types/jest": "^24.0.13",
+    "@json-schema-tools/meta-schema": "^1.0.9",
+    "@types/jest": "^26.0.0",
     "@types/lodash.merge": "^4.6.6",
-    "@types/node": "^12.12.17",
-    "jest": "^24.8.0",
-    "ts-jest": "^24.1.0",
-    "typescript": "^3.7.3"
+    "@types/node": "^14.0.13",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.3.0",
+    "typescript": "^3.9.5"
   },
   "dependencies": {
     "@json-schema-tools/meta-schema": "^1.0.3",
