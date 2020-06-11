@@ -63,6 +63,15 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenNthCalledWith(3, schema);
     });
 
+    it("when items is a boolean works fine", () => {
+      const schema = { type: "array", items: true };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, schema);
+    });
+
     it("doesnt skip boolean schemas that it has not seen", () => {
       const schema = {
         type: "object",
