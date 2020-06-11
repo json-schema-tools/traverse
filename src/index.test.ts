@@ -31,7 +31,7 @@ describe("traverse", () => {
 
     ["anyOf", "oneOf", "allOf"].forEach((prop) => {
       it(`traverses ${prop}`, () => {
-        test(prop)
+        test(prop);
       });
     });
 
