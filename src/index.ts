@@ -47,6 +47,19 @@ export default function traverse(
   recursiveStack: JSONMetaSchema[] = [],
   prePostMap: Array<[JSONMetaSchema, JSONMetaSchema]> = [],
 ) {
+
+  // booleans are a bit messed. Since all other schemas are objects (non-primitive type
+  // which gets a new address in mem) for each new JS refer to one of 2 memory addrs, and
+  // thus adding it to the recursive stack will prevent it from being explored if the
+  // boolean is seen in a further nested schema.
+  if (typeof schema === "boolean" || schema instanceof Boolean) {
+    if (traverseOptions.skipFirstMutation === true && depth === 0) {
+      return schema;
+    } else {
+      return mutation(schema);
+    }
+  }
+
   const mutableSchema: JSONMetaSchema = { ...schema };
   recursiveStack.push(schema);
 
@@ -77,36 +90,40 @@ export default function traverse(
     mutableSchema.allOf = schema.allOf.map(rec);
   } else if (schema.oneOf) {
     mutableSchema.oneOf = schema.oneOf.map(rec);
-  } else if (schema.items) {
-    if (schema.items instanceof Array) {
-      mutableSchema.items = schema.items.map(rec);
-    } else if (schema.items as any === true) {
-      mutableSchema.items = mutation(schema.items);
-    } else {
-      const foundCycle = isCycle(schema.items, recursiveStack);
-      if (foundCycle) {
-        const [, cycledMutableSchema] = prePostMap.find(
-          ([orig]) => foundCycle === orig,
-        ) as [JSONMetaSchema, JSONMetaSchema];
-        mutableSchema.items = cycledMutableSchema;
+  } else {
+    if (schema.items) {
+      if (schema.items instanceof Array) {
+        mutableSchema.items = schema.items.map(rec);
+      } else if (schema.items as any === true) {
+        mutableSchema.items = mutation(schema.items);
       } else {
-        mutableSchema.items = traverse(
-          schema.items,
-          mutation,
-          traverseOptions,
-          depth + 1,
-          recursiveStack,
-          prePostMap,
-        );
+        const foundCycle = isCycle(schema.items, recursiveStack);
+        if (foundCycle) {
+          const [, cycledMutableSchema] = prePostMap.find(
+            ([orig]) => foundCycle === orig,
+          ) as [JSONMetaSchema, JSONMetaSchema];
+          mutableSchema.items = cycledMutableSchema;
+        } else {
+          mutableSchema.items = traverse(
+            schema.items,
+            mutation,
+            traverseOptions,
+            depth + 1,
+            recursiveStack,
+            prePostMap,
+          );
+        }
       }
     }
-  } else if (schema.properties) {
-    const sProps: { [key: string]: JSONMetaSchema } = schema.properties;
-    mutableSchema.properties = Object.keys(sProps)
-      .reduce(
-        (r: JSONMetaSchema, v: string) => ({ ...r, ...{ [v]: rec(sProps[v]) } }),
-        {},
-      );
+
+    if (schema.properties) {
+      const sProps: { [key: string]: JSONMetaSchema } = schema.properties;
+      mutableSchema.properties = Object.keys(sProps)
+        .reduce(
+          (r: JSONMetaSchema, v: string) => ({ ...r, ...{ [v]: rec(sProps[v]) } }),
+          {},
+        );
+    }
   }
 
   if (traverseOptions.skipFirstMutation === true && depth === 0) {

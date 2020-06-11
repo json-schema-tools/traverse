@@ -1,5 +1,5 @@
 import traverse from "./";
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { CoreSchemaMetaSchema as JSONSchema, CoreSchemaMetaSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -54,7 +54,31 @@ describe("traverse", () => {
     });
 
     it("accepts boolean as valid schema in a nested schema", () => {
-      expect(test("properties", { a: true, b: true })).toHaveBeenCalledTimes(3);
+      const schema = { type: "object", properties: { a: true, b: false } };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(3);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(3, schema);
+    });
+
+    it("doesnt skip boolean schemas that it has not seen", () => {
+      const schema = {
+        type: "object",
+        properties: {
+          a: true,
+          b: {
+            properties: {
+              c: true,
+              d: { properties: { e: false } }
+            }
+          }
+        }
+      };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(6);
     });
 
     it("traverses properties", () => {
@@ -269,7 +293,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.items[0].items = schema; // set the leaf to a ref back to root schema
       let i = 0;
-      const result = traverse(schema, (s: JSONSchema) => {
+      const result: CoreSchemaMetaSchema = traverse(schema, (s: JSONSchema) => {
         s.i = i;
         i += 1;
         return s;
