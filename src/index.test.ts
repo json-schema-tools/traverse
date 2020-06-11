@@ -26,14 +26,37 @@ describe("traverse", () => {
       } else {
         expect(mockMutation).toHaveBeenCalledWith(a);
       }
+      return mockMutation;
     };
 
     ["anyOf", "oneOf", "allOf"].forEach((prop) => {
-      it(`traverses ${prop}`, () => test(prop));
+      it(`traverses ${prop}`, () => {
+        test(prop)
+      });
     });
 
-    it("traverses items when items is ordered list", () => test("items"));
-    it("traverses items when items constrained to single schema", () => test("items", { a: {}, b: {} }));
+    it("traverses items when items is ordered list", () => {
+      test("items")
+    });
+
+    it("traverses items when items constrained to single schema", () => {
+      test("items", { a: {}, b: {} });
+    });
+
+    it("accepts boolean as a valid schema", () => {
+      const testSchema: any = true;
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(1);
+    });
+
+    it("accepts boolean as valid schema in a nested schema", () => {
+      expect(test("properties", { a: true, b: true })).toHaveBeenCalledTimes(3);
+    });
+
     it("traverses properties", () => {
       const testSchema: any = {
         properties: {
@@ -62,6 +85,11 @@ describe("traverse", () => {
     });
   });
 
+
+  // describe("schema.type being an array", () => {
+  //   it("");
+  // });
+
   describe("cycle detection", () => {
     it("handles basic cycles", () => {
       const schema = { type: "object", properties: { foo: {} } };
@@ -72,12 +100,12 @@ describe("traverse", () => {
     });
 
     it("does not follow $refs", () => {
-      const schema = { type: "object", properties: { foo: { $ref: "#"} } };
+      const schema = { type: "object", properties: { foo: { $ref: "#" } } };
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
-    
+
     it("handles chained cycles", () => {
       const schema = {
         title: "1",
