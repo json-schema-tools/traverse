@@ -107,6 +107,16 @@ describe("traverse", () => {
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
+
+    it("skips first mutation when schema is a bool", () => {
+      const testSchema: any = true;
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { skipFirstMutation: true });
+
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(0);
+    });
   });
 
 
