@@ -1,5 +1,5 @@
 import traverse from "./";
-import { CoreSchemaMetaSchema as JSONSchema } from "@json-schema-tools/meta-schema";
+import { CoreSchemaMetaSchema as JSONSchema, CoreSchemaMetaSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -26,14 +26,88 @@ describe("traverse", () => {
       } else {
         expect(mockMutation).toHaveBeenCalledWith(a);
       }
+      return mockMutation;
     };
 
     ["anyOf", "oneOf", "allOf"].forEach((prop) => {
-      it(`traverses ${prop}`, () => test(prop));
+      it(`traverses ${prop}`, () => {
+        test(prop);
+      });
     });
 
-    it("traverses items when items is ordered list", () => test("items"));
-    it("traverses items when items constrained to single schema", () => test("items", { a: {}, b: {} }));
+    it("traverses items when items is ordered list", () => {
+      test("items");
+    });
+
+    it("traverses items when items constrained to single schema", () => {
+      test("items", { a: {}, b: {} });
+    });
+
+    it("accepts boolean as a valid schema", () => {
+      const testSchema: any = true;
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(1);
+    });
+
+    it("accepts boolean as valid schema in a nested schema", () => {
+      const schema = { type: "object", properties: { a: true, b: false } };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(3);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(3, schema);
+    });
+
+
+    it("allows booleans that are created via boolean class and new", () => {
+      const a = new Boolean(true);
+      const b = new Boolean(false);
+      const schema = { type: "object", properties: { a, b } };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(3);
+
+      expect(mockMutation).toHaveBeenNthCalledWith(1, a);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
+
+      expect(mockMutation).toHaveBeenNthCalledWith(2, b);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, false);
+
+      expect(mockMutation).toHaveBeenNthCalledWith(3, schema);
+    });
+
+    it("when items is a boolean works fine", () => {
+      const schema = { type: "array", items: true };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, schema);
+    });
+
+    it("doesnt skip boolean schemas that it has not seen", () => {
+      const schema = {
+        type: "object",
+        properties: {
+          a: true,
+          b: {
+            properties: {
+              c: true,
+              d: { properties: { e: false } }
+            }
+          }
+        }
+      };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(6);
+    });
+
     it("traverses properties", () => {
       const testSchema: any = {
         properties: {
@@ -60,6 +134,41 @@ describe("traverse", () => {
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
+
+    it("skips first mutation when schema is a bool", () => {
+      const testSchema: any = true;
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { skipFirstMutation: true });
+
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(0);
+    });
+  });
+
+
+  describe("schema.type being an array", () => {
+    it("allows type to be an array", () => {
+      const schema = { type: ["boolean", "string"], title: "gotimebucko" };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(1);
+    });
+
+    it("array and or object", () => {
+      const schema = {
+        type: ["object", "array"],
+        title: "gotimebucko",
+        properties: {
+          a: { type: "string" },
+          b: { type: "integer" }
+        },
+        items: { type: "string" }
+      };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(4);
+    });
   });
 
   describe("cycle detection", () => {
@@ -72,12 +181,12 @@ describe("traverse", () => {
     });
 
     it("does not follow $refs", () => {
-      const schema = { type: "object", properties: { foo: { $ref: "#"} } };
+      const schema = { type: "object", properties: { foo: { $ref: "#" } } };
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
-    
+
     it("handles chained cycles", () => {
       const schema = {
         title: "1",
@@ -221,7 +330,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.items[0].items = schema; // set the leaf to a ref back to root schema
       let i = 0;
-      const result = traverse(schema, (s: JSONSchema) => {
+      const result: CoreSchemaMetaSchema = traverse(schema, (s: JSONSchema) => {
         s.i = i;
         i += 1;
         return s;
