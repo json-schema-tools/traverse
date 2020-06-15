@@ -90,6 +90,10 @@ export default function traverse(
     mutableSchema.allOf = schema.allOf.map(rec);
   } else if (schema.oneOf) {
     mutableSchema.oneOf = schema.oneOf.map(rec);
+  } else if (schema.additionalProperties) {
+    mutableSchema.additionalProperties = rec(schema.additionalProperties);
+  } else if (schema.additionalItems) {
+    mutableSchema.additionalItems = rec(schema.additionalItems);
   } else {
     if (schema.items) {
       if (schema.items instanceof Array) {
