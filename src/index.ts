@@ -84,6 +84,7 @@ export default function traverse(
     );
   };
 
+
   if (schema.anyOf) {
     mutableSchema.anyOf = schema.anyOf.map(rec);
   } else if (schema.allOf) {
@@ -91,11 +92,11 @@ export default function traverse(
   } else if (schema.oneOf) {
     mutableSchema.oneOf = schema.oneOf.map(rec);
   } else {
+    let itemsIsSingleSchema = false;
+
     if (schema.items) {
       if (schema.items instanceof Array) {
         mutableSchema.items = schema.items.map(rec);
-      } else if (schema.items as any === true) {
-        mutableSchema.items = mutation(schema.items);
       } else {
         const foundCycle = isCycle(schema.items, recursiveStack);
         if (foundCycle) {
@@ -104,6 +105,7 @@ export default function traverse(
           ) as [JSONMetaSchema, JSONMetaSchema];
           mutableSchema.items = cycledMutableSchema;
         } else {
+          itemsIsSingleSchema = true;
           mutableSchema.items = traverse(
             schema.items,
             mutation,
@@ -116,6 +118,10 @@ export default function traverse(
       }
     }
 
+    if (!!schema.additionalItems === true && !itemsIsSingleSchema) {
+      mutableSchema.additionalItems = rec(schema.additionalItems);
+    }
+
     if (schema.properties) {
       const sProps: { [key: string]: JSONMetaSchema } = schema.properties;
       mutableSchema.properties = Object.keys(sProps)
@@ -123,6 +129,10 @@ export default function traverse(
           (r: JSONMetaSchema, v: string) => ({ ...r, ...{ [v]: rec(sProps[v]) } }),
           {},
         );
+    }
+
+    if (!!schema.additionalProperties === true) {
+      mutableSchema.additionalProperties = rec(schema.additionalProperties);
     }
   }
 
