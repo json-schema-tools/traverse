@@ -1,5 +1,5 @@
 import traverse from "./";
-import { CoreSchemaMetaSchema as JSONSchema, CoreSchemaMetaSchema } from "@json-schema-tools/meta-schema";
+import { CoreSchemaMetaSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -9,6 +9,19 @@ describe("traverse", () => {
     traverse(testSchema, mockMutation);
 
     expect(mockMutation).toHaveBeenCalledTimes(1);
+  });
+
+  it("has a merge option", () => {
+    const testSchema = {
+      type: "string"
+    };
+    const mergeProducer = () => ({ hello: "world" });
+    const opts = { mergeNotMutate: true };
+
+    const result = traverse(testSchema, mergeProducer, opts) as CoreSchemaMetaSchema;
+
+    expect(result.hello).toBe("world");
+    expect(result.type).toBe("string");
   });
 
   describe("basic functionality", () => {
@@ -396,7 +409,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.items[0].items = schema; // set the leaf to a ref back to root schema
       let i = 0;
-      const result: CoreSchemaMetaSchema = traverse(schema, (s: JSONSchema) => {
+      const result: CoreSchemaMetaSchema = traverse(schema, (s: CoreSchemaMetaSchema) => {
         s.i = i;
         i += 1;
         return s;

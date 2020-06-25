@@ -13,11 +13,18 @@ export interface TraverseOptions {
   /**
    * Set this to true if you don't want to call the mutator function on the root schema.
    */
-  skipFirstMutation: boolean;
+  skipFirstMutation?: boolean;
+
+  /**
+   * Set this to true if you want to merge the returned value of the mutation function into
+   * the original schema.
+   */
+  mergeNotMutate?: boolean;
 }
 
 export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
+  mergeNotMutate: false,
 };
 
 const isCycle = (s: JSONMetaSchema, recursiveStack: JSONMetaSchema[]) => {
@@ -138,8 +145,12 @@ export default function traverse(
 
   if (traverseOptions.skipFirstMutation === true && depth === 0) {
     return mutableSchema;
-  } else {
+  }
+
+  if (traverseOptions.mergeNotMutate) {
     merge(mutableSchema, mutation(mutableSchema));
     return mutableSchema;
   }
+
+  return mutation(mutableSchema);
 }
