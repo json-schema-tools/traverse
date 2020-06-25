@@ -11,6 +11,18 @@ describe("traverse", () => {
     expect(mockMutation).toHaveBeenCalledTimes(1);
   });
 
+  it("default mutate", () => {
+    const testSchema = {
+      type: "string"
+    };
+    const mutator = () => ({ hello: "world" });
+
+    const result = traverse(testSchema, mutator) as CoreSchemaMetaSchema;
+
+    expect(result.hello).toBe("world");
+    expect(result.type).toBe(undefined);
+  });
+
   it("has a merge option", () => {
     const testSchema = {
       type: "string"
@@ -22,6 +34,45 @@ describe("traverse", () => {
 
     expect(result.hello).toBe("world");
     expect(result.type).toBe("string");
+  });
+
+  it("mutate does not affect traversal", () => {
+    const testSchema = {
+      type: "object"
+    };
+
+    const mutator = jest.fn((s: CoreSchemaMetaSchema) => ({
+      ...s,
+      properties: {
+        foo: { type: "string" }
+      }
+    }));
+
+    const result = traverse(testSchema, mutator) as CoreSchemaMetaSchema;
+
+    expect(result.properties).toBeDefined();
+
+    expect(mutator).toHaveBeenCalledTimes(1);
+  });
+
+  it("merge does not affect traversal", () => {
+    const testSchema = {
+      type: "object"
+    };
+    const mergeProducer = jest.fn((s: CoreSchemaMetaSchema) => ({
+      ...s,
+      properties: {
+        foo: { type: "string" }
+      }
+    }));
+
+    const opts = { mergeNotMutate: true };
+
+    const result = traverse(testSchema, mergeProducer, opts) as CoreSchemaMetaSchema;
+
+    expect(result.properties).toBeDefined();
+
+    expect(mergeProducer).toHaveBeenCalledTimes(1);
   });
 
   describe("basic functionality", () => {
