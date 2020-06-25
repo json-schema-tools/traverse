@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/json-schema-tools/traverse/compare/1.1.0...1.1.1) (2020-06-25)
+
+
+### Bug Fixes
+
+* add more tests around mutation and merging ([d676794](https://github.com/json-schema-tools/traverse/commit/d676794348414670b510fbf41e11f675562383cc))
+* micro refactor ([087e905](https://github.com/json-schema-tools/traverse/commit/087e905f3cfcd308750eb998fa2489a0a5868f9a))
+
 # [1.1.0](https://github.com/json-schema-tools/traverse/compare/1.0.1...1.1.0) (2020-06-25)
 
 
