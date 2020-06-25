@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/json-schema-tools/traverse/compare/1.0.1...1.1.0) (2020-06-25)
+
+
+### Features
+
+* make merge an option ([230d347](https://github.com/json-schema-tools/traverse/commit/230d347208f073eaca618d13aa6d6230974dd4df))
+
 ## [1.0.1](https://github.com/json-schema-tools/traverse/compare/1.0.0...1.0.1) (2020-06-19)
 
 
