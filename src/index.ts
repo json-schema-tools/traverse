@@ -147,10 +147,12 @@ export default function traverse(
     return mutableSchema;
   }
 
+  const mutationResult = mutation(mutableSchema);
+
   if (traverseOptions.mergeNotMutate) {
-    merge(mutableSchema, mutation(mutableSchema));
+    merge(mutableSchema, mutationResult);
     return mutableSchema;
   }
 
-  return mutation(mutableSchema);
+  return mutationResult;
 }
