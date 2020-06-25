@@ -1,5 +1,5 @@
-import traverse from "./";
-import { CoreSchemaMetaSchema } from "@json-schema-tools/meta-schema";
+import traverse, { MutationFunctionAsync, traverseAsync } from "./";
+import { CoreSchemaMetaSchema, ObjectWji6VXSR } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -471,4 +471,27 @@ describe("traverse", () => {
       expect(rProps.foo.items[0].items.i).toBe(result.i);
     });
   });
+
+  it("has an async version", async () => {
+    const testSchema = {
+      type: "string",
+      properties: {
+        foo: { type: "number" },
+        bar: { type: "array" }
+      }
+    };
+
+    const mutator: MutationFunctionAsync = (s) => {
+      return new Promise((resolve) => {
+        setTimeout(() => { resolve({ ...s, dundiddit: true }); })
+      })
+    };
+
+    const result = await traverseAsync(testSchema, mutator);
+
+    console.log(result);
+    expect(result.type).toBe("string");
+    expect((result.properties as ObjectWji6VXSR).foo.type).toBe("string");
+  });
+
 });
