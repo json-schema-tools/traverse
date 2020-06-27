@@ -83,10 +83,10 @@ workflows:
       - hold:
           filters: *filter-only-master
           type: approval
-          requires:
-            - test
-            - build
       - release:
           filters: *filter-only-master
+          context: sem-rel-json-schema-tools
           requires:
             - hold
+            - test
+            - build
