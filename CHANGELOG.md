@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/json-schema-tools/traverse/compare/1.1.1...1.1.2) (2020-06-27)
+
+
+### Bug Fixes
+
+* update to latest JSON schema meta schema ([#53](https://github.com/json-schema-tools/traverse/issues/53)) ([c02585d](https://github.com/json-schema-tools/traverse/commit/c02585de7d37395be839b37b6e61c2c8bbde3d6f))
+
 ## [1.1.1](https://github.com/json-schema-tools/traverse/compare/1.1.0...1.1.1) (2020-06-25)
 
 
