@@ -1,5 +1,5 @@
 import traverse from "./";
-import { CoreSchemaMetaSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -17,7 +17,7 @@ describe("traverse", () => {
     };
     const mutator = () => ({ hello: "world" });
 
-    const result = traverse(testSchema, mutator) as CoreSchemaMetaSchema;
+    const result = traverse(testSchema, mutator) as JSONMetaSchema;
 
     expect(result.hello).toBe("world");
     expect(result.type).toBe(undefined);
@@ -30,7 +30,7 @@ describe("traverse", () => {
     const mergeProducer = () => ({ hello: "world" });
     const opts = { mergeNotMutate: true };
 
-    const result = traverse(testSchema, mergeProducer, opts) as CoreSchemaMetaSchema;
+    const result = traverse(testSchema, mergeProducer, opts) as JSONMetaSchema;
 
     expect(result.hello).toBe("world");
     expect(result.type).toBe("string");
@@ -41,14 +41,14 @@ describe("traverse", () => {
       type: "object"
     };
 
-    const mutator = jest.fn((s: CoreSchemaMetaSchema) => ({
+    const mutator = jest.fn((s: JSONMetaSchema) => ({
       ...s,
       properties: {
         foo: { type: "string" }
       }
     }));
 
-    const result = traverse(testSchema, mutator) as CoreSchemaMetaSchema;
+    const result = traverse(testSchema, mutator) as JSONMetaSchema;
 
     expect(result.properties).toBeDefined();
 
@@ -59,7 +59,7 @@ describe("traverse", () => {
     const testSchema = {
       type: "object"
     };
-    const mergeProducer = jest.fn((s: CoreSchemaMetaSchema) => ({
+    const mergeProducer = jest.fn((s: JSONMetaSchema) => ({
       ...s,
       properties: {
         foo: { type: "string" }
@@ -68,7 +68,7 @@ describe("traverse", () => {
 
     const opts = { mergeNotMutate: true };
 
-    const result = traverse(testSchema, mergeProducer, opts) as CoreSchemaMetaSchema;
+    const result = traverse(testSchema, mergeProducer, opts) as JSONMetaSchema;
 
     expect(result.properties).toBeDefined();
 
@@ -460,7 +460,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.items[0].items = schema; // set the leaf to a ref back to root schema
       let i = 0;
-      const result: CoreSchemaMetaSchema = traverse(schema, (s: CoreSchemaMetaSchema) => {
+      const result: JSONMetaSchema = traverse(schema, (s: JSONMetaSchema) => {
         s.i = i;
         i += 1;
         return s;

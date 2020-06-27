@@ -14,7 +14,7 @@
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@json-schema-tools/meta-schema": "^1.0.9",
+    "@json-schema-tools/meta-schema": "^1.0.10",
     "@types/jest": "^26.0.0",
     "@types/lodash.merge": "^4.6.6",
     "@types/node": "^14.0.13",
@@ -24,7 +24,6 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "@json-schema-tools/meta-schema": "^1.0.3",
     "lodash.merge": "^4.6.2"
   }
 }
