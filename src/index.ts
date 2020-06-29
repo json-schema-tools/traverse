@@ -20,11 +20,18 @@ export interface TraverseOptions {
    * the original schema.
    */
   mergeNotMutate?: boolean;
+
+  /**
+   * true if you want the original schema that was provided to be directly modified by the provided mutation/merge function
+   * To preserve cyclical refs this is necessary.
+   */
+  mutable?: boolean;
 }
 
 export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
   mergeNotMutate: false,
+  mutable: false,
 };
 
 const isCycle = (s: JSONMetaSchema, recursiveStack: JSONMetaSchema[]) => {
@@ -67,7 +74,10 @@ export default function traverse(
     }
   }
 
-  const mutableSchema: JSONMetaSchema = { ...schema };
+  let mutableSchema: JSONMetaSchema = schema;
+  if (traverseOptions.mutable === false) {
+    mutableSchema = { ...schema };
+  }
   recursiveStack.push(schema);
 
   prePostMap.push([schema, mutableSchema]);
