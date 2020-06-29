@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/json-schema-tools/traverse/compare/1.1.2...1.2.0) (2020-06-29)
+
+
+### Bug Fixes
+
+* use circleci context and parallelize more ([13111d5](https://github.com/json-schema-tools/traverse/commit/13111d5da6ba15921ec9b108c9e34a639b64c223))
+
+
+### Features
+
+* add an option that toggles mutating original schema ([#55](https://github.com/json-schema-tools/traverse/issues/55)) ([01506d8](https://github.com/json-schema-tools/traverse/commit/01506d86b8279f93f7da27ea5cbd727f6b246898))
+
 ## [1.1.2](https://github.com/json-schema-tools/traverse/compare/1.1.1...1.1.2) (2020-06-27)
 
 
