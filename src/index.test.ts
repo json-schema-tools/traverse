@@ -447,28 +447,45 @@ describe("traverse", () => {
         type: "object",
         properties: {
           foo: {
-            title: "1",
-            items: [
+            $ref: "#"
+          },
+        },
+      };
+      const result: JSONMetaSchema = traverse(schema, (s: JSONMetaSchema) => {
+        if (s.$ref) { return schema; }
+        return s;
+      }, { mutable: true });
+      const rProps = result.properties as any;
+      expect(rProps.foo).toBe(result);
+    });
+
+    it("handles the mutation function adding a cycle", () => {
+      const schema = {
+        title: "1",
+        type: "object",
+        properties: {
+          foo: {
+            title: "2",
+            anyOf: [
               {
-                title: "0",
+                title: "3",
                 type: "array",
-                items: { title: "2" },
+                items: {
+                  title: "4",
+                  properties: {
+                    baz: { title: "5" },
+                  },
+                },
               },
             ],
           },
         },
       };
-      schema.properties.foo.items[0].items = schema; // set the leaf to a ref back to root schema
-      let i = 0;
-      const result: JSONMetaSchema = traverse(schema, (s: JSONMetaSchema) => {
-        s.i = i;
-        i += 1;
-        return s;
-      });
-      const rProps = result.properties as any;
-      expect(result.i).toBe(2);
-      expect(rProps.foo.items[0].i).toBe(0);
-      expect(rProps.foo.items[0].items.i).toBe(result.i);
+      schema.properties.foo.anyOf[0].items.properties.baz = schema.properties.foo;
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(4);
     });
+
   });
 });
