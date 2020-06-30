@@ -1,4 +1,3 @@
-import merge from "lodash.merge";
 import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
 /**
@@ -30,7 +29,6 @@ export interface TraverseOptions {
 
 export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
-  mergeNotMutate: false,
   mutable: false,
 };
 
@@ -165,12 +163,5 @@ export default function traverse(
     return mutableSchema;
   }
 
-  const mutationResult = mutation(mutableSchema);
-
-  if (traverseOptions.mergeNotMutate) {
-    merge(mutableSchema, mutationResult);
-    return mutableSchema;
-  }
-
-  return mutationResult;
+  return mutation(mutableSchema);
 }
