@@ -23,19 +23,6 @@ describe("traverse", () => {
     expect(result.type).toBe(undefined);
   });
 
-  it("has a merge option", () => {
-    const testSchema = {
-      type: "string"
-    };
-    const mergeProducer = () => ({ hello: "world" });
-    const opts = { mergeNotMutate: true };
-
-    const result = traverse(testSchema, mergeProducer, opts) as JSONMetaSchema;
-
-    expect(result.hello).toBe("world");
-    expect(result.type).toBe("string");
-  });
-
   it("mutate does not affect traversal", () => {
     const testSchema = {
       type: "object"
