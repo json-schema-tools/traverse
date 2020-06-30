@@ -23,19 +23,6 @@ describe("traverse", () => {
     expect(result.type).toBe(undefined);
   });
 
-  it("has a merge option", () => {
-    const testSchema = {
-      type: "string"
-    };
-    const mergeProducer = () => ({ hello: "world" });
-    const opts = { mergeNotMutate: true };
-
-    const result = traverse(testSchema, mergeProducer, opts) as JSONMetaSchema;
-
-    expect(result.hello).toBe("world");
-    expect(result.type).toBe("string");
-  });
-
   it("mutate does not affect traversal", () => {
     const testSchema = {
       type: "object"
@@ -255,25 +242,6 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
 
-    it("skips the first schema when the option skipFirstMutation is true", () => {
-      const testSchema: any = { anyOf: [{}, {}] };
-      const mockMutation = jest.fn((mockS) => mockS);
-
-      traverse(testSchema, mockMutation, { skipFirstMutation: true });
-
-      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
-      expect(mockMutation).toHaveBeenCalledTimes(2);
-    });
-
-    it("skips first mutation when schema is a bool", () => {
-      const testSchema: any = true;
-      const mockMutation = jest.fn((mockS) => mockS);
-
-      traverse(testSchema, mockMutation, { skipFirstMutation: true });
-
-      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
-      expect(mockMutation).toHaveBeenCalledTimes(0);
-    });
   });
 
 
@@ -488,4 +456,45 @@ describe("traverse", () => {
     });
 
   });
+
+  describe("skipFirstMutation", () => {
+    it("skips the first schema when the option skipFirstMutation is true", () => {
+      const testSchema: any = { anyOf: [{}, {}] };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { skipFirstMutation: true });
+
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+    });
+
+    it("skips first mutation when schema is a bool", () => {
+      const testSchema: any = true;
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { skipFirstMutation: true });
+
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(0);
+    });
+
+    it("When the 2nd schema down is a cycle to its parent, the mutation function is called regardless", () => {
+      const testSchema: any = {
+        title: "skipFirstCycles",
+        type: "object",
+        properties: {
+          skipFirstCycle: {}
+        }
+      };
+      testSchema.properties.skipFirstCycle = testSchema;
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { skipFirstMutation: true });
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledTimes(1);
+    });
+
+  });
+
 });

@@ -22,8 +22,5 @@
     "ts-jest": "^24.3.0",
     "typedoc": "^0.17.7",
     "typescript": "^3.9.5"
-  },
-  "dependencies": {
-    "lodash.merge": "^4.6.2"
   }
 }

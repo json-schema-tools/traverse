@@ -1,4 +1,3 @@
-import merge from "lodash.merge";
 import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
 
 /**
@@ -30,7 +29,6 @@ export interface TraverseOptions {
 
 export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
-  mergeNotMutate: false,
   mutable: false,
 };
 
@@ -85,9 +83,17 @@ export default function traverse(
   const rec = (s: JSONMetaSchema) => {
     const foundCycle = isCycle(s, recursiveStack);
     if (foundCycle) {
+
+      // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
+      // If we don't, it will never happen.
+      if (traverseOptions.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
+        return mutation(s);
+      }
+
       const [, cycledMutableSchema] = prePostMap.find(
         ([orig]) => foundCycle === orig,
       ) as [JSONMetaSchema, JSONMetaSchema];
+
       return cycledMutableSchema;
     }
 
@@ -157,12 +163,5 @@ export default function traverse(
     return mutableSchema;
   }
 
-  const mutationResult = mutation(mutableSchema);
-
-  if (traverseOptions.mergeNotMutate) {
-    merge(mutableSchema, mutationResult);
-    return mutableSchema;
-  }
-
-  return mutationResult;
+  return mutation(mutableSchema);
 }
