@@ -85,9 +85,17 @@ export default function traverse(
   const rec = (s: JSONMetaSchema) => {
     const foundCycle = isCycle(s, recursiveStack);
     if (foundCycle) {
+
+      // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
+      // If we don't, it will never happen.
+      if (traverseOptions.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
+        return mutation(s);
+      }
+
       const [, cycledMutableSchema] = prePostMap.find(
         ([orig]) => foundCycle === orig,
       ) as [JSONMetaSchema, JSONMetaSchema];
+
       return cycledMutableSchema;
     }
 
