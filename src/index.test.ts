@@ -491,7 +491,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation, { skipFirstMutation: true });
 
-      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema);
       expect(mockMutation).toHaveBeenCalledTimes(1);
     });
 
