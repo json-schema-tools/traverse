@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/json-schema-tools/traverse/compare/1.2.1...1.2.2) (2020-07-01)
+
+
+### Bug Fixes
+
+* change sem rel ordering ([2370165](https://github.com/json-schema-tools/traverse/commit/2370165da335e9a4e73b7585aba1cc2edb877579))
+
 ## [1.2.1](https://github.com/json-schema-tools/traverse/compare/1.2.0...1.2.1) (2020-07-01)
 
 
