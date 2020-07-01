@@ -5,7 +5,7 @@
  - circular reference detection & handling
  - synchronous - doesn't touch the filesystem or make network requests.
  - easily perform schema mutations while traversing
- -
+ - optional mutability (toggle updating original schema object)
 
 ## Getting Started
 
