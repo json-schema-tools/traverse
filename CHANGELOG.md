@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/json-schema-tools/traverse/compare/1.2.0...1.2.1) (2020-07-01)
+
+
+### Bug Fixes
+
+* add to doc ([492cdbf](https://github.com/json-schema-tools/traverse/commit/492cdbfbbd5c1dce49493b5eec64881f5af66a73))
+
 # [1.2.0](https://github.com/json-schema-tools/traverse/compare/1.1.2...1.2.0) (2020-06-29)
 
 
