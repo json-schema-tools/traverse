@@ -123,10 +123,15 @@ export default function traverse(
       } else {
         const foundCycle = isCycle(schema.items, recursiveStack);
         if (foundCycle) {
-          const [, cycledMutableSchema] = prePostMap.find(
-            ([orig]) => foundCycle === orig,
-          ) as [JSONMetaSchema, JSONMetaSchema];
-          mutableSchema.items = cycledMutableSchema;
+          if (traverseOptions.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
+            return mutation(schema.items);
+          } else {
+            const [, cycledMutableSchema] = prePostMap.find(
+              ([orig]) => foundCycle === orig,
+            ) as [JSONMetaSchema, JSONMetaSchema];
+
+            mutableSchema.items = cycledMutableSchema;
+          }
         } else {
           itemsIsSingleSchema = true;
           mutableSchema.items = traverse(
