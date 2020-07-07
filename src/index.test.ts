@@ -479,20 +479,34 @@ describe("traverse", () => {
     });
 
     it("When the 2nd schema down is a cycle to its parent, the mutation function is called regardless", () => {
-      const testSchema: any = {
+      const testSchema1: any = {
         title: "skipFirstCycles",
         type: "object",
         properties: {
           skipFirstCycle: {}
         }
       };
-      testSchema.properties.skipFirstCycle = testSchema;
-      const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation, { skipFirstMutation: true });
+      const testSchema2: any = {
+        title: "skipFirstCycles",
+        type: "object",
+        items: {}
+      };
 
-      expect(mockMutation).toHaveBeenCalledWith(testSchema);
-      expect(mockMutation).toHaveBeenCalledTimes(1);
+      testSchema1.properties.skipFirstCycle = testSchema1;
+      testSchema2.items = testSchema2;
+
+      const mockMutation1 = jest.fn((mockS) => mockS);
+      traverse(testSchema1, mockMutation1, { skipFirstMutation: true });
+
+      const mockMutation2 = jest.fn((mockS) => mockS);
+      traverse(testSchema2, mockMutation2, { skipFirstMutation: true });
+
+      expect(mockMutation1).toHaveBeenCalledWith(testSchema1);
+      expect(mockMutation1).toHaveBeenCalledTimes(1);
+
+      expect(mockMutation2).toHaveBeenCalledWith(testSchema2);
+      expect(mockMutation2).toHaveBeenCalledTimes(1);
     });
 
   });
