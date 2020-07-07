@@ -1,3 +1,11 @@
+## [1.2.4](https://github.com/json-schema-tools/traverse/compare/1.2.3...1.2.4) (2020-07-07)
+
+
+### Bug Fixes
+
+* copy pasta errors ([e841877](https://github.com/json-schema-tools/traverse/commit/e8418779bffa3b68243baec21c99d00d83d5318b))
+* gh-pages fix ([dc9ed0e](https://github.com/json-schema-tools/traverse/commit/dc9ed0ecdf370793caf8e64897938b6c74ea31f8))
+
 ## [1.2.3](https://github.com/json-schema-tools/traverse/compare/1.2.2...1.2.3) (2020-07-07)
 
 
