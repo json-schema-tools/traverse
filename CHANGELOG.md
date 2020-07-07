@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/json-schema-tools/traverse/compare/1.2.2...1.2.3) (2020-07-07)
+
+
+### Bug Fixes
+
+* items cycle with first mutation skip ([c54d0d5](https://github.com/json-schema-tools/traverse/commit/c54d0d5cb3574eae54ee8805fa0e40c9f5853712))
+
 ## [1.2.2](https://github.com/json-schema-tools/traverse/compare/1.2.1...1.2.2) (2020-07-01)
 
 
