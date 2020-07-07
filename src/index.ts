@@ -124,7 +124,7 @@ export default function traverse(
         const foundCycle = isCycle(schema.items, recursiveStack);
         if (foundCycle) {
           if (traverseOptions.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-            return mutation(schema.items);
+            mutableSchema.items = mutation(schema.items);
           } else {
             const [, cycledMutableSchema] = prePostMap.find(
               ([orig]) => foundCycle === orig,

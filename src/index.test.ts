@@ -1,5 +1,5 @@
 import traverse from "./";
-import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import { JSONMetaSchema, Properties } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -497,16 +497,18 @@ describe("traverse", () => {
       testSchema2.items = testSchema2;
 
       const mockMutation1 = jest.fn((mockS) => mockS);
-      traverse(testSchema1, mockMutation1, { skipFirstMutation: true });
+      const testSchema1Result = traverse(testSchema1, mockMutation1, { skipFirstMutation: true }) as JSONMetaSchema;
 
       const mockMutation2 = jest.fn((mockS) => mockS);
-      traverse(testSchema2, mockMutation2, { skipFirstMutation: true });
+      const testSchema2Result = traverse(testSchema2, mockMutation2, { skipFirstMutation: true }) as JSONMetaSchema;
 
       expect(mockMutation1).toHaveBeenCalledWith(testSchema1);
       expect(mockMutation1).toHaveBeenCalledTimes(1);
+      expect((testSchema1Result.properties as Properties).skipFirstCycle).toBe(testSchema1Result);
 
       expect(mockMutation2).toHaveBeenCalledWith(testSchema2);
       expect(mockMutation2).toHaveBeenCalledTimes(1);
+      expect(testSchema2Result.items).toBe(testSchema2Result);
     });
 
   });
