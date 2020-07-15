@@ -35,7 +35,7 @@ export const defaultOptions: TraverseOptions = {
   mutable: false,
 };
 
-const isCycle = (s: JSONMetaSchema, recursiveStack: JSONMetaSchema[]) => {
+const isCycle = (s: JSONMetaSchema, recursiveStack: JSONMetaSchema[]): JSONMetaSchema | false => {
   const foundInRecursiveStack = recursiveStack.find((recSchema) => recSchema === s);
   if (foundInRecursiveStack) {
     return foundInRecursiveStack;
@@ -61,7 +61,7 @@ export default function traverse(
   depth = 0,
   recursiveStack: JSONMetaSchema[] = [],
   prePostMap: Array<[JSONMetaSchema, JSONMetaSchema]> = [],
-) {
+): JSONMetaSchema {
   let isRootOfCycle = false;
 
   // booleans are a bit messed. Since all other schemas are objects (non-primitive type
@@ -85,7 +85,7 @@ export default function traverse(
 
   prePostMap.push([schema, mutableSchema]);
 
-  const rec = (s: JSONMetaSchema) => {
+  const rec = (s: JSONMetaSchema): JSONMetaSchema => {
     const foundCycle = isCycle(s, recursiveStack);
     if (foundCycle) {
       if (foundCycle === schema) { isRootOfCycle = true; }
