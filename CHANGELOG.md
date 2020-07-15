@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/json-schema-tools/traverse/compare/1.2.4...1.3.0) (2020-07-15)
+
+
+### Bug Fixes
+
+* interface ([a085808](https://github.com/json-schema-tools/traverse/commit/a0858082750663009b887e75edc1de9f09912739))
+* lint fixing ([7c6cdae](https://github.com/json-schema-tools/traverse/commit/7c6cdaea3635e6b310b1cb5cd9eace86e482b5ca))
+
+
+### Features
+
+* add cycle tracking to the mutation function interface ([fe8ea52](https://github.com/json-schema-tools/traverse/commit/fe8ea52200ee7f0a291864478a5ed3db1bdd894f))
+
 ## [1.2.4](https://github.com/json-schema-tools/traverse/compare/1.2.3...1.2.4) (2020-07-07)
 
 
