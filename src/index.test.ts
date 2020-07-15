@@ -62,6 +62,7 @@ describe("traverse", () => {
     expect(mergeProducer).toHaveBeenCalledTimes(1);
   });
 
+
   describe("basic functionality", () => {
     const test = (prop: string, useVal?: any) => {
       const a = {};
@@ -73,9 +74,9 @@ describe("traverse", () => {
       traverse(testSchema, mockMutation);
 
       if (useVal) {
-        expect(mockMutation).toHaveBeenCalledWith(useVal);
+        expect(mockMutation).toHaveBeenCalledWith(useVal, false);
       } else {
-        expect(mockMutation).toHaveBeenCalledWith(a);
+        expect(mockMutation).toHaveBeenCalledWith(a, false);
       }
       return mockMutation;
     };
@@ -100,7 +101,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, false);
       expect(mockMutation).toHaveBeenCalledTimes(1);
     });
 
@@ -109,9 +110,9 @@ describe("traverse", () => {
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
-      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
-      expect(mockMutation).toHaveBeenNthCalledWith(2, false);
-      expect(mockMutation).toHaveBeenNthCalledWith(3, schema);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, false, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(3, schema, false);
     });
 
 
@@ -123,22 +124,22 @@ describe("traverse", () => {
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
 
-      expect(mockMutation).toHaveBeenNthCalledWith(1, a);
-      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, a, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true, false);
 
-      expect(mockMutation).toHaveBeenNthCalledWith(2, b);
-      expect(mockMutation).toHaveBeenNthCalledWith(2, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, b, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, false, false);
 
-      expect(mockMutation).toHaveBeenNthCalledWith(3, schema);
+      expect(mockMutation).toHaveBeenNthCalledWith(3, schema, false);
     });
 
-    it("when items is a boolean works fine", () => {
+    it("items is a boolean", () => {
       const schema = { type: "array", items: true };
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(2);
-      expect(mockMutation).toHaveBeenNthCalledWith(1, true);
-      expect(mockMutation).toHaveBeenNthCalledWith(2, schema);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, true, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, schema, false);
     });
 
     it("doesnt skip boolean schemas that it has not seen", () => {
@@ -170,9 +171,9 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.properties.a);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.properties.b);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.properties.a, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.properties.b, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, false);
       expect(mockMutation).toHaveBeenCalledTimes(3);
     });
 
@@ -184,8 +185,8 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, false);
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
 
@@ -202,10 +203,10 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties.properties.c);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties.properties.d);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties.properties.c, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalProperties.properties.d, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, false);
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
 
@@ -217,8 +218,8 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, false);
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
 
@@ -235,10 +236,10 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems.properties.c);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems.properties.d);
-      expect(mockMutation).toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems.properties.c, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.additionalItems.properties.d, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, false);
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
 
@@ -464,7 +465,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation, { skipFirstMutation: true });
 
-      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema, expect.any);
       expect(mockMutation).toHaveBeenCalledTimes(2);
     });
 
@@ -474,7 +475,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation, { skipFirstMutation: true });
 
-      expect(mockMutation).not.toHaveBeenCalledWith(testSchema);
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema, expect.any);
       expect(mockMutation).toHaveBeenCalledTimes(0);
     });
 
@@ -502,15 +503,56 @@ describe("traverse", () => {
       const mockMutation2 = jest.fn((mockS) => mockS);
       const testSchema2Result = traverse(testSchema2, mockMutation2, { skipFirstMutation: true }) as JSONMetaSchema;
 
-      expect(mockMutation1).toHaveBeenCalledWith(testSchema1);
+      expect(mockMutation1).toHaveBeenCalledWith(testSchema1, true);
       expect(mockMutation1).toHaveBeenCalledTimes(1);
       expect((testSchema1Result.properties as Properties).skipFirstCycle).toBe(testSchema1Result);
 
-      expect(mockMutation2).toHaveBeenCalledWith(testSchema2);
+      expect(mockMutation2).toHaveBeenCalledWith(testSchema2, true);
       expect(mockMutation2).toHaveBeenCalledTimes(1);
       expect(testSchema2Result.items).toBe(testSchema2Result);
     });
 
   });
 
+  describe("isCycle", () => {
+
+    it("true when the schema is a deep cycle", () => {
+      const testSchema = {
+        type: "object",
+        properties: {
+          foo: {
+            type: "object",
+            properties: { bar: {} },
+          },
+        },
+      };
+
+      testSchema.properties.foo.properties.bar = testSchema.properties.foo;
+
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { mutable: true });
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema.properties.foo, true);
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema.properties.foo, false);
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+    });
+
+    it("true when the schema is the root of a cycle", () => {
+      const testSchema = {
+        type: "object",
+        properties: {
+          foo: {}
+        }
+      };
+      testSchema.properties.foo = testSchema;
+
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { mutable: true });
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, true);
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema, false);
+    });
+  });
 });
