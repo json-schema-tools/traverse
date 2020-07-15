@@ -6,7 +6,7 @@ import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
  * @param schema The schema or subschema node being traversed
  * @param isRootOfCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  */
-export type MutationFunction = (schema: JSONMetaSchema, isRootOfCycle: Boolean) => JSONMetaSchema;
+export type MutationFunction = (schema: JSONMetaSchema, isRootOfCycle: boolean) => JSONMetaSchema;
 
 /**
  * The options you can use when traversing.
