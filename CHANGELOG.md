@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/json-schema-tools/traverse/compare/1.3.0...1.3.1) (2020-07-20)
+
+
+### Bug Fixes
+
+* remove junk ([fd1468e](https://github.com/json-schema-tools/traverse/commit/fd1468e0c661a400e7902222b06cf19ab77bece8))
+* update docs ([a2af5e0](https://github.com/json-schema-tools/traverse/commit/a2af5e077b18606d542843bd98b703e3ec060a9f))
+
 # [1.3.0](https://github.com/json-schema-tools/traverse/compare/1.2.4...1.3.0) (2020-07-15)
 
 
