@@ -555,4 +555,48 @@ describe("traverse", () => {
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema, false);
     });
   });
+
+  it.only("pre-post mapping works", () => {
+    const testSchema = {
+      title: "govna",
+      type: "object",
+      properties: {
+        bar: {
+          title: "bar",
+          type: "number"
+        },
+        foo: {
+          oneOf: [
+            { title: "foo", type: "string" }
+          ]
+        }
+      }
+    };
+
+    testSchema.properties.foo.oneOf.push(testSchema.properties.bar);
+
+    let i = 0;
+
+    const schemaSet: any = [];
+    traverse(
+      testSchema,
+      (s) => {
+        i += 1;
+        console.log(s); //tslint:disable-line
+        schemaSet.push({ ...s });
+        delete s.type;
+        delete s.title;
+        delete s.oneOf;
+        s.$ref = `${i}`;
+        return s;
+      },
+      { skipFirstMutation: true, mutable: true }
+    );
+
+    expect(schemaSet[2].oneOf[0]).toHaveProperty("$ref");
+    expect(schemaSet[2].oneOf[1]).toHaveProperty("$ref");
+
+    console.log(testSchema); //tslint:disable-line
+  });
+
 });

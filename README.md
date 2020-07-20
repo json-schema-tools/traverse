@@ -1,5 +1,7 @@
 # JSON Schema Traverse
 
+This package exports a method that will traverse a JSON-Schema, calling a "mutation" function for each sub schema found. It is useful for building tools to work with JSON Schemas.
+
 ## Features
 
  - circular reference detection & handling
@@ -47,7 +49,6 @@ traverse(mySchema, (schemaOrSubschema) => {
  - unevaluatedProperties (https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.2.4)
  - contains (https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.1.4)
  - propertyNames (https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.2.5)
- -
 
 ### Contributing
 

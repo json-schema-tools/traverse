@@ -93,6 +93,7 @@ export default function traverse(
       // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
       // If we don't, it will never happen.
       if (traverseOptions.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
+        console.log("SKIP FIRST && CYCLE TO ROOT"); //tslint:disable-line
         return mutation(s, true);
       }
 
@@ -100,6 +101,7 @@ export default function traverse(
         ([orig]) => foundCycle === orig,
       ) as [JSONMetaSchema, JSONMetaSchema];
 
+      console.log("RETURNING CYCLED RESULT", cycledMutableSchema); //tslint:disable-line
       return cycledMutableSchema;
     }
 
@@ -159,11 +161,15 @@ export default function traverse(
 
     if (schema.properties) {
       const sProps: { [key: string]: JSONMetaSchema } = schema.properties;
-      mutableSchema.properties = Object.keys(sProps)
-        .reduce(
-          (r: JSONMetaSchema, v: string) => ({ ...r, ...{ [v]: rec(sProps[v]) } }),
-          {},
-        );
+      const sPropKeys = Object.keys(sProps);
+      sPropKeys.forEach((propKey) => {
+        const propSchema = sProps[propKey];
+        (mutableSchema.properties as any)[propKey] = rec(propSchema);
+        console.log("POST DEALING WITH PROPS RECURSIVE STACK"); //tslint:disable-line
+        console.log(recursiveStack); //tslint:disable-line
+        console.log("PRE-POST Map"); //tslint:disable-line
+        console.log(prePostMap); //tslint:disable-line
+      });
     }
 
     if (!!schema.additionalProperties === true) {
