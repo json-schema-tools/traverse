@@ -1,5 +1,5 @@
-import traverse from "./";
-import { Properties, JSONSchemaObject } from "@json-schema-tools/meta-schema";
+import traverse, { MutationFunction } from "./";
+import { Properties, JSONSchemaObject, JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -35,7 +35,7 @@ describe("traverse", () => {
       }
     }));
 
-    const result = traverse(testSchema, mutator) as JSONSchemaObject;
+    const result = traverse(testSchema, mutator as MutationFunction) as JSONSchemaObject;
 
     expect(result.properties).toBeDefined();
 
@@ -55,7 +55,7 @@ describe("traverse", () => {
 
     const opts = { mergeNotMutate: true };
 
-    const result = traverse(testSchema, mergeProducer, opts) as JSONSchemaObject;
+    const result = traverse(testSchema, mergeProducer as MutationFunction, opts) as JSONSchemaObject;
 
     expect(result.properties).toBeDefined();
 
@@ -420,8 +420,8 @@ describe("traverse", () => {
           },
         },
       };
-      const result = traverse(schema, (s: JSONSchemaObject) => {
-        if (s.$ref) { return schema; }
+      const result = traverse(schema, (s: JSONSchema) => {
+        if ((s as JSONSchemaObject).$ref) { return schema; }
         return s;
       }, { mutable: true }) as JSONSchemaObject;
 

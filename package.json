@@ -1,7 +1,7 @@
 {
   "name": "@json-schema-tools/traverse",
   "version": "0.0.0-development",
-  "description": "",
+  "description": "This package exports a method that will traverse a JSON-Schema, calling a mutation function for each sub schema found. It is useful for building tools to work with JSON Schemas.",
   "main": "build/index.js",
   "publishConfig": {
     "access": "public"
@@ -11,7 +11,7 @@
     "build:docs": "typedoc",
     "test": "jest --coverage"
   },
-  "author": "",
+  "author": "Zachary Belford<belfordz66@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
     "@json-schema-tools/meta-schema": "^1.3.0",
