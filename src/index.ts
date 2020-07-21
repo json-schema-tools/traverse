@@ -120,8 +120,6 @@ export default function traverse(
   } else if (schema.oneOf) {
     mutableSchema.oneOf = schema.oneOf.map(rec);
   } else {
-    let itemsIsSingleSchema = false;
-
     if (schema.items) {
       if (schema.items instanceof Array) {
         mutableSchema.items = schema.items.map(rec);
@@ -140,7 +138,6 @@ export default function traverse(
             mutableSchema.items = cycledMutableSchema;
           }
         } else {
-          itemsIsSingleSchema = true;
           mutableSchema.items = traverse(
             schema.items,
             mutation,
@@ -153,7 +150,7 @@ export default function traverse(
       }
     }
 
-    if (schema.additionalItems !== undefined && !!schema.additionalItems === true && !itemsIsSingleSchema) {
+    if (schema.additionalItems !== undefined) {
       mutableSchema.additionalItems = rec(schema.additionalItems);
     }
 
@@ -165,7 +162,7 @@ export default function traverse(
       });
     }
 
-    if (schema.additionalProperties !== undefined && !!schema.additionalProperties === true) {
+    if (schema.additionalProperties !== undefined) {
       mutableSchema.additionalProperties = rec(schema.additionalProperties);
     }
   }
