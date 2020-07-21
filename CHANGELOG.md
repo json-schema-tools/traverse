@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/json-schema-tools/traverse/compare/1.4.0...1.4.1) (2020-07-21)
+
+
+### Bug Fixes
+
+* props mutate ([1a36823](https://github.com/json-schema-tools/traverse/commit/1a368235682c9d3f1f0361e52413c5e7545e89b0))
+
 # [1.4.0](https://github.com/json-schema-tools/traverse/compare/1.3.1...1.4.0) (2020-07-21)
 
 
