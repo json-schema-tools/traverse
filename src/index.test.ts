@@ -1,5 +1,5 @@
-import traverse from "./";
-import { JSONMetaSchema, Properties } from "@json-schema-tools/meta-schema";
+import traverse, { MutationFunction } from "./";
+import { Properties, JSONSchemaObject, JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   it("it calls mutate only once when there are no subschemas", () => {
@@ -17,7 +17,7 @@ describe("traverse", () => {
     };
     const mutator = () => ({ hello: "world" });
 
-    const result = traverse(testSchema, mutator) as JSONMetaSchema;
+    const result = traverse(testSchema, mutator) as any;
 
     expect(result.hello).toBe("world");
     expect(result.type).toBe(undefined);
@@ -28,14 +28,14 @@ describe("traverse", () => {
       type: "object"
     };
 
-    const mutator = jest.fn((s: JSONMetaSchema) => ({
+    const mutator = jest.fn((s: JSONSchemaObject) => ({
       ...s,
       properties: {
         foo: { type: "string" }
       }
     }));
 
-    const result = traverse(testSchema, mutator) as JSONMetaSchema;
+    const result = traverse(testSchema, mutator as MutationFunction) as JSONSchemaObject;
 
     expect(result.properties).toBeDefined();
 
@@ -46,7 +46,7 @@ describe("traverse", () => {
     const testSchema = {
       type: "object"
     };
-    const mergeProducer = jest.fn((s: JSONMetaSchema) => ({
+    const mergeProducer = jest.fn((s: JSONSchemaObject) => ({
       ...s,
       properties: {
         foo: { type: "string" }
@@ -55,7 +55,7 @@ describe("traverse", () => {
 
     const opts = { mergeNotMutate: true };
 
-    const result = traverse(testSchema, mergeProducer, opts) as JSONMetaSchema;
+    const result = traverse(testSchema, mergeProducer as MutationFunction, opts) as JSONSchemaObject;
 
     expect(result.properties).toBeDefined();
 
@@ -420,11 +420,12 @@ describe("traverse", () => {
           },
         },
       };
-      const result: JSONMetaSchema = traverse(schema, (s: JSONMetaSchema) => {
-        if (s.$ref) { return schema; }
+      const result = traverse(schema, (s: JSONSchema) => {
+        if ((s as JSONSchemaObject).$ref) { return schema; }
         return s;
-      }, { mutable: true });
-      const rProps = result.properties as any;
+      }, { mutable: true }) as JSONSchemaObject;
+
+      const rProps = result.properties as Properties;
       expect(rProps.foo).toBe(result);
     });
 
@@ -498,10 +499,10 @@ describe("traverse", () => {
       testSchema2.items = testSchema2;
 
       const mockMutation1 = jest.fn((mockS) => mockS);
-      const testSchema1Result = traverse(testSchema1, mockMutation1, { skipFirstMutation: true }) as JSONMetaSchema;
+      const testSchema1Result = traverse(testSchema1, mockMutation1, { skipFirstMutation: true }) as JSONSchemaObject;
 
       const mockMutation2 = jest.fn((mockS) => mockS);
-      const testSchema2Result = traverse(testSchema2, mockMutation2, { skipFirstMutation: true }) as JSONMetaSchema;
+      const testSchema2Result = traverse(testSchema2, mockMutation2, { skipFirstMutation: true }) as JSONSchemaObject;
 
       expect(mockMutation1).toHaveBeenCalledWith(testSchema1, true);
       expect(mockMutation1).toHaveBeenCalledTimes(1);

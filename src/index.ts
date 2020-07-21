@@ -1,4 +1,4 @@
-import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
+import { JSONSchema, JSONSchemaObject, Properties } from "@json-schema-tools/meta-schema";
 
 /**
  * Signature of the mutation method passed to traverse.
@@ -6,7 +6,7 @@ import { JSONMetaSchema } from "@json-schema-tools/meta-schema";
  * @param schema The schema or subschema node being traversed
  * @param isRootOfCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  */
-export type MutationFunction = (schema: JSONMetaSchema, isRootOfCycle: boolean) => JSONMetaSchema;
+export type MutationFunction = (schema: JSONSchema, isRootOfCycle: boolean) => JSONSchema;
 
 /**
  * The options you can use when traversing.
@@ -35,7 +35,7 @@ export const defaultOptions: TraverseOptions = {
   mutable: false,
 };
 
-const isCycle = (s: JSONMetaSchema, recursiveStack: JSONMetaSchema[]): JSONMetaSchema | false => {
+const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | false => {
   const foundInRecursiveStack = recursiveStack.find((recSchema) => recSchema === s);
   if (foundInRecursiveStack) {
     return foundInRecursiveStack;
@@ -55,13 +55,13 @@ const isCycle = (s: JSONMetaSchema, recursiveStack: JSONMetaSchema[]): JSONMetaS
  *
  */
 export default function traverse(
-  schema: JSONMetaSchema,
+  schema: JSONSchema,
   mutation: MutationFunction,
   traverseOptions = defaultOptions,
   depth = 0,
-  recursiveStack: JSONMetaSchema[] = [],
-  prePostMap: Array<[JSONMetaSchema, JSONMetaSchema]> = [],
-): JSONMetaSchema {
+  recursiveStack: JSONSchema[] = [],
+  prePostMap: Array<[JSONSchema, JSONSchema]> = [],
+): JSONSchema {
   let isRootOfCycle = false;
 
   // booleans are a bit messed. Since all other schemas are objects (non-primitive type
@@ -76,7 +76,7 @@ export default function traverse(
     }
   }
 
-  let mutableSchema: JSONMetaSchema = schema;
+  let mutableSchema: JSONSchemaObject = schema;
   if (traverseOptions.mutable === false) {
     mutableSchema = { ...schema };
   }
@@ -85,7 +85,7 @@ export default function traverse(
 
   prePostMap.push([schema, mutableSchema]);
 
-  const rec = (s: JSONMetaSchema): JSONMetaSchema => {
+  const rec = (s: JSONSchema): JSONSchema => {
     const foundCycle = isCycle(s, recursiveStack);
     if (foundCycle) {
       if (foundCycle === schema) { isRootOfCycle = true; }
@@ -98,7 +98,7 @@ export default function traverse(
 
       const [, cycledMutableSchema] = prePostMap.find(
         ([orig]) => foundCycle === orig,
-      ) as [JSONMetaSchema, JSONMetaSchema];
+      ) as [JSONSchema, JSONSchema];
 
       return cycledMutableSchema;
     }
@@ -135,7 +135,7 @@ export default function traverse(
           } else {
             const [, cycledMutableSchema] = prePostMap.find(
               ([orig]) => foundCycle === orig,
-            ) as [JSONMetaSchema, JSONMetaSchema];
+            ) as [JSONSchema, JSONSchema];
 
             mutableSchema.items = cycledMutableSchema;
           }
@@ -153,20 +153,19 @@ export default function traverse(
       }
     }
 
-    if (!!schema.additionalItems === true && !itemsIsSingleSchema) {
+    if (schema.additionalItems !== undefined && !!schema.additionalItems === true && !itemsIsSingleSchema) {
       mutableSchema.additionalItems = rec(schema.additionalItems);
     }
 
-    if (schema.properties) {
-      const sProps: { [key: string]: JSONMetaSchema } = schema.properties;
-      mutableSchema.properties = Object.keys(sProps)
-        .reduce(
-          (r: JSONMetaSchema, v: string) => ({ ...r, ...{ [v]: rec(sProps[v]) } }),
-          {},
-        );
+    if (schema.properties !== undefined) {
+      const sProps: { [key: string]: JSONSchema } = schema.properties;
+
+      Object.keys(schema.properties).forEach((schemaPropKey: string) => {
+        (mutableSchema.properties as Properties)[schemaPropKey] = rec(sProps[schemaPropKey]);
+      });
     }
 
-    if (!!schema.additionalProperties === true) {
+    if (schema.additionalProperties !== undefined && !!schema.additionalProperties === true) {
       mutableSchema.additionalProperties = rec(schema.additionalProperties);
     }
   }
