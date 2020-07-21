@@ -159,10 +159,14 @@ export default function traverse(
 
     if (schema.properties !== undefined) {
       const sProps: { [key: string]: JSONSchema } = schema.properties;
+      const mutableProps: { [key: string]: JSONSchema } = {};
+
 
       Object.keys(schema.properties).forEach((schemaPropKey: string) => {
-        (mutableSchema.properties as Properties)[schemaPropKey] = rec(sProps[schemaPropKey]);
+        mutableProps[schemaPropKey] = rec(sProps[schemaPropKey]);
       });
+
+      mutableSchema.properties = mutableProps;
     }
 
     if (schema.additionalProperties !== undefined && !!schema.additionalProperties === true) {
