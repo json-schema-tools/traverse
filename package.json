@@ -3,6 +3,14 @@
   "version": "0.0.0-development",
   "description": "This package exports a method that will traverse a JSON-Schema, calling a mutation function for each sub schema found. It is useful for building tools to work with JSON Schemas.",
   "main": "build/index.js",
+  "bugs": {
+    "url": "https://github.com/json-schema-tools/traverse/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/json-schema-tools/traverse.git"
+  },
+  "homepage": "json-schema.tools",
   "publishConfig": {
     "access": "public"
   },
