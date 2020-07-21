@@ -1,3 +1,12 @@
+## [1.4.2](https://github.com/json-schema-tools/traverse/compare/1.4.1...1.4.2) (2020-07-21)
+
+
+### Bug Fixes
+
+* add more details to package.json ([34dde39](https://github.com/json-schema-tools/traverse/commit/34dde396d5f7f500a9e16212d29f138f0701f548))
+* only release build files ([b44f0ab](https://github.com/json-schema-tools/traverse/commit/b44f0ab8fe5590248583feeb4ef178bb6a764950))
+* remove hold ([e406d74](https://github.com/json-schema-tools/traverse/commit/e406d74e7f099a37a0c351aebbd0367725b72288))
+
 ## [1.4.1](https://github.com/json-schema-tools/traverse/compare/1.4.0...1.4.1) (2020-07-21)
 
 
