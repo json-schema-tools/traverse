@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/json-schema-tools/traverse/compare/1.3.1...1.4.0) (2020-07-21)
+
+
+### Bug Fixes
+
+* set node version ([24b9516](https://github.com/json-schema-tools/traverse/commit/24b9516b1cf27560d54c4c1fba647524f9bf38c3))
+* test are now passing ([65ca712](https://github.com/json-schema-tools/traverse/commit/65ca7128301a29cbca5eae54c8aaeeb10c8c0854))
+
+
+### Features
+
+* update to new meta-schema ([82a133e](https://github.com/json-schema-tools/traverse/commit/82a133ecc0825f1ab989e5c28b75451dcd887c74))
+
 ## [1.3.1](https://github.com/json-schema-tools/traverse/compare/1.3.0...1.3.1) (2020-07-20)
 
 
