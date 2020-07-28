@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/json-schema-tools/traverse/compare/1.4.2...1.5.0) (2020-07-28)
+
+
+### Features
+
+* add pattern properties ([9234934](https://github.com/json-schema-tools/traverse/commit/9234934f37d0aeddf8b462d082387ac552949e0b))
+
 ## [1.4.2](https://github.com/json-schema-tools/traverse/compare/1.4.1...1.4.2) (2020-07-21)
 
 
