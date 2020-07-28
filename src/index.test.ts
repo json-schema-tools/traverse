@@ -115,6 +115,20 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenNthCalledWith(3, schema, false);
     });
 
+    it("accepts patternProperties", () => {
+      const a = { type: "string" };
+      const b = { type: "number" };
+      const schema = {
+        type: "object",
+        patternProperties: { "*.": a, "x-^": b }
+      };
+      const mockMutation = jest.fn((s) => s);
+      traverse(schema, mockMutation);
+      expect(mockMutation).toHaveBeenCalledTimes(3);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, a, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, b, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(3, schema, false);
+    });
 
     it("allows booleans that are created via boolean class and new", () => {
       const a = new Boolean(true);

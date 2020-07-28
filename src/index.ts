@@ -1,4 +1,4 @@
-import { JSONSchema, JSONSchemaObject, Properties } from "@json-schema-tools/meta-schema";
+import { JSONSchema, JSONSchemaObject, Properties, PatternProperties } from "@json-schema-tools/meta-schema";
 
 /**
  * Signature of the mutation method passed to traverse.
@@ -167,6 +167,17 @@ export default function traverse(
       });
 
       mutableSchema.properties = mutableProps;
+    }
+
+    if (schema.patternProperties !== undefined) {
+      const sProps = schema.patternProperties;
+      const mutableProps: PatternProperties = {};
+
+      Object.keys(schema.patternProperties).forEach((regex: string) => {
+        mutableProps[regex] = rec(sProps[regex]);
+      });
+
+      mutableSchema.patternProperties = mutableProps;
     }
 
     if (schema.additionalProperties !== undefined && !!schema.additionalProperties === true) {
