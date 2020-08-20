@@ -84,8 +84,12 @@ export default function traverse(
   }
 
   let mutableSchema: JSONSchemaObject = schema;
-  if (traverseOptions.mutable === false) {
+  if (!traverseOptions.mutable) {
     mutableSchema = { ...schema };
+  }
+
+  if (traverseOptions.bfs) {
+    mutableSchema = mutation(mutableSchema, false) as JSONSchemaObject;
   }
 
   recursiveStack.push(schema);
@@ -196,5 +200,9 @@ export default function traverse(
     return mutableSchema;
   }
 
-  return mutation(mutableSchema, isRootOfCycle);
+  if (traverseOptions.bfs) {
+    return mutableSchema;
+  } else {
+    return mutation(mutableSchema, isRootOfCycle);
+  }
 }

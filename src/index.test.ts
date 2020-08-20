@@ -513,10 +513,10 @@ describe("traverse", () => {
       testSchema2.items = testSchema2;
 
       const mockMutation1 = jest.fn((mockS) => mockS);
-      const testSchema1Result = traverse(testSchema1, mockMutation1, { skipFirstMutation: true }) as JSONSchemaObject;
+      const testSchema1Result = traverse(testSchema1, mockMutation1, { skipFirstMutation: true, mutable: true }) as JSONSchemaObject;
 
       const mockMutation2 = jest.fn((mockS) => mockS);
-      const testSchema2Result = traverse(testSchema2, mockMutation2, { skipFirstMutation: true }) as JSONSchemaObject;
+      const testSchema2Result = traverse(testSchema2, mockMutation2, { skipFirstMutation: true, mutable: true }) as JSONSchemaObject;
 
       expect(mockMutation1).toHaveBeenCalledWith(testSchema1, true);
       expect(mockMutation1).toHaveBeenCalledTimes(1);
@@ -587,12 +587,12 @@ describe("traverse", () => {
       };
       const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation, { bfs: true });
+      traverse(testSchema, mockMutation, { bfs: true, });
 
       expect(mockMutation).nthCalledWith(1, testSchema, false)
-      expect(mockMutation).nthCalledWith(2, testSchema.properties.foo)
-      expect(mockMutation).nthCalledWith(3, testSchema.properties.foo.items[0])
-      expect(mockMutation).nthCalledWith(4, testSchema.properties.foo.items[1])
+      expect(mockMutation).nthCalledWith(2, testSchema.properties.foo, false)
+      expect(mockMutation).nthCalledWith(3, testSchema.properties.foo.items[0], false)
+      expect(mockMutation).nthCalledWith(4, testSchema.properties.foo.items[1], false)
     });
   });
 });
