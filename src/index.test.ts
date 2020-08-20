@@ -513,18 +513,18 @@ describe("traverse", () => {
       testSchema2.items = testSchema2;
 
       const mockMutation1 = jest.fn((mockS) => mockS);
-      const testSchema1Result = traverse(testSchema1, mockMutation1, { skipFirstMutation: true, mutable: true }) as JSONSchemaObject;
+      traverse(testSchema1, mockMutation1, { skipFirstMutation: true, mutable: true }) as JSONSchemaObject;
 
       const mockMutation2 = jest.fn((mockS) => mockS);
-      const testSchema2Result = traverse(testSchema2, mockMutation2, { skipFirstMutation: true, mutable: true }) as JSONSchemaObject;
+      traverse(testSchema2, mockMutation2, { skipFirstMutation: true, mutable: true }) as JSONSchemaObject;
 
       expect(mockMutation1).toHaveBeenCalledWith(testSchema1, true);
       expect(mockMutation1).toHaveBeenCalledTimes(1);
-      expect((testSchema1Result.properties as Properties).skipFirstCycle).toBe(testSchema1Result);
+      expect((testSchema1.properties as Properties).skipFirstCycle).toBe(testSchema1);
 
       expect(mockMutation2).toHaveBeenCalledWith(testSchema2, true);
       expect(mockMutation2).toHaveBeenCalledTimes(1);
-      expect(testSchema2Result.items).toBe(testSchema2Result);
+      expect(testSchema2.items).toBe(testSchema2);
     });
 
   });
@@ -593,6 +593,151 @@ describe("traverse", () => {
       expect(mockMutation).nthCalledWith(2, testSchema.properties.foo, false)
       expect(mockMutation).nthCalledWith(3, testSchema.properties.foo.items[0], false)
       expect(mockMutation).nthCalledWith(4, testSchema.properties.foo.items[1], false)
+    });
+
+    it("works with mutable settings", () => {
+      const testSchema = {
+        type: "object",
+        properties: {
+          foo: {
+            type: "array",
+            items: [
+              { type: "string" },
+              { type: "number" },
+            ]
+          }
+        }
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { bfs: true, mutable: true });
+
+      expect(mockMutation).nthCalledWith(1, testSchema, false)
+      expect(mockMutation).nthCalledWith(2, testSchema.properties.foo, false)
+      expect(mockMutation).nthCalledWith(3, testSchema.properties.foo.items[0], false)
+      expect(mockMutation).nthCalledWith(4, testSchema.properties.foo.items[1], false)
+    });
+  });
+});
+
+describe("Mutability settings", () => {
+  it("defaults to being immutable", () => {
+    const s = {
+      type: "object",
+      properties: {
+        foo: { type: "string" },
+        bar: { type: "number" }
+      }
+    };
+
+    const frozenS = Object.freeze(s);
+
+    const result = traverse(frozenS, () => {
+      return { hello: "world" };
+    });
+
+    expect(frozenS).not.toBe(result);
+    expect(frozenS).not.toBe(result);
+  });
+
+  describe("mutable: false", () => {
+    it("cycles are preserved, but reference is not the same as original", () => {
+      const s = {
+        type: "object",
+        properties: {
+          foo: {},
+        }
+      };
+      s.properties.foo = s;
+
+      const frozenS = Object.freeze(s);
+
+      const result = traverse(frozenS, (ss) => ss, { mutable: false }) as JSONSchemaObject;
+
+      expect(frozenS).not.toBe(result);
+      expect((result.properties as Properties).foo).toBe(result);
+      expect(frozenS.properties.foo).not.toBe(result);
+      expect(frozenS.properties.foo).toEqual(result);
+      expect(frozenS.properties.foo).toEqual(frozenS);
+    });
+
+    it("a copy of the first schema is given even when skipFirstMutation is used", () => {
+      const s = {
+        type: "object",
+        properties: {
+          foo: { type: "string" },
+        }
+      };
+
+      const frozenS = Object.freeze(s);
+
+      const result = traverse(frozenS, (ss) => ss, { mutable: false, skipFirstMutation: true }) as JSONSchemaObject;
+
+      expect(frozenS).not.toBe(result);
+      expect((result.properties as Properties).foo).not.toBe(frozenS.properties.foo);
+      expect((result.properties as Properties).foo).toEqual(frozenS.properties.foo);
+    });
+
+    it("returns a deep copy when bfs is used (IE bfs doesn't change the behavior)", () => {
+      const s = {
+        type: "object",
+        properties: {
+          foo: {
+            type: "array",
+            items: [
+              { type: "string" },
+              { type: "number" }
+            ]
+          },
+        }
+      };
+
+      const frozenS = Object.freeze(s);
+
+      const result = traverse(frozenS, (ss) => {
+        if (ss === true || ss === false) { return ss; }
+        return { hello: "world", ...ss };
+      }, { mutable: false, bfs: true }) as JSONSchemaObject;
+
+      expect(frozenS).not.toBe(result);
+      expect(result.hello).toBe("world");
+      expect((result.properties as Properties).foo).not.toBe(frozenS.properties.foo);
+      expect((result.properties as Properties).foo.items[0]).not.toBe(frozenS.properties.foo.items[0]);
+
+      expect((result.properties as Properties).foo.hello).toBe("world");
+      expect((result.properties as Properties).foo.items[0].hello).toBe("world");
+      expect((result.properties as Properties).foo.items[1].hello).toBe("world");
+    });
+
+    it("skipFirstMutation and bfs combined also has no effect on mutability", () => {
+      const s = {
+        type: "object",
+        properties: {
+          foo: {
+            type: "array",
+            items: [
+              { type: "string" },
+              { type: "number" }
+            ]
+          },
+        }
+      };
+
+      const frozenS = Object.freeze(s);
+
+      const result = traverse(frozenS, (ss) => {
+        if (ss === true || ss === false) { return ss; }
+        return { hello: "world", ...ss };
+      }, { mutable: false, bfs: true, skipFirstMutation: true }) as JSONSchemaObject;
+
+      expect(frozenS).not.toBe(result);
+      expect(result.hello).not.toBeDefined();
+      expect((result.properties as Properties).foo).not.toBe(frozenS.properties.foo);
+      expect((result.properties as Properties).foo.items[0]).not.toBe(frozenS.properties.foo.items[0]);
+
+      expect((result.properties as Properties).foo.hello).toBe("world");
+      expect((result.properties as Properties).foo.items[0].hello).toBe("world");
+      expect((result.properties as Properties).foo.items[1].hello).toBe("world");
     });
   });
 });

@@ -84,7 +84,7 @@ export default function traverse(
   }
 
   let mutableSchema: JSONSchemaObject = schema;
-  if (!traverseOptions.mutable) {
+  if (traverseOptions.mutable !== true) {
     mutableSchema = { ...schema };
   }
 
