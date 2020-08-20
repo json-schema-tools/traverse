@@ -570,4 +570,29 @@ describe("traverse", () => {
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema, false);
     });
   });
+
+  describe("bfs", () => {
+    it("call order is correct for nested objects and arrays", () => {
+      const testSchema = {
+        type: "object",
+        properties: {
+          foo: {
+            type: "array",
+            items: [
+              { type: "string" },
+              { type: "number" },
+            ]
+          }
+        }
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { bfs: true });
+
+      expect(mockMutation).nthCalledWith(1, testSchema, false)
+      expect(mockMutation).nthCalledWith(2, testSchema.properties.foo)
+      expect(mockMutation).nthCalledWith(3, testSchema.properties.foo.items[0])
+      expect(mockMutation).nthCalledWith(4, testSchema.properties.foo.items[1])
+    });
+  });
 });

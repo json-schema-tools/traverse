@@ -28,11 +28,18 @@ export interface TraverseOptions {
    * To preserve cyclical refs this is necessary.
    */
   mutable?: boolean;
+
+  /**
+   * true if you want to traverse in a breadth-first manner. This will cause the mutation function to be called first with
+   * the root schema, moving down the subschemas until the terminal subschemas.
+   */
+  bfs?: boolean;
 }
 
 export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
   mutable: false,
+  bfs: false,
 };
 
 const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | false => {
