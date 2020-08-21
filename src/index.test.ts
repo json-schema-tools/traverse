@@ -740,4 +740,57 @@ describe("Mutability settings", () => {
       expect((result.properties as Properties).foo.items[1].hello).toBe("world");
     });
   });
+
+  describe("mutable: true", () => {
+    it("cycles are preserved, reference is the same as original", () => {
+      const s = {
+        type: "object",
+        properties: {
+          foo: {},
+        }
+      };
+      s.properties.foo = s;
+
+
+      const result = traverse(s, (ss) => ss, { mutable: true }) as JSONSchemaObject;
+
+      expect(s).toBe(result);
+      expect((result.properties as Properties).foo).toBe(result);
+      expect(s.properties.foo).toBe(s);
+      expect((result.properties as Properties).foo).toBe(s);
+    });
+
+    it("the first schema is returned unmutated when skipFirstMutation is used", () => {
+      const s = {
+        type: "object",
+        properties: {
+          foo: { type: "string" },
+        }
+      };
+
+      const result = traverse(s, (ss: any) => { ss.hello = "world"; return ss; }, { mutable: true, skipFirstMutation: true }) as JSONSchemaObject;
+
+      expect(s).toBe(result);
+      expect((s as any).hello).not.toBeDefined();
+      expect((s.properties.foo as any).hello).toBe("world")
+    });
+
+    it("bfs also preserves refs", () => {
+      const s = {
+        type: "object",
+        properties: {
+          foo: { type: "string" },
+        }
+      };
+
+      const result = traverse(s, (ss: any) => { ss.hello = "world"; return ss; }, { mutable: true, bfs: true }) as JSONSchemaObject;
+
+      expect(s).toBe(result);
+      expect((s as any).hello).toBe("world");
+      expect((s.properties.foo as any).hello).toBe("world")
+      expect((result.properties as Properties).foo).toBe(s.properties.foo);
+    });
+
+  });
+
 });
