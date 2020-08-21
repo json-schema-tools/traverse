@@ -70,13 +70,14 @@ export default function traverse(
   prePostMap: Array<[JSONSchema, JSONSchema]> = [],
 ): JSONSchema {
   let isRootOfCycle = false;
+  const opts = { ...defaultOptions, ...traverseOptions }; // would be nice to make an 'entry' func when we get around to optimizations
 
   // booleans are a bit messed. Since all other schemas are objects (non-primitive type
   // which gets a new address in mem) for each new JS refer to one of 2 memory addrs, and
   // thus adding it to the recursive stack will prevent it from being explored if the
   // boolean is seen in a further nested schema.
   if (typeof schema === "boolean" || schema instanceof Boolean) {
-    if (traverseOptions.skipFirstMutation === true && depth === 0) {
+    if (opts.skipFirstMutation === true && depth === 0) {
       return schema;
     } else {
       return mutation(schema, false);
@@ -84,12 +85,14 @@ export default function traverse(
   }
 
   let mutableSchema: JSONSchemaObject = schema;
-  if (traverseOptions.mutable !== true) {
+  if (opts.mutable === false) {
     mutableSchema = { ...schema };
   }
 
-  if (traverseOptions.bfs) {
-    mutableSchema = mutation(mutableSchema, false) as JSONSchemaObject;
+  if (opts.bfs === true) {
+    if (opts.skipFirstMutation === false || depth !== 0) {
+      mutableSchema = mutation(mutableSchema, false) as JSONSchemaObject;
+    }
   }
 
   recursiveStack.push(schema);
@@ -103,7 +106,7 @@ export default function traverse(
 
       // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
       // If we don't, it will never happen.
-      if (traverseOptions.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
+      if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
         return mutation(s, true);
       }
 
@@ -141,7 +144,7 @@ export default function traverse(
         if (foundCycle) {
           if (foundCycle === schema) { isRootOfCycle = true; }
 
-          if (traverseOptions.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
+          if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
             mutableSchema.items = mutation(schema.items, true);
           } else {
             const [, cycledMutableSchema] = prePostMap.find(
@@ -196,11 +199,11 @@ export default function traverse(
     }
   }
 
-  if (traverseOptions.skipFirstMutation === true && depth === 0) {
+  if (opts.skipFirstMutation === true && depth === 0) {
     return mutableSchema;
   }
 
-  if (traverseOptions.bfs) {
+  if (opts.bfs === true) {
     return mutableSchema;
   } else {
     return mutation(mutableSchema, isRootOfCycle);
