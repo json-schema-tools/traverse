@@ -1,3 +1,18 @@
+# [1.6.0](https://github.com/json-schema-tools/traverse/compare/1.5.0...1.6.0) (2020-08-24)
+
+
+### Bug Fixes
+
+* add implementation ([c0689d2](https://github.com/json-schema-tools/traverse/commit/c0689d2612e27988b428f758f1f55b3834b7df8b))
+* add more tests ([d14e6d7](https://github.com/json-schema-tools/traverse/commit/d14e6d7beff81667fa2733cf6abad0d9ff5ab9a0))
+* bfs with skipfirst working as well as option defaulting ([fdbbfe9](https://github.com/json-schema-tools/traverse/commit/fdbbfe982fedbeb818c9384be19fd65f25f96dc9))
+* found a test case that highlights an issue ([a4a86be](https://github.com/json-schema-tools/traverse/commit/a4a86be6bf8b81cf6e470ac850b089dea9501bc2))
+
+
+### Features
+
+* add bfs option ([244ad94](https://github.com/json-schema-tools/traverse/commit/244ad9459de796f0f9fe5f0218781bace5d9884f))
+
 # [1.5.0](https://github.com/json-schema-tools/traverse/compare/1.4.2...1.5.0) (2020-07-28)
 
 
