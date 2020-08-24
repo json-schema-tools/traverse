@@ -88,6 +88,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="traverseoptions.html#bfs" class="tsd-kind-icon">bfs</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="traverseoptions.html#mergenotmutate" class="tsd-kind-icon">merge<wbr>Not<wbr>Mutate</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="traverseoptions.html#mutable" class="tsd-kind-icon">mutable</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="traverseoptions.html#skipfirstmutation" class="tsd-kind-icon">skip<wbr>First<wbr>Mutation</a></li>
@@ -99,12 +100,28 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="bfs" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> bfs</h3>
+					<div class="tsd-signature tsd-kind-icon">bfs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L36">index.ts:36</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>true if you want to traverse in a breadth-first manner. This will cause the mutation function to be called first with
+							the root schema, moving down the subschemas until the terminal subschemas.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="mergenotmutate" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> merge<wbr>Not<wbr>Mutate</h3>
 					<div class="tsd-signature tsd-kind-icon">merge<wbr>Not<wbr>Mutate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/1cf043e/src/index.ts#L24">index.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L24">index.ts:24</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -120,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">mutable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/1cf043e/src/index.ts#L30">index.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L30">index.ts:30</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -136,7 +153,7 @@
 					<div class="tsd-signature tsd-kind-icon">skip<wbr>First<wbr>Mutation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/1cf043e/src/index.ts#L18">index.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L18">index.ts:18</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
