@@ -68,15 +68,16 @@ describe("traverse", () => {
       const a = {};
       const b = {};
       const testSchema: any = {};
+      let curPath = "";
       testSchema[prop] = useVal ? useVal : [a, b];
-      const mockMutation = jest.fn((mockS) => mockS);
+      const mockMutation = jest.fn((mockS, path) => {curPath = path; return mockS;});
 
       traverse(testSchema, mockMutation);
 
       if (useVal) {
-        expect(mockMutation).toHaveBeenCalledWith(useVal, false);
+        expect(mockMutation).toHaveBeenCalledWith(useVal, curPath, false);
       } else {
-        expect(mockMutation).toHaveBeenCalledWith(a, false);
+        expect(mockMutation).toHaveBeenCalledWith(a, curPath, false);
       }
       return mockMutation;
     };
@@ -97,11 +98,12 @@ describe("traverse", () => {
 
     it("accepts boolean as a valid schema", () => {
       const testSchema: any = true;
-      const mockMutation = jest.fn((mockS) => mockS);
+      let curPath = "";
+      const mockMutation = jest.fn((mockS, path) => {curPath = path; return mockS;});
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).toHaveBeenCalledWith(testSchema, false);
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, curPath, false);
       expect(mockMutation).toHaveBeenCalledTimes(1);
     });
 
@@ -125,9 +127,9 @@ describe("traverse", () => {
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
-      expect(mockMutation).toHaveBeenNthCalledWith(1, a, false);
-      expect(mockMutation).toHaveBeenNthCalledWith(2, b, false);
-      expect(mockMutation).toHaveBeenNthCalledWith(3, schema, false);
+      expect(mockMutation).toHaveBeenNthCalledWith(1, a, "$", false);
+      expect(mockMutation).toHaveBeenNthCalledWith(2, b, "$", false);
+      expect(mockMutation).toHaveBeenNthCalledWith(3, schema, "$", false);
     });
 
     it("allows booleans that are created via boolean class and new", () => {
