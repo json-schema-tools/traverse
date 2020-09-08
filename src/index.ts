@@ -45,12 +45,14 @@ export const defaultOptions: TraverseOptions = {
   bfs: false,
 };
 
-const jsonPathStringify = (s: string[]) => {
+const jsonPathStringify = (s: any[]) => {
   return s.map(i => {
     if (i === "$") {
       return i;
+    } else if (isNumber(i)) {
+      return `[${i}]`;
     } else {
-      return `['${i}']`
+      return `['${i}']`;
     }
   }).join("");
 };
@@ -80,7 +82,7 @@ export default function traverse(
   traverseOptions = defaultOptions,
   depth = 0,
   recursiveStack: JSONSchema[] = [],
-  pathStack: string[] = [],
+  pathStack: any[] = [],
   prePostMap: Array<[JSONSchema, JSONSchema]> = [],
 ): JSONSchema {
   let isRootOfCycle = false;
@@ -148,15 +150,30 @@ export default function traverse(
 
   if (schema.anyOf) {
     pathStack.push("anyOf");
-    mutableSchema.anyOf = schema.anyOf.map(rec);
+    mutableSchema.anyOf = schema.anyOf.map((x,i) => {
+      pathStack.push(i);
+      const result = rec(x);
+      pathStack.pop();
+      return result;
+    });
     pathStack.pop();
   } else if (schema.allOf) {
     pathStack.push("allOf");
-    mutableSchema.allOf = schema.allOf.map(rec);
+    mutableSchema.allOf = schema.allOf.map((x,i) => {
+      pathStack.push(i);
+      const result = rec(x);
+      pathStack.pop();
+      return result;
+    });
     pathStack.pop();
   } else if (schema.oneOf) {
     pathStack.push("oneOf");
-    mutableSchema.oneOf = schema.oneOf.map(rec);
+    mutableSchema.oneOf = schema.oneOf.map((x,i) => {
+      pathStack.push(i);
+      const result = rec(x);
+      pathStack.pop();
+      return result;
+    });
     pathStack.pop();
   } else {
     let itemsIsSingleSchema = false;
@@ -164,7 +181,12 @@ export default function traverse(
     if (schema.items) {
       if (schema.items instanceof Array) {
         pathStack.push("items");
-        mutableSchema.items = schema.items.map(rec);
+        mutableSchema.items = schema.items.map((x,i) => {
+          pathStack.push(i);
+          const result = rec(x);
+          pathStack.pop();
+          return result;
+        });
         pathStack.pop();
       } else {
         const foundCycle = isCycle(schema.items, recursiveStack);
