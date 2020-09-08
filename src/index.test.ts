@@ -595,8 +595,8 @@ describe("traverse", () => {
 
       const expectedPath1 = "$['properties']['foo']['items'][0]";
       const expectedPath2 = "$['properties']['foo']['items'][1]";
-      expect(mockMutation).nthCalledWith(1, testSchema, "$", false)
-      expect(mockMutation).nthCalledWith(2, testSchema.properties.foo, "$['properties']['foo']", false)
+      expect(mockMutation).nthCalledWith(1, testSchema, "$", false);
+      expect(mockMutation).nthCalledWith(2, testSchema.properties.foo, "$['properties']['foo']", false);
       expect(mockMutation).nthCalledWith(3, testSchema.properties.foo.items[0], expectedPath1, false);
       expect(mockMutation).nthCalledWith(4, testSchema.properties.foo.items[1], expectedPath2, false);
     });
@@ -618,10 +618,12 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation, { bfs: true, mutable: true });
 
-      expect(mockMutation).nthCalledWith(1, testSchema, false)
-      expect(mockMutation).nthCalledWith(2, testSchema.properties.foo, false)
-      expect(mockMutation).nthCalledWith(3, testSchema.properties.foo.items[0], false)
-      expect(mockMutation).nthCalledWith(4, testSchema.properties.foo.items[1], false)
+      const expectedPath1 = "$['properties']['foo']['items'][0]";
+      const expectedPath2 = "$['properties']['foo']['items'][1]";
+      expect(mockMutation).nthCalledWith(1, testSchema, "$", false);
+      expect(mockMutation).nthCalledWith(2, testSchema.properties.foo, "$['properties']['foo']", false);
+      expect(mockMutation).nthCalledWith(3, testSchema.properties.foo.items[0], expectedPath1, false);
+      expect(mockMutation).nthCalledWith(4, testSchema.properties.foo.items[1], expectedPath2, false);
     });
   });
 });
