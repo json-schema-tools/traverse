@@ -5,11 +5,10 @@ import { isNumber } from "util";
  * Signature of the mutation method passed to traverse.
  *
  * @param schema The schema or subschema node being traversed
- * @param path json path string separated by periods
  * @param isRootOfCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  * @param path json path string separated by periods
  */
-export type MutationFunction = (schema: JSONSchema, path: string, isRootOfCycle: boolean) => JSONSchema;
+export type MutationFunction = (schema: JSONSchema, isRootOfCycle: boolean, path: string, ) => JSONSchema;
 
 /**
  * The options you can use when traversing.
@@ -100,7 +99,7 @@ export default function traverse(
     if (opts.skipFirstMutation === true && depth === 0) {
       return schema;
     } else {
-      return mutation(schema, jsonPathStringify(pathStack), false);
+      return mutation(schema, false, jsonPathStringify(pathStack));
     }
   }
 
@@ -111,7 +110,7 @@ export default function traverse(
 
   if (opts.bfs === true) {
     if (opts.skipFirstMutation === false || depth !== 0) {
-      mutableSchema = mutation(mutableSchema, jsonPathStringify(pathStack), false) as JSONSchemaObject;
+      mutableSchema = mutation(mutableSchema, false, jsonPathStringify(pathStack)) as JSONSchemaObject;
     }
   }
 
@@ -127,7 +126,7 @@ export default function traverse(
       // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
       // If we don't, it will never happen.
       if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-        return mutation(s, jsonPathStringify(pathStack), true);
+        return mutation(s, true, jsonPathStringify(pathStack));
       }
 
       const [, cycledMutableSchema] = prePostMap.find(
@@ -194,7 +193,7 @@ export default function traverse(
           if (foundCycle === schema) { isRootOfCycle = true; }
 
           if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-            mutableSchema.items = mutation(schema.items, jsonPathStringify(pathStack), true);
+            mutableSchema.items = mutation(schema.items, true, jsonPathStringify(pathStack));
           } else {
             const [, cycledMutableSchema] = prePostMap.find(
               ([orig]) => foundCycle === orig,
@@ -267,6 +266,6 @@ export default function traverse(
   if (opts.bfs === true) {
     return mutableSchema;
   } else {
-    return mutation(mutableSchema, jsonPathStringify(pathStack), isRootOfCycle,);
+    return mutation(mutableSchema, isRootOfCycle, jsonPathStringify(pathStack));
   }
 }
