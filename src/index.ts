@@ -43,6 +43,16 @@ export const defaultOptions: TraverseOptions = {
   bfs: false,
 };
 
+const jsonPathStringify = (s: string[]) => {
+  return s.map(i => {
+    if (i === "$") {
+      return i;
+    } else {
+      return `['${i}']`
+    }
+  }).join("");
+};
+
 const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | false => {
   const foundInRecursiveStack = recursiveStack.find((recSchema) => recSchema === s);
   if (foundInRecursiveStack) {
@@ -86,7 +96,7 @@ export default function traverse(
     if (opts.skipFirstMutation === true && depth === 0) {
       return schema;
     } else {
-      return mutation(schema, pathStack.join("."), false);
+      return mutation(schema, jsonPathStringify(pathStack), false);
     }
   }
 
@@ -97,7 +107,7 @@ export default function traverse(
 
   if (opts.bfs === true) {
     if (opts.skipFirstMutation === false || depth !== 0) {
-      mutableSchema = mutation(mutableSchema, pathStack.join("."), false) as JSONSchemaObject;
+      mutableSchema = mutation(mutableSchema, jsonPathStringify(pathStack), false) as JSONSchemaObject;
     }
   }
 
@@ -113,7 +123,7 @@ export default function traverse(
       // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
       // If we don't, it will never happen.
       if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-        return mutation(s, pathStack.join("."), true);
+        return mutation(s, jsonPathStringify(pathStack), true);
       }
 
       const [, cycledMutableSchema] = prePostMap.find(
@@ -160,7 +170,7 @@ export default function traverse(
           if (foundCycle === schema) { isRootOfCycle = true; }
 
           if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-            mutableSchema.items = mutation(schema.items, pathStack.join("."), true);
+            mutableSchema.items = mutation(schema.items, jsonPathStringify(pathStack), true);
           } else {
             const [, cycledMutableSchema] = prePostMap.find(
               ([orig]) => foundCycle === orig,
@@ -233,6 +243,6 @@ export default function traverse(
   if (opts.bfs === true) {
     return mutableSchema;
   } else {
-    return mutation(mutableSchema, pathStack.join("."), isRootOfCycle,);
+    return mutation(mutableSchema, jsonPathStringify(pathStack), isRootOfCycle,);
   }
 }

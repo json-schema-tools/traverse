@@ -30,7 +30,7 @@ describe("traverse with path", () => {
 
     traverse(testSchema, mockMutation);
 
-    expect(pathArray).toEqual(["$.properties.foo", "$.properties.bar", "$" ]);
+    expect(pathArray).toEqual(["$['properties']['foo']", "$['properties']['bar']", "$" ]);
   });
 
   it("traverse bfs schema", () => {
@@ -54,6 +54,6 @@ describe("traverse with path", () => {
 
     traverse(testSchema, mockMutation);
 
-    expect(pathArray).toEqual(["$.properties.foo.properties.fooNoBar", "$.properties.foo", "$.properties.bar", "$"]);
+    expect(pathArray).toEqual(["$['properties']['foo']['properties']['fooNoBar']", "$['properties']['foo']", "$['properties']['bar']", "$"]);
   });
 });
