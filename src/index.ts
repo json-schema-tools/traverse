@@ -47,11 +47,9 @@ export const defaultOptions: TraverseOptions = {
 const jsonPathStringify = (s: any[]) => {
   return s.map(i => {
     if (i === "$") {
-      return i;
-    } else if (isNumber(i)) {
-      return `[${i}]`;
+      return "";
     } else {
-      return `['${i}']`;
+      return `/${i}`;
     }
   }).join("");
 };
