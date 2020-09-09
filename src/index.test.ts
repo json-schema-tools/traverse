@@ -494,15 +494,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation, { skipFirstMutation: true });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema, expect.any, "");
-=======
-      expect(mockMutation).not.toHaveBeenCalledWith(testSchema, expect.any, "$");
->>>>>>> 933db2b... fix: update mutation function args and delete obsolete test file
-=======
-      expect(mockMutation).not.toHaveBeenCalledWith(testSchema, expect.any, "");
->>>>>>> 6881b77... fix: change from JSON-Path spec to RFC 6901 for path output
       expect(mockMutation).toHaveBeenCalledTimes(0);
     });
 
