@@ -73,7 +73,7 @@ export default function traverse(
   traverseOptions = defaultOptions,
   depth = 0,
   recursiveStack: JSONSchema[] = [],
-  pathStack: any[] = [],
+  pathStack: string[] = [],
   prePostMap: Array<[JSONSchema, JSONSchema]> = [],
 ): JSONSchema {
   let isRootOfCycle = false;
@@ -142,7 +142,7 @@ export default function traverse(
   if (schema.anyOf) {
     pathStack.push("anyOf");
     mutableSchema.anyOf = schema.anyOf.map((x,i) => {
-      pathStack.push(i);
+      pathStack.push(`${i}`);
       const result = rec(x);
       pathStack.pop();
       return result;
@@ -151,7 +151,7 @@ export default function traverse(
   } else if (schema.allOf) {
     pathStack.push("allOf");
     mutableSchema.allOf = schema.allOf.map((x,i) => {
-      pathStack.push(i);
+      pathStack.push(`${i}`);
       const result = rec(x);
       pathStack.pop();
       return result;
@@ -160,7 +160,7 @@ export default function traverse(
   } else if (schema.oneOf) {
     pathStack.push("oneOf");
     mutableSchema.oneOf = schema.oneOf.map((x,i) => {
-      pathStack.push(i);
+      pathStack.push(`${i}`);
       const result = rec(x);
       pathStack.pop();
       return result;
@@ -173,7 +173,7 @@ export default function traverse(
       if (schema.items instanceof Array) {
         pathStack.push("items");
         mutableSchema.items = schema.items.map((x,i) => {
-          pathStack.push(i);
+          pathStack.push(`${i}`);
           const result = rec(x);
           pathStack.pop();
           return result;
