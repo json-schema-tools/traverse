@@ -45,13 +45,7 @@ export const defaultOptions: TraverseOptions = {
 };
 
 const jsonPathStringify = (s: any[]) => {
-  return s.map(i => {
-    if (i === "$") {
-      return "";
-    } else {
-      return `/${i}`;
-    }
-  }).join("");
+  return s.map(i => i === "" ? `${i}` : `/${i}`).join("");
 };
 
 const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | false => {
@@ -90,7 +84,7 @@ export default function traverse(
   // thus adding it to the recursive stack will prevent it from being explored if the
   // boolean is seen in a further nested schema.
   if(depth === 0) {
-    pathStack.push("$");
+    pathStack.push("");
   }
 
   if (typeof schema === "boolean" || schema instanceof Boolean) {
