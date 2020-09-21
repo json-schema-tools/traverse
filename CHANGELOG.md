@@ -1,3 +1,31 @@
+# [1.7.0](https://github.com/json-schema-tools/traverse/compare/1.6.0...1.7.0) (2020-09-21)
+
+
+### Bug Fixes
+
+* add space ([9a7e27e](https://github.com/json-schema-tools/traverse/commit/9a7e27ec155e21c79a2d6d14b05b18c51efdd288))
+* added array pathing ([936105a](https://github.com/json-schema-tools/traverse/commit/936105a624c8bb3d3fb5d30d13fce0013139cb2d))
+* added array pathing ([9b6d723](https://github.com/json-schema-tools/traverse/commit/9b6d7233078e23caaddbf90545aafe7fa5576c16))
+* change from JSON-Path spec to RFC 6901 for path output ([768bfca](https://github.com/json-schema-tools/traverse/commit/768bfcaa60ed4f56af28257cfd9548e7ed4a6f0d))
+* change from JSON-Path spec to RFC 6901 for path output ([ccd369a](https://github.com/json-schema-tools/traverse/commit/ccd369a2de236a1993d7d55d6c6910c41ad161bd))
+* clean up stringify code ([a639c35](https://github.com/json-schema-tools/traverse/commit/a639c35d7d5c304cb00512544911829fcd477aff))
+* clean up stringify code ([bd28424](https://github.com/json-schema-tools/traverse/commit/bd284248aedf7c2b9ad649e57162e6c60ca7b029))
+* remove implicit typecasting ([e534193](https://github.com/json-schema-tools/traverse/commit/e53419385db316e4cd52bc441b15b8d9586cec3a))
+* remove merge artifact ([858ef35](https://github.com/json-schema-tools/traverse/commit/858ef35f282a0060d16223abc3d8109956f779a0))
+* remove push/pop to improve performance ([9bf5eff](https://github.com/json-schema-tools/traverse/commit/9bf5effdda9acf2ce5a806129d70b2302473dd87))
+* standardize pathstack to string array ([b36ef4a](https://github.com/json-schema-tools/traverse/commit/b36ef4a6155fd032b4dbdf3c1b650d9c14d94e42))
+* standardize pathstack to string array ([48550f7](https://github.com/json-schema-tools/traverse/commit/48550f714270b393a6e3f60b5c44331f94d21633))
+* update index.test.ts to use path ([7d9cedf](https://github.com/json-schema-tools/traverse/commit/7d9cedfc9caafa6952b1d6bd5472aeb369fab50b))
+* update index.test.ts to use path ([5bc96db](https://github.com/json-schema-tools/traverse/commit/5bc96dbfa3a023acb5bb7424a635b3057df3f187))
+* update mutation function args and delete obsolete test file ([3fb1bfd](https://github.com/json-schema-tools/traverse/commit/3fb1bfdf84afd89cd3249e5dc7629cf0779b1c8c))
+* update mutation function args and delete obsolete test file ([4607ae1](https://github.com/json-schema-tools/traverse/commit/4607ae1faa1a2fac5a3d311f61139991655c5be5))
+
+
+### Features
+
+* add path to mutator function ([85551ab](https://github.com/json-schema-tools/traverse/commit/85551ab7165b4a02b8b5c3b15baafa64abc9cc31))
+* add path to mutator function ([e9137d3](https://github.com/json-schema-tools/traverse/commit/e9137d350e1a4d4c2f5ab51be3793c69f2a0f7d2))
+
 # [1.6.0](https://github.com/json-schema-tools/traverse/compare/1.5.0...1.6.0) (2020-08-24)
 
 
