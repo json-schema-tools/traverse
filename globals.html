@@ -83,6 +83,7 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function"><a href="globals.html#iscycle" class="tsd-kind-icon">is<wbr>Cycle</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#jsonpathstringify" class="tsd-kind-icon">json<wbr>Path<wbr>Stringify</a></li>
 								<li class="tsd-kind-function"><a href="globals.html#traverse" class="tsd-kind-icon">traverse</a></li>
 							</ul>
 						</section>
@@ -100,10 +101,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias">
 					<a name="mutationfunction" class="tsd-anchor"></a>
 					<h3>Mutation<wbr>Function</h3>
-					<div class="tsd-signature tsd-kind-icon">Mutation<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>schema<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span>, isRootOfCycle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">JSONSchema</span></div>
+					<div class="tsd-signature tsd-kind-icon">Mutation<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>schema<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span>, isRootOfCycle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">JSONSchema</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L9">index.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/db0a0eb/src/index.ts#L11">index.ts:11</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -117,6 +118,9 @@
 							<dt>param</dt>
 							<dd><p>false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.</p>
 							</dd>
+							<dt>param</dt>
+							<dd><p>json path string separated by periods</p>
+							</dd>
 						</dl>
 					</div>
 					<div class="tsd-type-declaration">
@@ -124,7 +128,7 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>schema<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span>, isRootOfCycle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>schema<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span>, isRootOfCycle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -135,6 +139,9 @@
 											</li>
 											<li>
 												<h5>isRootOfCycle: <span class="tsd-signature-type">boolean</span></h5>
+											</li>
+											<li>
+												<h5>path: <span class="tsd-signature-type">string</span></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">JSONSchema</span></h4>
@@ -157,7 +164,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L45">index.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/db0a0eb/src/index.ts#L51">index.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -174,16 +181,39 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function">
-					<a name="traverse" class="tsd-anchor"></a>
-					<h3>traverse</h3>
+					<a name="jsonpathstringify" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> json<wbr>Path<wbr>Stringify</h3>
 					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">traverse<span class="tsd-signature-symbol">(</span>schema<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span>, mutation<span class="tsd-signature-symbol">: </span><a href="globals.html#mutationfunction" class="tsd-signature-type">MutationFunction</a>, traverseOptions<span class="tsd-signature-symbol">?: </span><a href="interfaces/traverseoptions.html" class="tsd-signature-type">TraverseOptions</a>, depth<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, recursiveStack<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">[]</span>, prePostMap<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span></li>
+						<li class="tsd-signature tsd-kind-icon">json<wbr>Path<wbr>Stringify<span class="tsd-signature-symbol">(</span>s<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L64">index.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/db0a0eb/src/index.ts#L47">index.ts:47</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>s: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="traverse" class="tsd-anchor"></a>
+					<h3>traverse</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">traverse<span class="tsd-signature-symbol">(</span>schema<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span>, mutation<span class="tsd-signature-symbol">: </span><a href="globals.html#mutationfunction" class="tsd-signature-type">MutationFunction</a>, traverseOptions<span class="tsd-signature-symbol">?: </span><a href="interfaces/traverseoptions.html" class="tsd-signature-type">TraverseOptions</a>, depth<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, recursiveStack<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">[]</span>, pathStack<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, prePostMap<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JSONSchema</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/db0a0eb/src/index.ts#L70">index.ts:70</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -223,6 +253,9 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> recursiveStack: <span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></h5>
 								</li>
 								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> pathStack: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></h5>
+								</li>
+								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> prePostMap: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">JSONSchema</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></h5>
 								</li>
 							</ul>
@@ -239,7 +272,7 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L39">index.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/db0a0eb/src/index.ts#L41">index.ts:41</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -248,7 +281,7 @@
 						<div class="tsd-signature tsd-kind-icon">bfs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L42">index.ts:42</a></li>
+								<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/db0a0eb/src/index.ts#L44">index.ts:44</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -258,7 +291,7 @@
 						<div class="tsd-signature tsd-kind-icon">mutable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L41">index.ts:41</a></li>
+								<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/db0a0eb/src/index.ts#L43">index.ts:43</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -268,7 +301,7 @@
 						<div class="tsd-signature tsd-kind-icon">skip<wbr>First<wbr>Mutation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/5cd4ae5/src/index.ts#L40">index.ts:40</a></li>
+								<li>Defined in <a href="https://github.com/json-schema-tools/traverse/blob/db0a0eb/src/index.ts#L42">index.ts:42</a></li>
 							</ul>
 						</aside>
 					</section>
