@@ -44,8 +44,8 @@ export const defaultOptions: TraverseOptions = {
   bfs: false,
 };
 
-const jsonPathStringify = (s: any[]) => {
-  return s.map(i => i === "" ? `${i}` : `/${i}`).join("");
+const jsonPathStringify = (s: string[]) => {
+  return s.map(i => i === "" ? i.toString() : ("/" + i.toString())).join("");
 };
 
 const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | false => {
@@ -141,17 +141,17 @@ export default function traverse(
 
   if (schema.anyOf) {
     mutableSchema.anyOf = schema.anyOf.map((x,i) => {
-      const result = rec(x, [...pathStack, "anyOf", `${i}`]);
+      const result = rec(x, [...pathStack, "anyOf", i.toString()]);
       return result;
     });
   } else if (schema.allOf) {
     mutableSchema.allOf = schema.allOf.map((x,i) => {
-      const result = rec(x, [...pathStack, "allOf", `${i}`]);
+      const result = rec(x, [...pathStack, "allOf", i.toString()]);
       return result;
     });
   } else if (schema.oneOf) {
     mutableSchema.oneOf = schema.oneOf.map((x,i) => {
-      const result = rec(x, [...pathStack, "oneOf", `${i}`]);
+      const result = rec(x, [...pathStack, "oneOf", i.toString()]);
       return result;
     });
   } else {
@@ -160,7 +160,7 @@ export default function traverse(
     if (schema.items) {
       if (schema.items instanceof Array) {
         mutableSchema.items = schema.items.map((x,i) => {
-          const result = rec(x, [...pathStack, "items", `${i}`]);
+          const result = rec(x, [...pathStack, "items", i.toString()]);
           return result;
         });
       } else {
@@ -201,7 +201,7 @@ export default function traverse(
       const mutableProps: { [key: string]: JSONSchema } = {};
 
       Object.keys(schema.properties).forEach((schemaPropKey: string) => {
-        mutableProps[schemaPropKey] = rec(sProps[schemaPropKey], [...pathStack, "properties",`${schemaPropKey}`]);
+        mutableProps[schemaPropKey] = rec(sProps[schemaPropKey], [...pathStack, "properties", schemaPropKey.toString()]);
       });
 
       mutableSchema.properties = mutableProps;
@@ -212,7 +212,7 @@ export default function traverse(
       const mutableProps: PatternProperties = {};
 
       Object.keys(schema.patternProperties).forEach((regex: string) => {
-        mutableProps[regex] = rec(sProps[regex], [...pathStack, "patternProperties", `${regex}`]);
+        mutableProps[regex] = rec(sProps[regex], [...pathStack, "patternProperties", regex.toString()]);
       });
 
       mutableSchema.patternProperties = mutableProps;
