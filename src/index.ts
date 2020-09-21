@@ -83,7 +83,7 @@ export default function traverse(
   // which gets a new address in mem) for each new JS refer to one of 2 memory addrs, and
   // thus adding it to the recursive stack will prevent it from being explored if the
   // boolean is seen in a further nested schema.
-  if(depth === 0) {
+  if (depth === 0) {
     pathStack = [""];
   }
 
