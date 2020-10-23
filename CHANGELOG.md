@@ -1,3 +1,11 @@
+## [1.7.3](https://github.com/json-schema-tools/traverse/compare/1.7.2...1.7.3) (2020-10-23)
+
+
+### Bug Fixes
+
+* add lint script to package.json ([18bdfff](https://github.com/json-schema-tools/traverse/commit/18bdfff1ce453ea2fbc89d418b34b722e0759712))
+* update node version ([d4c9809](https://github.com/json-schema-tools/traverse/commit/d4c9809bf641f3c42f9b3744ee8736bb391729bf))
+
 ## [1.7.2](https://github.com/json-schema-tools/traverse/compare/1.7.1...1.7.2) (2020-10-23)
 
 
