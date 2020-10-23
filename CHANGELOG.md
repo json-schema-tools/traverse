@@ -1,3 +1,10 @@
+## [1.7.4](https://github.com/json-schema-tools/traverse/compare/1.7.3...1.7.4) (2020-10-23)
+
+
+### Bug Fixes
+
+* add funding ([e8f323d](https://github.com/json-schema-tools/traverse/commit/e8f323dddb9c1849ad3e3c3a464391d28a205c8f))
+
 ## [1.7.3](https://github.com/json-schema-tools/traverse/compare/1.7.2...1.7.3) (2020-10-23)
 
 
