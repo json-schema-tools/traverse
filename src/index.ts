@@ -1,5 +1,4 @@
-import { JSONSchema, JSONSchemaObject, Properties, PatternProperties } from "@json-schema-tools/meta-schema";
-import { isNumber } from "util";
+import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-tools/meta-schema";
 
 /**
  * Signature of the mutation method passed to traverse.
