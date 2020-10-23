@@ -139,10 +139,10 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(3);
 
       expect(mockMutation).toHaveBeenNthCalledWith(1, a, false, "/properties/a");
-      expect(mockMutation).toHaveBeenNthCalledWith(1, true, false, "/properties/a");
+      expect(mockMutation).not.toHaveBeenNthCalledWith(1, true, false, "/properties/a");
 
       expect(mockMutation).toHaveBeenNthCalledWith(2, b, false, "/properties/b");
-      expect(mockMutation).toHaveBeenNthCalledWith(2, false, false, "/properties/b");
+      expect(mockMutation).not.toHaveBeenNthCalledWith(2, false, false, "/properties/b");
 
       expect(mockMutation).toHaveBeenNthCalledWith(3, schema, false, "");
     });
