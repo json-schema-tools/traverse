@@ -1,3 +1,10 @@
+## [1.7.5](https://github.com/json-schema-tools/traverse/compare/1.7.4...1.7.5) (2020-10-23)
+
+
+### Bug Fixes
+
+* incorrect open collective username ([6bb07ef](https://github.com/json-schema-tools/traverse/commit/6bb07ef807013fc41ab48d04ac1e0d1883fc2a0b))
+
 ## [1.7.4](https://github.com/json-schema-tools/traverse/compare/1.7.3...1.7.4) (2020-10-23)
 
 
