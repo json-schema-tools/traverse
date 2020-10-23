@@ -1,3 +1,12 @@
+## [1.7.1](https://github.com/json-schema-tools/traverse/compare/1.7.0...1.7.1) (2020-10-23)
+
+
+### Bug Fixes
+
+* eslint issues resolved by updating linter ([eabb64a](https://github.com/json-schema-tools/traverse/commit/eabb64aba9ec91c7400ea2f449d290029799c933))
+* test was highlighting an issue with jest that was fixed ([e1c5d69](https://github.com/json-schema-tools/traverse/commit/e1c5d69641627907b1835657a7b966a2fcd3cfc2))
+* update deps ([99a7ba2](https://github.com/json-schema-tools/traverse/commit/99a7ba292e011b00fda96e97cc795bf54f813324))
+
 # [1.7.0](https://github.com/json-schema-tools/traverse/compare/1.6.0...1.7.0) (2020-09-21)
 
 
