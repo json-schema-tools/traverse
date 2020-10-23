@@ -17,7 +17,8 @@
   "scripts": {
     "build": "tsc",
     "build:docs": "typedoc",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "lint": "eslint . --ext .ts"
   },
   "author": "Zachary Belford<belfordz66@gmail.com>",
   "license": "Apache-2.0",
