@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/json-schema-tools/traverse/compare/1.7.1...1.7.2) (2020-10-23)
+
+
+### Bug Fixes
+
+* add badges ([f12c2ad](https://github.com/json-schema-tools/traverse/commit/f12c2ad40b2b34a8703b87ebc0de2f246a8a5bbc))
+
 ## [1.7.1](https://github.com/json-schema-tools/traverse/compare/1.7.0...1.7.1) (2020-10-23)
 
 
