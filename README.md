@@ -19,6 +19,7 @@ This package exports a method that will traverse a JSON-Schema, calling a "mutat
  - synchronous - doesn't touch the filesystem or make network requests.
  - easily perform schema mutations while traversing
  - optional mutability (toggle updating original schema object)
+ - returns paths as it traverses
 
 ## Getting Started
 
