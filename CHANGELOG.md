@@ -1,3 +1,10 @@
+## [1.7.7](https://github.com/json-schema-tools/traverse/compare/1.7.6...1.7.7) (2020-11-03)
+
+
+### Bug Fixes
+
+* update docs ([d63b561](https://github.com/json-schema-tools/traverse/commit/d63b56180387ba8779a2d8b8e48d3d45a2c08ccc))
+
 ## [1.7.6](https://github.com/json-schema-tools/traverse/compare/1.7.5...1.7.6) (2020-10-29)
 
 
