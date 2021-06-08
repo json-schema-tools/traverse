@@ -6,10 +6,12 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
-    - name: nodenv/setup-nodenv
-      uses: nodenv/actions-setup-nodenv@v2.0.4
     - uses: actions/checkout@v1
-    - name: install eslint
-      run: npm install 
+    - name: Use Node.js 14.15.1
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.15.1
+    - name: npm install
+      run: npm install
     - name: lint
-      run: ./node_modules/.bin/eslint . --ext .ts
+      run: npm run lint
