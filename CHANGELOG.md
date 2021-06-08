@@ -1,3 +1,13 @@
+## [1.7.8](https://github.com/json-schema-tools/traverse/compare/1.7.7...1.7.8) (2021-06-08)
+
+
+### Bug Fixes
+
+* big dep bump for next release ([12bb092](https://github.com/json-schema-tools/traverse/commit/12bb0922b128df44bc734cc36a424d48d8da9221))
+* get typedoc working again ([43fa0e8](https://github.com/json-schema-tools/traverse/commit/43fa0e86dc40c48faa780a608ebf85b176ed3059))
+* github workflow for linting fixup ([191c69e](https://github.com/json-schema-tools/traverse/commit/191c69e164cb1947b0446f84dcb39eafdf20aeed))
+* remove dependabot status from readme ([ecfffc9](https://github.com/json-schema-tools/traverse/commit/ecfffc9fece521e1ef75c614cbcee47022357166))
+
 ## [1.7.7](https://github.com/json-schema-tools/traverse/compare/1.7.6...1.7.7) (2020-11-03)
 
 
