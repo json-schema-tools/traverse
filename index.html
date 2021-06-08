@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for @json-schema-tools/traverse">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -40,8 +41,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -51,11 +50,6 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
 			<h1>@json-schema-tools/traverse</h1>
 		</div>
 	</div>
@@ -71,7 +65,6 @@
 					<span>
 						<img alt="CircleCI branch" src="https://img.shields.io/circleci/project/github/json-schema-tools/traverse/master.svg">
 						<img src="https://codecov.io/gh/json-schema-tools/traverse/branch/master/graph/badge.svg" />
-						<img alt="Dependabot status" src="https://api.dependabot.com/badges/status?host=github&repo=json-schema-tools/traverse" />
 						<img alt="npm" src="https://img.shields.io/npm/dt/@json-schema-tools/traverse.svg" />
 						<img alt="GitHub release" src="https://img.shields.io/github/release/json-schema-tools/traverse.svg" />
 						<img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/json-schema-tools/traverse/latest.svg" />
@@ -91,32 +84,34 @@
 				<a href="#getting-started" id="getting-started" style="color: inherit; text-decoration: none;">
 					<h2>Getting Started</h2>
 				</a>
-				<pre><code class="language-sh">npm install @json-schema-tools/traverse</code></pre>
-				<pre><code class="language-js"><span class="hljs-keyword">const</span> traverse = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;@json-schema-tools/traverse&quot;</span>).default;
-<span class="hljs-comment">//import traverse from &quot;@json-schema-tools/traverse&quot;</span>
+				<pre><code class="language-sh"><span style="color: #000000">npm install @json-schema-tools/traverse</span>
+</code></pre>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">traverse</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;@json-schema-tools/traverse&quot;</span><span style="color: #000000">).</span><span style="color: #001080">default</span><span style="color: #000000">;</span>
+<span style="color: #008000">//import traverse from &quot;@json-schema-tools/traverse&quot;</span>
 
-<span class="hljs-keyword">const</span> mySchema = {
-  <span class="hljs-attr">title</span>: <span class="hljs-string">&quot;baz&quot;</span>,
-  <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;object&quot;</span>,
-  <span class="hljs-attr">properties</span>: {
-    <span class="hljs-attr">foo</span>: {
-      <span class="hljs-attr">title</span>: <span class="hljs-string">&quot;foo&quot;</span>,
-      <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;array&quot;</span>,
-      <span class="hljs-attr">items</span>: { <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;string&quot;</span> }
-    },
-    <span class="hljs-attr">bar</span>: {
-      <span class="hljs-attr">title</span>: <span class="hljs-string">&quot;bar&quot;</span>,
-      <span class="hljs-attr">anyOf</span>: [
-        { <span class="hljs-attr">title</span>: <span class="hljs-string">&quot;stringerific&quot;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;string&quot;</span> },
-        { <span class="hljs-attr">title</span>: <span class="hljs-string">&quot;numberoo&quot;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;number&quot;</span> }
-      ]
-    }
-  }
-};
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">mySchema</span><span style="color: #000000"> = {</span>
+<span style="color: #000000">  </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;baz&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;object&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">properties:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">foo:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;foo&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;array&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">items:</span><span style="color: #000000"> { </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;string&quot;</span><span style="color: #000000"> }</span>
+<span style="color: #000000">    },</span>
+<span style="color: #000000">    </span><span style="color: #001080">bar:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;bar&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">anyOf:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">        { </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;stringerific&quot;</span><span style="color: #000000">, </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;string&quot;</span><span style="color: #000000"> },</span>
+<span style="color: #000000">        { </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;numberoo&quot;</span><span style="color: #000000">, </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;number&quot;</span><span style="color: #000000"> }</span>
+<span style="color: #000000">      ]</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">};</span>
 
-traverse(mySchema, <span class="hljs-function">(<span class="hljs-params">schemaOrSubschema</span>) =&gt;</span> {
-  <span class="hljs-built_in">console</span>.log(schemaOrSubschema.title);
-});</code></pre>
+<span style="color: #795E26">traverse</span><span style="color: #000000">(</span><span style="color: #001080">mySchema</span><span style="color: #000000">, (</span><span style="color: #001080">schemaOrSubschema</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">schemaOrSubschema</span><span style="color: #000000">.</span><span style="color: #001080">title</span><span style="color: #000000">);</span>
+<span style="color: #000000">});</span>
+</code></pre>
 				<a href="#features-todo" id="features-todo" style="color: inherit; text-decoration: none;">
 					<h2>Features Todo</h2>
 				</a>
@@ -135,15 +130,21 @@ traverse(mySchema, <span class="hljs-function">(<span class="hljs-params">schema
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-function">
-						<a href="globals.html#traverse" class="tsd-kind-icon">traverse</a>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/traverseoptions.html" class="tsd-kind-icon">Traverse<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#mutationfunction" class="tsd-kind-icon">Mutation<wbr>Function</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#defaultoptions" class="tsd-kind-icon">default<wbr>Options</a>
 					</li>
 				</ul>
 			</nav>
