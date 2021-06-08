@@ -1,7 +1,6 @@
 {
   "name": "@json-schema-tools/traverse",
-  "mode": "file",
-  "inputFiles": [
+  "entryPoints": [
     "./src/index.ts"
   ],
   "out": "docs",
@@ -14,6 +13,9 @@
     "src/*.test.ts"
   ],
   "toc": [
-    "traverse"
+    "Traverse",
+    "TraverseOptions",
+    "MutationFunction",
+    "defaultOptions"
   ]
 }
