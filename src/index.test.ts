@@ -415,7 +415,7 @@ describe("traverse", () => {
             title: "6",
             type: "object",
             allOf: [
-              { title: "7", type: "object", properties: { baz: { title: "8" } } },
+              { title: "7", type: "object", properties: { baz: { title: "5" } } },
             ],
           },
         },
@@ -569,6 +569,27 @@ describe("traverse", () => {
       const mockMutation = jest.fn((mockS) => mockS);
 
       traverse(testSchema, mockMutation, { mutable: true });
+
+      expect(mockMutation).toHaveBeenCalledWith(testSchema, true, "");
+      expect(mockMutation).not.toHaveBeenCalledWith(testSchema, false, "");
+    });
+
+    it("true when the cycle is inside oneOf", () => {
+      const testSchema = {
+        title: "a",
+        oneOf: [{
+          title: "b",
+          type: "object",
+          properties: {
+            a: {}
+          }
+        }]
+      };
+      testSchema.oneOf[0].properties.a = testSchema;
+
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation, { mutable: false });
 
       expect(mockMutation).toHaveBeenCalledWith(testSchema, true, "");
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema, false, "");
