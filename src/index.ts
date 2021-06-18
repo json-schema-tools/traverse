@@ -124,9 +124,6 @@ export default function traverse(
         ([orig]) => foundCycle === orig,
       ) as [JSONSchema, JSONSchema];
 
-      // attempt to signal that there is a cycle by putting one into the recursiveStack
-
-
       return cycledMutableSchema;
     }
 
