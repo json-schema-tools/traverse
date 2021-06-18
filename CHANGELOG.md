@@ -1,3 +1,16 @@
+# [1.8.0](https://github.com/json-schema-tools/traverse/compare/1.7.8...1.8.0) (2021-06-18)
+
+
+### Bug Fixes
+
+* remove additional comment ([3fdca68](https://github.com/json-schema-tools/traverse/commit/3fdca68fc54c85f053cc2cee2bd1a81e3dd7dafc))
+* update deps ([3c69609](https://github.com/json-schema-tools/traverse/commit/3c69609cb556babb38bc8793e0cd5481a9e5fc34))
+
+
+### Features
+
+* mutation functions isCycle param working properly now ([4a6ad09](https://github.com/json-schema-tools/traverse/commit/4a6ad0928406d185cff3e85a941a2467b878cd1d))
+
 ## [1.7.8](https://github.com/json-schema-tools/traverse/compare/1.7.7...1.7.8) (2021-06-08)
 
 
