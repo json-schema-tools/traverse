@@ -14,7 +14,7 @@ describe("traverse", () => {
   it("default mutate", () => {
     const testSchema = {
       type: "string"
-    };
+    } as JSONSchema;
     const mutator = () => ({ hello: "world" });
 
     const result = traverse(testSchema, mutator) as any;
@@ -26,7 +26,7 @@ describe("traverse", () => {
   it("mutate does not affect traversal", () => {
     const testSchema = {
       type: "object"
-    };
+    } as JSONSchema;
 
     const mutator = jest.fn((s: JSONSchemaObject) => ({
       ...s,
@@ -45,7 +45,7 @@ describe("traverse", () => {
   it("merge does not affect traversal", () => {
     const testSchema = {
       type: "object"
-    };
+    } as JSONSchema;
     const mergeProducer = jest.fn((s: JSONSchemaObject) => ({
       ...s,
       properties: {
@@ -106,7 +106,7 @@ describe("traverse", () => {
     });
 
     it("accepts boolean as valid schema in a nested schema", () => {
-      const schema = { type: "object", properties: { a: true, b: false } };
+      const schema = { type: "object", properties: { a: true, b: false } } as JSONSchema;
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
@@ -121,7 +121,7 @@ describe("traverse", () => {
       const schema = {
         type: "object",
         patternProperties: { "*.": a, "x-^": b }
-      };
+      } as JSONSchema;
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
@@ -133,7 +133,7 @@ describe("traverse", () => {
     it("allows booleans that are created via boolean class and new", () => {
       const a = new Boolean(true);
       const b = new Boolean(false);
-      const schema = { type: "object", properties: { a, b } };
+      const schema = { type: "object", properties: { a, b } } as JSONSchema;
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
@@ -148,7 +148,7 @@ describe("traverse", () => {
     });
 
     it("items is a boolean", () => {
-      const schema = { type: "array", items: true };
+      const schema = { type: "array", items: true } as JSONSchema;
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(2);
@@ -168,7 +168,7 @@ describe("traverse", () => {
             }
           }
         }
-      };
+      } as JSONSchema;
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(6);
@@ -266,7 +266,7 @@ describe("traverse", () => {
 
   describe("schema.type being an array", () => {
     it("allows type to be an array", () => {
-      const schema = { type: ["boolean", "string"], title: "gotimebucko" };
+      const schema = { type: ["boolean", "string"], title: "gotimebucko" } as JSONSchema;
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(1);
@@ -281,7 +281,7 @@ describe("traverse", () => {
           b: { type: "integer" }
         },
         items: { type: "string" }
-      };
+      } as JSONSchema;
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(4);
@@ -293,12 +293,12 @@ describe("traverse", () => {
       const schema = { type: "object", properties: { foo: {} } };
       schema.properties.foo = schema;
       const mockMutation = jest.fn((s) => s);
-      traverse(schema, mockMutation);
+      traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(1);
     });
 
     it("does not follow $refs", () => {
-      const schema = { type: "object", properties: { foo: { $ref: "#" } } };
+      const schema = { type: "object", properties: { foo: { $ref: "#" } } } as JSONSchema;
       const mockMutation = jest.fn((s) => s);
       traverse(schema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(2);
@@ -323,7 +323,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.items[0].items = schema;
       const mockMutation = jest.fn((s) => s);
-      traverse(schema, mockMutation);
+      traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
     });
 
@@ -351,7 +351,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.anyOf[0].items.properties.baz = schema.properties.foo;
       const mockMutation = jest.fn((s) => s);
-      traverse(schema, mockMutation);
+      traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
 
@@ -387,7 +387,7 @@ describe("traverse", () => {
       schema.properties.foo.anyOf[0].items.properties.baz = schema;
       schema.properties.bar.allOf[0].properties.baz = schema.properties.foo.anyOf[0];
       const mockMutation = jest.fn((s) => s);
-      traverse(schema, mockMutation);
+      traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(6);
     });
 
@@ -471,7 +471,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.anyOf[0].items.properties.baz = schema.properties.foo;
       const mockMutation = jest.fn((s) => s);
-      traverse(schema, mockMutation);
+      traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
 
@@ -550,7 +550,7 @@ describe("traverse", () => {
 
       const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation, { mutable: true });
+      traverse(testSchema as JSONSchema, mockMutation, { mutable: true });
 
       expect(mockMutation).toHaveBeenCalledWith(testSchema.properties.foo, true, "/properties/foo");
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema.properties.foo, false, "/properties/foo");
@@ -568,7 +568,7 @@ describe("traverse", () => {
 
       const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation, { mutable: true });
+      traverse(testSchema as JSONSchema, mockMutation, { mutable: true });
 
       expect(mockMutation).toHaveBeenCalledWith(testSchema, true, "");
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema, false, "");
@@ -589,7 +589,7 @@ describe("traverse", () => {
 
       const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation, { mutable: false });
+      traverse(testSchema as JSONSchema, mockMutation, { mutable: false });
 
       expect(mockMutation).toHaveBeenCalledWith(testSchema, true, "");
       expect(mockMutation).not.toHaveBeenCalledWith(testSchema, false, "");
@@ -612,7 +612,7 @@ describe("traverse", () => {
       };
       const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation, { bfs: true, });
+      traverse(testSchema as JSONSchema, mockMutation, { bfs: true, });
 
       const expectedPath1 = "/properties/foo/items/0";
       const expectedPath2 = "/properties/foo/items/1";
@@ -637,7 +637,7 @@ describe("traverse", () => {
       };
       const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation, { bfs: true, mutable: true });
+      traverse(testSchema as JSONSchema, mockMutation, { bfs: true, mutable: true });
 
       const expectedPath1 = "/properties/foo/items/0";
       const expectedPath2 = "/properties/foo/items/1";
@@ -657,7 +657,7 @@ describe("Mutability settings", () => {
         foo: { type: "string" },
         bar: { type: "number" }
       }
-    };
+    } as JSONSchema;
 
     const frozenS = Object.freeze(s);
 
@@ -681,7 +681,7 @@ describe("Mutability settings", () => {
 
       const frozenS = Object.freeze(s);
 
-      const result = traverse(frozenS, (ss) => ss, { mutable: false }) as JSONSchemaObject;
+      const result = traverse(frozenS as JSONSchema, (ss) => ss, { mutable: false }) as JSONSchemaObject;
 
       expect(frozenS).not.toBe(result);
       expect((result.properties as Properties).foo).toBe(result);
@@ -700,7 +700,7 @@ describe("Mutability settings", () => {
 
       const frozenS = Object.freeze(s);
 
-      const result = traverse(frozenS, (ss) => ss, { mutable: false, skipFirstMutation: true }) as JSONSchemaObject;
+      const result = traverse(frozenS as JSONSchema, (ss) => ss, { mutable: false, skipFirstMutation: true }) as JSONSchemaObject;
 
       expect(frozenS).not.toBe(result);
       expect((result.properties as Properties).foo).not.toBe(frozenS.properties.foo);
@@ -723,7 +723,7 @@ describe("Mutability settings", () => {
 
       const frozenS = Object.freeze(s);
 
-      const result = traverse(frozenS, (ss) => {
+      const result = traverse(frozenS as JSONSchema, (ss) => {
         if (ss === true || ss === false) { return ss; }
         return { hello: "world", ...ss };
       }, { mutable: false, bfs: true }) as JSONSchemaObject;
@@ -754,7 +754,7 @@ describe("Mutability settings", () => {
 
       const frozenS = Object.freeze(s);
 
-      const result = traverse(frozenS, (ss) => {
+      const result = traverse(frozenS as JSONSchema, (ss) => {
         if (ss === true || ss === false) { return ss; }
         return { hello: "world", ...ss };
       }, { mutable: false, bfs: true, skipFirstMutation: true }) as JSONSchemaObject;
@@ -781,7 +781,7 @@ describe("Mutability settings", () => {
       s.properties.foo = s;
 
 
-      const result = traverse(s, (ss) => ss, { mutable: true }) as JSONSchemaObject;
+      const result = traverse(s as JSONSchema, (ss) => ss, { mutable: true }) as JSONSchemaObject;
 
       expect(s).toBe(result);
       expect((result.properties as Properties).foo).toBe(result);
@@ -797,7 +797,7 @@ describe("Mutability settings", () => {
         }
       };
 
-      const result = traverse(s, (ss: any) => { ss.hello = "world"; return ss; }, { mutable: true, skipFirstMutation: true }) as JSONSchemaObject;
+      const result = traverse(s as JSONSchema, (ss: any) => { ss.hello = "world"; return ss; }, { mutable: true, skipFirstMutation: true }) as JSONSchemaObject;
 
       expect(s).toBe(result);
       expect((s as any).hello).not.toBeDefined();
@@ -812,14 +812,12 @@ describe("Mutability settings", () => {
         }
       };
 
-      const result = traverse(s, (ss: any) => { ss.hello = "world"; return ss; }, { mutable: true, bfs: true }) as JSONSchemaObject;
+      const result = traverse(s as JSONSchema, (ss: any) => { ss.hello = "world"; return ss; }, { mutable: true, bfs: true }) as JSONSchemaObject;
 
       expect(s).toBe(result);
       expect((s as any).hello).toBe("world");
       expect((s.properties.foo as any).hello).toBe("world")
       expect((result.properties as Properties).foo).toBe(s.properties.foo);
     });
-
   });
-
 });
