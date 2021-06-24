@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/json-schema-tools/traverse/compare/1.8.0...1.8.1) (2021-06-24)
+
+
+### Bug Fixes
+
+* update to latest json schema meta schema ([a00b1ee](https://github.com/json-schema-tools/traverse/commit/a00b1ee8694c391dc50d912c6ffd762e0e6b410d))
+
 # [1.8.0](https://github.com/json-schema-tools/traverse/compare/1.7.8...1.8.0) (2021-06-18)
 
 
