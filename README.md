@@ -54,6 +54,10 @@ traverse(mySchema, (schemaOrSubschema) => {
 });
 ```
 
+## API Docs
+
+https://json-schema-tools.github.io/traverse/
+
 ## Features Todo
 
  - unevaluatedItems (https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.1.3)
