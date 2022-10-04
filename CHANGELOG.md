@@ -1,3 +1,19 @@
+# [1.9.0](https://github.com/json-schema-tools/traverse/compare/1.8.1...1.9.0) (2022-10-04)
+
+
+### Bug Fixes
+
+* add docs link to readme ([3252c23](https://github.com/json-schema-tools/traverse/commit/3252c23052f304c30d698f8bcc88af15b68df7e2))
+* dont use jsdom for jest ([140e7fa](https://github.com/json-schema-tools/traverse/commit/140e7fa049c565865afc048be6e552a8c3911171))
+* node version in circle was wrong ([b80ed78](https://github.com/json-schema-tools/traverse/commit/b80ed78eca85fbb11fac07335a40606d61f4b8a7))
+* remove outdated typedoc setting ([0959a1e](https://github.com/json-schema-tools/traverse/commit/0959a1ef15fe926360582099c4cf9e69c045b4f7))
+* update node and deps ([d318d06](https://github.com/json-schema-tools/traverse/commit/d318d066dc33ce6193cbb9147bcb29bc3a0b6e6f))
+
+
+### Features
+
+* use json-path for path param ([970d03a](https://github.com/json-schema-tools/traverse/commit/970d03aa1ac583b2dc87f420776a831d180d5a53))
+
 ## [1.8.1](https://github.com/json-schema-tools/traverse/compare/1.8.0...1.8.1) (2021-06-24)
 
 
