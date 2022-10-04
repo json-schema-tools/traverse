@@ -5,7 +5,7 @@ import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-to
  *
  * @param schema The schema or subschema node being traversed
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
- * @param path json path string separated by periods
+ * @param path json-path string in dot-notation as per [draft-goessner-dispatch-jsonpath-00](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html#name-overview-of-jsonpath-expres)
  */
 export type MutationFunction = (schema: JSONSchema, isCycle: boolean, path: string,) => JSONSchema;
 
@@ -44,7 +44,13 @@ export const defaultOptions: TraverseOptions = {
 };
 
 const jsonPathStringify = (s: string[]) => {
-  return s.map(i => i === "" ? i.toString() : ("/" + i.toString())).join("");
+  return s.map((i) => {
+    if (i === "") {
+      return '$';
+    } else {
+      return `.${i}`;
+    }
+  }).join("");
 };
 
 const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | false => {
@@ -142,17 +148,17 @@ export default function traverse(
 
   if (schema.anyOf) {
     mutableSchema.anyOf = schema.anyOf.map((x, i) => {
-      const result = rec(x, [...pathStack, "anyOf", i.toString()]);
+      const result = rec(x, [...pathStack, `anyOf[${i}]`]);
       return result;
     });
   } else if (schema.allOf) {
     mutableSchema.allOf = schema.allOf.map((x, i) => {
-      const result = rec(x, [...pathStack, "allOf", i.toString()]);
+      const result = rec(x, [...pathStack, `allOf[${i}]`]);
       return result;
     });
   } else if (schema.oneOf) {
     mutableSchema.oneOf = schema.oneOf.map((x, i) => {
-      const result = rec(x, [...pathStack, "oneOf", i.toString()]);
+      const result = rec(x, [...pathStack, `oneOf[${i}]`]);
       return result;
     });
   } else {
@@ -161,7 +167,7 @@ export default function traverse(
     if (schema.items) {
       if (schema.items instanceof Array) {
         mutableSchema.items = schema.items.map((x, i) => {
-          const result = rec(x, [...pathStack, "items", i.toString()]);
+          const result = rec(x, [...pathStack, `items[${i}]`]);
           return result;
         });
       } else {
@@ -186,7 +192,7 @@ export default function traverse(
             traverseOptions,
             depth + 1,
             recursiveStack,
-            pathStack,
+            [...pathStack, "items"],
             prePostMap,
             cycleSet,
           );
