@@ -1,3 +1,15 @@
+# [1.10.0](https://github.com/json-schema-tools/traverse/compare/1.9.0...1.10.0) (2022-10-05)
+
+
+### Bug Fixes
+
+* add tests around MutationFunction.parent ([33a06a0](https://github.com/json-schema-tools/traverse/commit/33a06a04fdd535f79dcb8808c66db43aa6c9080a))
+
+
+### Features
+
+* mutation function is called with parent schema ([2e26427](https://github.com/json-schema-tools/traverse/commit/2e264278a3df77f3f4e4101538f4a1e5c318e236))
+
 # [1.9.0](https://github.com/json-schema-tools/traverse/compare/1.8.1...1.9.0) (2022-10-04)
 
 
