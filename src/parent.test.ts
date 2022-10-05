@@ -1,50 +1,49 @@
-import traverse from "./";
-import { JSONSchema } from "@json-schema-tools/meta-schema";
 
-describe("traverse paths", () => {
-  const test = (s: JSONSchema, paths: string[]) => {
+import traverse from "./";
+import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
+
+describe("traverse parent", () => {
+  const test = (s: JSONSchema, parents: JSONSchema[]) => {
     const mutator = jest.fn((s) => s);
 
     traverse(s, mutator);
 
-    paths.forEach((path) => {
+    parents.forEach((parent) => {
       expect(mutator).toHaveBeenCalledWith(
         expect.anything(),
         expect.any(Boolean),
-        path,
-        expect.anything(),
+        expect.any(String),
+        parent,
       );
     });
   };
 
   describe("schema is a boolean", () => {
     it("allows root schema as boolean", () => {
-      const testSchema: any = true;
-      test(testSchema, ["$"]);
+      const testSchema: JSONSchema = true;
+      test(testSchema, [testSchema]);
     });
   });
 
   describe("schema.properties", () => {
     it("allows traversing property subschemas", () => {
-      const testSchema: any = {
+      const testSchema: JSONSchema = {
         properties: {
           a: {},
           b: {},
         },
       };
-      test(testSchema, [
-        "$",
-        "$.properties.a",
-        "$.properties.b",
-      ]);
+
+      test(testSchema, [testSchema]);
     });
+
     it("allows boolean subschema in properties", () => {
-      const testSchema = { type: "object", properties: { a: true, b: false } } as JSONSchema;
-      test(testSchema, [
-        "$",
-        "$.properties.a",
-        "$.properties.b",
-      ]);
+      const testSchema: JSONSchema = {
+        type: "object",
+        properties: { a: true, b: false }
+      };
+
+      test(testSchema, [testSchema]);
     });
   });
 
@@ -53,7 +52,7 @@ describe("traverse paths", () => {
       const testSchema: any = {
         additionalProperties: true
       };
-      test(testSchema, ["$", "$.additionalProperties"]);
+      test(testSchema, [testSchema]);
     });
 
     it("allows subschema", () => {
@@ -67,10 +66,8 @@ describe("traverse paths", () => {
       };
 
       test(testSchema, [
-        "$",
-        "$.additionalProperties",
-        "$.additionalProperties.properties.c",
-        "$.additionalProperties.properties.d",
+        testSchema,
+        testSchema.additionalProperties
       ]);
     });
   });
@@ -80,7 +77,7 @@ describe("traverse paths", () => {
       const testSchema: any = {
         additionalItems: true
       };
-      test(testSchema, ["$", "$.additionalItems"]);
+      test(testSchema, [testSchema]);
     });
 
     it("allows subschema", () => {
@@ -93,12 +90,7 @@ describe("traverse paths", () => {
         },
       };
 
-      test(testSchema, [
-        "$",
-        "$.additionalItems",
-        "$.additionalItems.properties.c",
-        "$.additionalItems.properties.d",
-      ]);
+      test(testSchema, [testSchema, testSchema.additionalItems]);
     });
   });
 
@@ -111,7 +103,8 @@ describe("traverse paths", () => {
           { type: "number" },
         ]
       } as JSONSchema;
-      test(testSchema, ["$.items[0]"]);
+
+      test(testSchema, [testSchema]);
     });
 
     it("allows a schema", () => {
@@ -120,7 +113,36 @@ describe("traverse paths", () => {
         items: { type: "number" },
       } as JSONSchema;
 
-      test(testSchema, ["$.items"]);
+      test(testSchema, [testSchema]);
+    });
+  });
+
+  describe("schema.oneOf", () => {
+    it("works with deeply nested oneOfs", () => {
+      const testSchema: any = {
+        oneOf: [
+          {
+            oneOf: [{ type: "number" }, { type: "string" }]
+          },
+          {
+            type: "object",
+            properties: {
+              foo: {
+                oneOf: [
+                  { type: "array", items: true }, { type: "boolean" }
+                ]
+              }
+            }
+          }
+        ]
+      };
+
+      test(testSchema, [
+        testSchema,
+        testSchema.oneOf[0],
+        testSchema.oneOf[1],
+        testSchema.oneOf[1].properties.foo,
+      ]);
     });
   });
 });
