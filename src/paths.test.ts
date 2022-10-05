@@ -11,7 +11,8 @@ describe("traverse paths", () => {
       expect(mutator).toHaveBeenCalledWith(
         expect.anything(),
         expect.any(Boolean),
-        path
+        path,
+        expect.anything(),
       );
     });
   };

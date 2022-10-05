@@ -6,8 +6,14 @@ import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-to
  * @param schema The schema or subschema node being traversed
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  * @param path json-path string in dot-notation as per [draft-goessner-dispatch-jsonpath-00](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html#name-overview-of-jsonpath-expres)
+ * @param parent if the schema is the root, this will be the same as `schema`. Otherwise, it will be a reference to JSONSchema that is the parent.
  */
-export type MutationFunction = (schema: JSONSchema, isCycle: boolean, path: string,) => JSONSchema;
+export type MutationFunction = (
+  schema: JSONSchema,
+  isCycle: boolean,
+  path: string,
+  parent: JSONSchema,
+) => JSONSchema;
 
 /**
  * The options you can use when traversing.
@@ -61,6 +67,10 @@ const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | fals
   return false;
 };
 
+const last = (i: JSONSchema[]): JSONSchema | undefined => {
+  return i[i.length - 1];
+};
+
 /**
  * Traverse all subschema of a schema, calling the mutator function with each.
  * The mutator is called on leaf nodes first.
@@ -96,7 +106,12 @@ export default function traverse(
     if (opts.skipFirstMutation === true && depth === 0) {
       return schema;
     } else {
-      return mutation(schema, false, jsonPathStringify(pathStack));
+      return mutation(
+        schema,
+        false,
+        jsonPathStringify(pathStack),
+        last(recursiveStack) || schema
+      );
     }
   }
 
@@ -107,7 +122,12 @@ export default function traverse(
 
   if (opts.bfs === true) {
     if (opts.skipFirstMutation === false || depth !== 0) {
-      mutableSchema = mutation(mutableSchema, false, jsonPathStringify(pathStack)) as JSONSchemaObject;
+      mutableSchema = mutation(
+        mutableSchema,
+        false,
+        jsonPathStringify(pathStack),
+        last(recursiveStack) || schema
+      ) as JSONSchemaObject;
     }
   }
 
@@ -123,7 +143,12 @@ export default function traverse(
       // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
       // If we don't, it will never happen.
       if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-        return mutation(s, true, jsonPathStringify(path));
+        return mutation(
+          s,
+          true,
+          jsonPathStringify(path),
+          last(recursiveStack) || schema
+        );
       }
 
       const [, cycledMutableSchema] = prePostMap.find(
@@ -176,7 +201,12 @@ export default function traverse(
           cycleSet.push(foundCycle);
 
           if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-            mutableSchema.items = mutation(schema.items, true, jsonPathStringify(pathStack));
+            mutableSchema.items = mutation(
+              schema.items,
+              true,
+              jsonPathStringify(pathStack),
+              last(recursiveStack) || schema
+            );
           } else {
             const [, cycledMutableSchema] = prePostMap.find(
               ([orig]) => foundCycle === orig,
@@ -239,6 +269,11 @@ export default function traverse(
     return mutableSchema;
   } else {
     const isCycle = cycleSet.indexOf(schema) !== -1
-    return mutation(mutableSchema, isCycle, jsonPathStringify(pathStack));
+    return mutation(
+      mutableSchema,
+      isCycle,
+      jsonPathStringify(pathStack),
+      last(recursiveStack) || schema
+    );
   }
 }
