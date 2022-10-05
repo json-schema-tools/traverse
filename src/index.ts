@@ -67,8 +67,9 @@ const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | fals
   return false;
 };
 
-const last = (i: JSONSchema[]): JSONSchema | undefined => {
-  return i[i.length - 1];
+const last = (i: JSONSchema[], skipTwo = false): JSONSchema | undefined => {
+  const skip = skipTwo ? -2 : -1;
+  return i[i.length - skip];
 };
 
 /**
@@ -132,7 +133,6 @@ export default function traverse(
   }
 
   recursiveStack.push(schema);
-
   prePostMap.push([schema, mutableSchema]);
 
   const rec = (s: JSONSchema, path: string[]): JSONSchema => {
@@ -147,7 +147,7 @@ export default function traverse(
           s,
           true,
           jsonPathStringify(path),
-          last(recursiveStack) || schema
+          last(recursiveStack, true) || schema
         );
       }
 
@@ -205,7 +205,7 @@ export default function traverse(
               schema.items,
               true,
               jsonPathStringify(pathStack),
-              last(recursiveStack) || schema
+              last(recursiveStack, true) || schema
             );
           } else {
             const [, cycledMutableSchema] = prePostMap.find(
@@ -273,7 +273,7 @@ export default function traverse(
       mutableSchema,
       isCycle,
       jsonPathStringify(pathStack),
-      last(recursiveStack) || schema
+      last(recursiveStack, true) || schema
     );
   }
 }
