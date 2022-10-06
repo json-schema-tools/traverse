@@ -1,3 +1,12 @@
+## [1.10.1](https://github.com/json-schema-tools/traverse/compare/1.10.0...1.10.1) (2022-10-06)
+
+
+### Bug Fixes
+
+* additionalItems should always be traversed ([c259f3c](https://github.com/json-schema-tools/traverse/commit/c259f3ceb6cf43a2493a17f9fd110debd963e953))
+* circle ci config fixed ([cf5b7f9](https://github.com/json-schema-tools/traverse/commit/cf5b7f998e379e37c86840d786a5e457771a35f9))
+* clean up circle config a little bit ([83bf89a](https://github.com/json-schema-tools/traverse/commit/83bf89add240c6114089d206918acd35aa360aa0))
+
 # [1.10.0](https://github.com/json-schema-tools/traverse/compare/1.9.0...1.10.0) (2022-10-05)
 
 
