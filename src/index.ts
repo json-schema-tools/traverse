@@ -187,8 +187,6 @@ export default function traverse(
       return result;
     });
   } else {
-    let itemsIsSingleSchema = false;
-
     if (schema.items) {
       if (schema.items instanceof Array) {
         mutableSchema.items = schema.items.map((x, i) => {
@@ -215,7 +213,6 @@ export default function traverse(
             mutableSchema.items = cycledMutableSchema;
           }
         } else {
-          itemsIsSingleSchema = true;
           mutableSchema.items = traverse(
             schema.items,
             mutation,
@@ -230,8 +227,11 @@ export default function traverse(
       }
     }
 
-    if (schema.additionalItems !== undefined && !!schema.additionalItems === true && !itemsIsSingleSchema) {
-      mutableSchema.additionalItems = rec(schema.additionalItems, [...pathStack, "additionalItems"]);
+    if (schema.additionalItems !== undefined) {
+      mutableSchema.additionalItems = rec(
+        schema.additionalItems,
+        [...pathStack, "additionalItems"]
+      );
     }
 
     if (schema.properties !== undefined) {

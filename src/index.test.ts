@@ -278,41 +278,113 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
 
-    it("traverses additionalItems as boolean", () => {
-      const testSchema: any = {
-        additionalItems: true
-      };
-      const mockMutation = jest.fn((mockS) => mockS);
+    describe("additionalItems", () => {
+      it("as a boolean schema true", () => {
+        const testSchema: any = {
+          additionalItems: true
+        };
+        const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation);
+        traverse(testSchema, mockMutation);
 
-      testCalls(mockMutation, testSchema.additionalItems);
-      testCalls(mockMutation, testSchema);
+        testCalls(mockMutation, testSchema.additionalItems);
+        testCalls(mockMutation, testSchema);
 
-      expect(mockMutation).toHaveBeenCalledTimes(2);
-    });
+        expect(mockMutation).toHaveBeenCalledTimes(2);
+      });
 
-    it("traverses additionalItems as schema", () => {
-      const testSchema: any = {
-        additionalItems: {
-          properties: {
-            c: {},
-            d: {},
+      it("as a boolean schema false", () => {
+        const testSchema: any = {
+          additionalItems: false
+        };
+        const mockMutation = jest.fn((mockS) => mockS);
+
+        traverse(testSchema, mockMutation);
+
+        testCalls(mockMutation, testSchema.additionalItems);
+        testCalls(mockMutation, testSchema);
+
+        expect(mockMutation).toHaveBeenCalledTimes(2);
+      });
+
+      it("as a boolean schema true: items is array", () => {
+        const testSchema: any = {
+          items: [{ type: "string" }],
+          additionalItems: true
+        };
+        const mockMutation = jest.fn((mockS) => mockS);
+
+        traverse(testSchema, mockMutation);
+
+        testCalls(mockMutation, testSchema.additionalItems);
+        testCalls(mockMutation, testSchema.items[0]);
+        testCalls(mockMutation, testSchema);
+
+        expect(mockMutation).toHaveBeenCalledTimes(3);
+      });
+
+      it("as a boolean schema false: items is single schema", () => {
+        const testSchema: any = {
+          items: { type: "string" },
+          additionalItems: false
+        };
+        const mockMutation = jest.fn((mockS) => mockS);
+
+        traverse(testSchema, mockMutation);
+
+        testCalls(mockMutation, testSchema.additionalItems);
+        testCalls(mockMutation, testSchema.items);
+        testCalls(mockMutation, testSchema);
+
+        expect(mockMutation).toHaveBeenCalledTimes(3);
+      });
+
+      it("schema with nested subschemas: items is array", () => {
+        const testSchema: any = {
+          items: [{ type: "string" }],
+          additionalItems: {
+            properties: {
+              c: {},
+              d: {},
+            },
           },
-        },
-      };
-      const mockMutation = jest.fn((mockS) => mockS);
+        };
+        const mockMutation = jest.fn((mockS) => mockS);
 
-      traverse(testSchema, mockMutation);
+        traverse(testSchema, mockMutation);
 
-      testCalls(mockMutation, testSchema.additionalItems);
-      testCalls(mockMutation, testSchema.additionalItems.properties.c);
-      testCalls(mockMutation, testSchema.additionalItems.properties.d);
-      testCalls(mockMutation, testSchema);
+        testCalls(mockMutation, testSchema.additionalItems);
+        testCalls(mockMutation, testSchema.items[0]);
+        testCalls(mockMutation, testSchema.additionalItems.properties.c);
+        testCalls(mockMutation, testSchema.additionalItems.properties.d);
+        testCalls(mockMutation, testSchema);
 
-      expect(mockMutation).toHaveBeenCalledTimes(4);
+        expect(mockMutation).toHaveBeenCalledTimes(5);
+      });
+
+      it("schema with nested subschemas: items is single schema", () => {
+        const testSchema: any = {
+          items: { type: "string" },
+          additionalItems: {
+            properties: {
+              c: {},
+              d: {},
+            },
+          },
+        };
+        const mockMutation = jest.fn((mockS) => mockS);
+
+        traverse(testSchema, mockMutation);
+
+        testCalls(mockMutation, testSchema.additionalItems);
+        testCalls(mockMutation, testSchema.items);
+        testCalls(mockMutation, testSchema.additionalItems.properties.c);
+        testCalls(mockMutation, testSchema.additionalItems.properties.d);
+        testCalls(mockMutation, testSchema);
+
+        expect(mockMutation).toHaveBeenCalledTimes(5);
+      });
     });
-
   });
 
 
