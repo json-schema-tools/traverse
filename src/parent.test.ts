@@ -1,6 +1,6 @@
 
 import traverse from "./";
-import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
+import { JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse parent", () => {
   const test = (s: JSONSchema, parents: JSONSchema[]) => {
