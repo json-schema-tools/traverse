@@ -6,22 +6,24 @@ describe("traverse", () => {
     mockMutation: any,
     schema: JSONSchema,
     isCycle = expect.any(Boolean),
-    nth?: number
+    nth?: number,
+    parent = expect.anything(),
   ) => {
+    if (parent === false) { parent = undefined; }
     if (nth) {
       expect(mockMutation).toHaveBeenNthCalledWith(
         nth,
         schema,
         isCycle,
         expect.any(String),
-        expect.anything(),
+        parent
       );
     } else {
       expect(mockMutation).toHaveBeenCalledWith(
         schema,
         isCycle,
         expect.any(String),
-        expect.anything(),
+        parent
       );
     }
   };
@@ -510,7 +512,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.anyOf[0].items.properties.baz = schema;
       schema.properties.bar.allOf[0].properties.baz = schema.properties.foo.anyOf[0];
-      const mockMutation = jest.fn((s) => s);
+      const mockMutation = jest.fn((s) => { console.log(s); return s; });
       traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(6);
     });
@@ -655,6 +657,22 @@ describe("traverse", () => {
       testCalls(mockMutation2, testSchema2);
       expect(mockMutation2).toHaveBeenCalledTimes(1);
       expect(testSchema2.items).toBe(testSchema2);
+
+      expect(mockMutation1).toHaveBeenCalledTimes(1);
+      expect(mockMutation1).toHaveBeenCalledWith(
+        testSchema1.properties.skipFirstCycle,
+        true,
+        expect.any(String),
+        testSchema1
+      );
+
+      expect(mockMutation2).toHaveBeenCalledTimes(1);
+      expect(mockMutation2).toHaveBeenCalledWith(
+        testSchema2.items,
+        true,
+        expect.any(String),
+        testSchema2
+      );
     });
 
   });
@@ -755,7 +773,7 @@ describe("traverse", () => {
 
       traverse(testSchema as JSONSchema, mockMutation, { bfs: true, });
 
-      testCalls(mockMutation, testSchema, false, 1);
+      testCalls(mockMutation, testSchema, false, 1, false);
       testCalls(mockMutation, testSchema.properties.foo, false, 2);
       testCalls(mockMutation, testSchema.properties.foo.items[0], false, 3);
       testCalls(mockMutation, testSchema.properties.foo.items[1], false, 4);
@@ -778,7 +796,7 @@ describe("traverse", () => {
 
       traverse(testSchema as JSONSchema, mockMutation, { bfs: true, mutable: true });
 
-      testCalls(mockMutation, testSchema, false, 1);
+      testCalls(mockMutation, testSchema, false, 1, false);
       testCalls(mockMutation, testSchema.properties.foo, false, 2);
       testCalls(mockMutation, testSchema.properties.foo.items[0], false, 3);
       testCalls(mockMutation, testSchema.properties.foo.items[1], false, 4);

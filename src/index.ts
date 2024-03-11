@@ -67,8 +67,7 @@ const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | fals
   return false;
 };
 
-const last = (i: JSONSchema[], skipTwo = false): JSONSchema | undefined => {
-  const skip = skipTwo ? -2 : -1;
+const last = (i: JSONSchema[], skip: number = 1): JSONSchema => {
   return i[i.length - skip];
 };
 
@@ -89,6 +88,7 @@ export default function traverse(
   traverseOptions = defaultOptions,
   depth = 0,
   recursiveStack: JSONSchema[] = [],
+  mutableStack: JSONSchema[] = [],
   pathStack: string[] = [],
   prePostMap: Array<[JSONSchema, JSONSchema]> = [],
   cycleSet: JSONSchema[] = [],
@@ -111,7 +111,7 @@ export default function traverse(
         schema,
         false,
         jsonPathStringify(pathStack),
-        last(recursiveStack) || schema
+        last(mutableStack) || schema
       );
     }
   }
@@ -121,13 +121,15 @@ export default function traverse(
     mutableSchema = { ...schema };
   }
 
+  mutableStack.push(mutableSchema);
+
   if (opts.bfs === true) {
     if (opts.skipFirstMutation === false || depth !== 0) {
       mutableSchema = mutation(
         mutableSchema,
         false,
         jsonPathStringify(pathStack),
-        last(recursiveStack) || schema
+        last(mutableStack, 2)
       ) as JSONSchemaObject;
     }
   }
@@ -147,7 +149,7 @@ export default function traverse(
           s,
           true,
           jsonPathStringify(path),
-          last(recursiveStack, true) || schema
+          last(mutableStack), // should we be popping here?
         );
       }
 
@@ -165,6 +167,7 @@ export default function traverse(
       traverseOptions,
       depth + 1,
       recursiveStack,
+      mutableStack,
       path,
       prePostMap,
       cycleSet,
@@ -203,7 +206,7 @@ export default function traverse(
               schema.items,
               true,
               jsonPathStringify(pathStack),
-              last(recursiveStack, true) || schema
+              last(mutableStack)
             );
           } else {
             const [, cycledMutableSchema] = prePostMap.find(
@@ -219,6 +222,7 @@ export default function traverse(
             traverseOptions,
             depth + 1,
             recursiveStack,
+            mutableStack,
             [...pathStack, "items"],
             prePostMap,
             cycleSet,
@@ -266,14 +270,18 @@ export default function traverse(
   }
 
   if (opts.bfs === true) {
+    mutableStack.pop();
     return mutableSchema;
   } else {
     const isCycle = cycleSet.indexOf(schema) !== -1
-    return mutation(
+    //console.log(recursiveStack, depth, mutableSchema);
+    const mutated = mutation(
       mutableSchema,
       isCycle,
       jsonPathStringify(pathStack),
-      last(recursiveStack, true) || schema
+      last(mutableStack, 2) || schema
     );
+    mutableStack.pop();
+    return mutated;
   }
 }
