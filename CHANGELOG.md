@@ -1,3 +1,11 @@
+## [1.10.2](https://github.com/json-schema-tools/traverse/compare/1.10.1...1.10.2) (2024-03-11)
+
+
+### Bug Fixes
+
+* bump to node 20 ([4b6e691](https://github.com/json-schema-tools/traverse/commit/4b6e69109d86e4aa1beb3ca9ebd97708106de9bd))
+* run npm audit fix ([b56e01a](https://github.com/json-schema-tools/traverse/commit/b56e01a33495446d382e793eb1b59a63b4267282))
+
 ## [1.10.1](https://github.com/json-schema-tools/traverse/compare/1.10.0...1.10.1) (2022-10-06)
 
 
