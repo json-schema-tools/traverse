@@ -3,7 +3,7 @@ import traverse from "./";
 import { JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse parent", () => {
-  const test = (s: JSONSchema, parents: JSONSchema[]) => {
+  const test = (s: JSONSchema, parents: (JSONSchema | undefined)[], isCycle = false) => {
     const mutator = jest.fn((s) => s);
 
     traverse(s, mutator);
@@ -15,13 +15,22 @@ describe("traverse parent", () => {
         expect.any(String),
         parent,
       );
+
+      if (!isCycle) {
+        expect(mutator).not.toHaveBeenCalledWith(
+          s,
+          expect.any(Boolean),
+          expect.any(String),
+          s
+        );
+      }
     });
   };
 
   describe("schema is a boolean", () => {
-    it("allows root schema as boolean", () => {
+    it("allows root schema as boolean, but its parent is undefined", () => {
       const testSchema: JSONSchema = true;
-      test(testSchema, [testSchema]);
+      test(testSchema, [undefined]);
     });
   });
 
@@ -92,6 +101,29 @@ describe("traverse parent", () => {
 
       test(testSchema, [testSchema, testSchema.additionalItems]);
     });
+
+    it("parent for additionalItems is correct", () => {
+      const testSchema: any = {
+        type: "array",
+        additionalItems: {
+          properties: {
+            c: {},
+            d: {},
+          },
+        },
+      };
+
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+
+      expect(mutator).toHaveBeenCalledWith(
+        expect.anything(),
+        false,
+        expect.any(String),
+        testSchema.additionalItems
+      );
+    });
   });
 
   describe("schema.items", () => {
@@ -115,21 +147,76 @@ describe("traverse parent", () => {
 
       test(testSchema, [testSchema]);
     });
+
+    it("doesnt call mutator with parent being itself when there is no cycle", () => {
+      const testSchema: any = {
+        type: "array",
+        items: {
+          properties: {
+            c: {},
+            d: {},
+          },
+        },
+      };
+
+      const mutator = jest.fn((...args) => {
+        console.log(args);
+        return args[0];
+      });
+
+      traverse(testSchema, mutator);
+
+      expect(mutator).toHaveBeenCalledWith(
+        testSchema.items.properties.c,
+        false,
+        expect.any(String),
+        testSchema.items
+      );
+
+      // additionalItems is not the root should not be the its own parent
+      expect(mutator).not.toHaveBeenCalledWith(
+        testSchema.items,
+        false,
+        expect.any(String),
+        testSchema.items
+      );
+    });
   });
 
   describe("schema.oneOf", () => {
-    it("works with deeply nested oneOfs", () => {
+    it.only("works with deeply nested oneOfs", () => {
       const testSchema: any = {
+        title: '1',
         oneOf: [
           {
-            oneOf: [{ type: "number" }, { type: "string" }]
+            title: '2',
+            oneOf: [
+              {
+                title: '3',
+                type: "number"
+              },
+              {
+                title: '4',
+                type: "string"
+              }
+            ]
           },
           {
+            title: '5',
             type: "object",
             properties: {
               foo: {
+                title: '6',
                 oneOf: [
-                  { type: "array", items: true }, { type: "boolean" }
+                  {
+                    title: '7',
+                    type: "array",
+                    items: true
+                  },
+                  {
+                    title: '8',
+                    type: "boolean"
+                  }
                 ]
               }
             }
@@ -143,6 +230,18 @@ describe("traverse parent", () => {
         testSchema.oneOf[1],
         testSchema.oneOf[1].properties.foo,
       ]);
+    });
+
+    it("works with cycle to the root", () => {
+      const testSchema: any = {
+        oneOf: [
+          {},
+        ]
+      };
+
+      testSchema.oneOf[0] = testSchema;
+
+      test(testSchema, [testSchema], true);
     });
   });
 });

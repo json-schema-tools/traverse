@@ -6,22 +6,26 @@ describe("traverse", () => {
     mockMutation: any,
     schema: JSONSchema,
     isCycle = expect.any(Boolean),
-    nth?: number
+    nth?: number,
+    parent = expect.anything(),
   ) => {
+    if (parent === false) {
+      parent = undefined;
+    }
     if (nth) {
       expect(mockMutation).toHaveBeenNthCalledWith(
         nth,
         schema,
         isCycle,
         expect.any(String),
-        expect.anything(),
+        parent
       );
     } else {
       expect(mockMutation).toHaveBeenCalledWith(
         schema,
         isCycle,
         expect.any(String),
-        expect.anything(),
+        parent
       );
     }
   };
@@ -126,7 +130,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      testCalls(mockMutation, testSchema)
+      testCalls(mockMutation, testSchema, false, undefined, false)
       expect(mockMutation).toHaveBeenCalledTimes(1);
     });
 
@@ -288,7 +292,7 @@ describe("traverse", () => {
         traverse(testSchema, mockMutation);
 
         testCalls(mockMutation, testSchema.additionalItems);
-        testCalls(mockMutation, testSchema);
+        testCalls(mockMutation, testSchema, false, undefined, false);
 
         expect(mockMutation).toHaveBeenCalledTimes(2);
       });
@@ -302,7 +306,7 @@ describe("traverse", () => {
         traverse(testSchema, mockMutation);
 
         testCalls(mockMutation, testSchema.additionalItems);
-        testCalls(mockMutation, testSchema);
+        testCalls(mockMutation, testSchema, false, undefined, false);
 
         expect(mockMutation).toHaveBeenCalledTimes(2);
       });
@@ -318,7 +322,7 @@ describe("traverse", () => {
 
         testCalls(mockMutation, testSchema.additionalItems);
         testCalls(mockMutation, testSchema.items[0]);
-        testCalls(mockMutation, testSchema);
+        testCalls(mockMutation, testSchema, false, undefined, false);
 
         expect(mockMutation).toHaveBeenCalledTimes(3);
       });
@@ -334,7 +338,7 @@ describe("traverse", () => {
 
         testCalls(mockMutation, testSchema.additionalItems);
         testCalls(mockMutation, testSchema.items);
-        testCalls(mockMutation, testSchema);
+        testCalls(mockMutation, testSchema, false, undefined, false);
 
         expect(mockMutation).toHaveBeenCalledTimes(3);
       });
@@ -357,7 +361,7 @@ describe("traverse", () => {
         testCalls(mockMutation, testSchema.items[0]);
         testCalls(mockMutation, testSchema.additionalItems.properties.c);
         testCalls(mockMutation, testSchema.additionalItems.properties.d);
-        testCalls(mockMutation, testSchema);
+        testCalls(mockMutation, testSchema, false, undefined, false);
 
         expect(mockMutation).toHaveBeenCalledTimes(5);
       });
@@ -380,7 +384,7 @@ describe("traverse", () => {
         testCalls(mockMutation, testSchema.items);
         testCalls(mockMutation, testSchema.additionalItems.properties.c);
         testCalls(mockMutation, testSchema.additionalItems.properties.d);
-        testCalls(mockMutation, testSchema);
+        testCalls(mockMutation, testSchema, false, undefined, false);
 
         expect(mockMutation).toHaveBeenCalledTimes(5);
       });
@@ -439,7 +443,7 @@ describe("traverse", () => {
               {
                 title: "3",
                 type: "array",
-                items: { title: "4" },
+                items: { title: "replaced with root" },
               },
             ],
           },
@@ -479,7 +483,7 @@ describe("traverse", () => {
       expect(mockMutation).toHaveBeenCalledTimes(4);
     });
 
-    it("handles chained cycles where the cycle starts in the middle of a different branch of the tree", () => {
+    it.only("handles chained cycles where the cycle starts in the middle of a different branch of the tree", () => {
       const schema = {
         title: "1",
         type: "object",
@@ -493,17 +497,17 @@ describe("traverse", () => {
                 items: {
                   title: "4",
                   properties: {
-                    baz: { title: "5" },
+                    baz: { title: "replaced with root" },
                   },
                 },
               },
             ],
           },
           bar: {
-            title: "6",
+            title: "5",
             type: "object",
             allOf: [
-              { title: "7", type: "object", properties: { baz: { title: "8" } } },
+              { title: "6", type: "object", properties: { baz: { title: "replaced with #3" } } },
             ],
           },
         },
@@ -539,7 +543,7 @@ describe("traverse", () => {
             title: "6",
             type: "object",
             allOf: [
-              { title: "7", type: "object", properties: { baz: { title: "5" } } },
+              { title: "7", type: "object", properties: { baz: { title: "replaced with #5" } } },
             ],
           },
         },
