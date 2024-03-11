@@ -512,7 +512,7 @@ describe("traverse", () => {
       };
       schema.properties.foo.anyOf[0].items.properties.baz = schema;
       schema.properties.bar.allOf[0].properties.baz = schema.properties.foo.anyOf[0];
-      const mockMutation = jest.fn((s) => { console.log(s); return s; });
+      const mockMutation = jest.fn((s) => s);
       traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(6);
     });

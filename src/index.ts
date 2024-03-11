@@ -6,7 +6,7 @@ import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-to
  * @param schema The schema or subschema node being traversed
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  * @param path json-path string in dot-notation as per [draft-goessner-dispatch-jsonpath-00](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html#name-overview-of-jsonpath-expres)
- * @param parent if the schema is the root, this will be the same as `schema`. Otherwise, it will be a reference to JSONSchema that is the parent.
+ * @param parent A reference to JSONSchema that is the parent of the `schema` param. If the `schema` is the root schema, `parent` will be `undefined`. when schema is a cycle, parent is the parent of the referenced cycle (once again, if the cycled schema is the root, the parent will be undefined).
  */
 export type MutationFunction = (
   schema: JSONSchema,
@@ -111,7 +111,7 @@ export default function traverse(
         schema,
         false,
         jsonPathStringify(pathStack),
-        last(mutableStack) || schema
+        last(mutableStack)
       );
     }
   }
@@ -274,7 +274,6 @@ export default function traverse(
     return mutableSchema;
   } else {
     const isCycle = cycleSet.indexOf(schema) !== -1
-    //console.log(recursiveStack, depth, mutableSchema);
     const mutated = mutation(
       mutableSchema,
       isCycle,
