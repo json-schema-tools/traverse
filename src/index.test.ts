@@ -128,7 +128,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      testCalls(mockMutation, testSchema)
+      testCalls(mockMutation, testSchema, false, 1, false);
       expect(mockMutation).toHaveBeenCalledTimes(1);
     });
 

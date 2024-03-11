@@ -2,7 +2,7 @@ import traverse from "./";
 import { JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse paths", () => {
-  const test = (s: JSONSchema, paths: string[]) => {
+  const test = (s: JSONSchema, paths: string[], isRoot: boolean = false) => {
     const mutator = jest.fn((s) => s);
 
     traverse(s, mutator);
@@ -12,7 +12,7 @@ describe("traverse paths", () => {
         expect.anything(),
         expect.any(Boolean),
         path,
-        expect.anything(),
+        isRoot ? undefined : expect.anything()
       );
     });
   };
@@ -20,7 +20,7 @@ describe("traverse paths", () => {
   describe("schema is a boolean", () => {
     it("allows root schema as boolean", () => {
       const testSchema: any = true;
-      test(testSchema, ["$"]);
+      test(testSchema, ["$"], true);
     });
   });
 

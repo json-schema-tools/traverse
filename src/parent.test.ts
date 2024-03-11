@@ -3,7 +3,7 @@ import traverse from "./";
 import { JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse parent", () => {
-  const test = (s: JSONSchema, parents: JSONSchema[]) => {
+  const test = (s: JSONSchema, parents: Array<JSONSchema | undefined>) => {
     const mutator = jest.fn((s) => s);
 
     traverse(s, mutator);
@@ -207,7 +207,7 @@ describe("traverse parent", () => {
   describe("schema is a boolean", () => {
     it("allows root schema as boolean", () => {
       const testSchema: JSONSchema = true;
-      test(testSchema, [testSchema]);
+      test(testSchema, [undefined]);
     });
   });
 
