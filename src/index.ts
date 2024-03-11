@@ -6,13 +6,13 @@ import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-to
  * @param schema The schema or subschema node being traversed
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  * @param path json-path string in dot-notation as per [draft-goessner-dispatch-jsonpath-00](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html#name-overview-of-jsonpath-expres)
- * @param parent if the schema is the root, this will be the same as `schema`. Otherwise, it will be a reference to JSONSchema that is the parent.
+ * @param parent if the schema is a cycle, parent will be the same as `schema`. Otherwise, it will be a reference to JSONSchema that is the parent. If the schema has no parent (ie is the root), it will be undefined.
  */
 export type MutationFunction = (
   schema: JSONSchema,
   isCycle: boolean,
   path: string,
-  parent: JSONSchema,
+  parent: JSONSchema | undefined,
 ) => JSONSchema;
 
 /**
@@ -107,11 +107,12 @@ export default function traverse(
     if (opts.skipFirstMutation === true && depth === 0) {
       return schema;
     } else {
+      console.log('mutableSchema:', schema, 'last: ', recursiveStack[recursiveStack.length - 1]);
       return mutation(
         schema,
         false,
         jsonPathStringify(pathStack),
-        last(recursiveStack) || schema
+        recursiveStack[recursiveStack.length - 1]
       );
     }
   }
@@ -269,11 +270,28 @@ export default function traverse(
     return mutableSchema;
   } else {
     const isCycle = cycleSet.indexOf(schema) !== -1
+    let parent: JSONSchema | undefined = recursiveStack[recursiveStack.length - 2];
+    console.log(
+      'mutableSchema:', mutableSchema,
+      'recursive stack: ', recursiveStack,
+      'parent: ', parent,
+      'isCycle: ', isCycle,
+      'depth:, ', depth
+    );
+    if (depth === 0) {
+      // console.log('depth 0 is root: root doesnt have a parent');
+      parent = undefined;
+    }
+    if (isCycle) {
+      // console.log('isCycle:', isCycle, 'mutableSchema: ', mutableSchema);
+      parent = recursiveStack[recursiveStack.length - 1];
+    }
+    // recursiveStack.pop();
     return mutation(
       mutableSchema,
       isCycle,
       jsonPathStringify(pathStack),
-      last(recursiveStack, true) || schema
+      parent
     );
   }
 }
