@@ -1,3 +1,15 @@
+## [1.10.3](https://github.com/json-schema-tools/traverse/compare/1.10.2...1.10.3) (2024-03-12)
+
+
+### Bug Fixes
+
+* add self-review suggestions ([f1f95e5](https://github.com/json-schema-tools/traverse/commit/f1f95e534b3d0b7caf26df7071287a1ebd1130f5))
+* all tests passing ([0c180b0](https://github.com/json-schema-tools/traverse/commit/0c180b0fed4a7ca430f483a35ca0cb4dd28f1f93))
+* bug fixed and tests fixed ([6f9b06e](https://github.com/json-schema-tools/traverse/commit/6f9b06ee5ce508f4e1fa6b50526fa89e7ca02cbf))
+* parent fixups and testing ([77a77f6](https://github.com/json-schema-tools/traverse/commit/77a77f63c7214ff8959c70688f21a035afc8a26a))
+* simplify code a bit where possible ([b3eae12](https://github.com/json-schema-tools/traverse/commit/b3eae12bdc529c564ed1c7d37db16746d851e7fc))
+* undo debugging stuff ([516cea9](https://github.com/json-schema-tools/traverse/commit/516cea9c099e91b59e3e9d0b2fba5af8f9babf3e))
+
 ## [1.10.2](https://github.com/json-schema-tools/traverse/compare/1.10.1...1.10.2) (2024-03-11)
 
 
