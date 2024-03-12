@@ -274,13 +274,12 @@ export default function traverse(
     return mutableSchema;
   } else {
     const isCycle = cycleSet.indexOf(schema) !== -1
-    const mutated = mutation(
+    mutableStack.pop();
+    return mutation(
       mutableSchema,
       isCycle,
       jsonPathStringify(pathStack),
-      last(mutableStack, 2)
+      last(mutableStack)
     );
-    mutableStack.pop();
-    return mutated;
   }
 }
