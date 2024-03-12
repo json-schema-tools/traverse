@@ -2,7 +2,7 @@ import traverse from "./";
 import { JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse paths", () => {
-  const test = (s: JSONSchema, paths: string[], isRoot: boolean = false) => {
+  const test = (s: JSONSchema, paths: string[], isRoot = false) => {
     const mutator = jest.fn((s) => s);
 
     traverse(s, mutator);

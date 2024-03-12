@@ -67,7 +67,7 @@ const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | fals
   return false;
 };
 
-const last = (i: JSONSchema[], skip: number = 1): JSONSchema => {
+const last = (i: JSONSchema[], skip = 1): JSONSchema => {
   return i[i.length - skip];
 };
 
