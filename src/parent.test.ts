@@ -331,7 +331,7 @@ describe("traverse parent", () => {
         testSchema,
         expect.any(Boolean),
         expect.any(String),
-        testSchema
+        undefined
       );
     });
 
@@ -416,7 +416,7 @@ describe("traverse parent", () => {
         testSchema,
         false,
         expect.any(String),
-        testSchema,
+        undefined,
       );
 
       // additionalItems is not the root should not be the its own parent

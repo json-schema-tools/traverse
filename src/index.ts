@@ -278,7 +278,7 @@ export default function traverse(
       mutableSchema,
       isCycle,
       jsonPathStringify(pathStack),
-      last(mutableStack, 2) || schema
+      last(mutableStack, 2)
     );
     mutableStack.pop();
     return mutated;

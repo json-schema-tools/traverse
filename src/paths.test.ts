@@ -7,12 +7,13 @@ describe("traverse paths", () => {
 
     traverse(s, mutator);
 
-    paths.forEach((path) => {
-      expect(mutator).toHaveBeenCalledWith(
+    paths.forEach((path, i) => {
+      expect(mutator).nthCalledWith(
+        i + 1,
         expect.anything(),
         expect.any(Boolean),
         path,
-        isRoot ? undefined : expect.anything()
+        i === paths.length - 1 ? undefined : expect.anything()
       );
     });
   };
@@ -32,19 +33,45 @@ describe("traverse paths", () => {
           b: {},
         },
       };
-      test(testSchema, [
-        "$",
-        "$.properties.a",
-        "$.properties.b",
-      ]);
+
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+      expect(mutator).nthCalledWith(
+        1,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.properties.a',
+        expect.anything(),
+      );
+      expect(mutator).nthCalledWith(
+        2,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.properties.b',
+        expect.anything()
+      );
     });
     it("allows boolean subschema in properties", () => {
       const testSchema = { type: "object", properties: { a: true, b: false } } as JSONSchema;
-      test(testSchema, [
-        "$",
-        "$.properties.a",
-        "$.properties.b",
-      ]);
+
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+      expect(mutator).nthCalledWith(
+        1,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.properties.a',
+        expect.anything(),
+      );
+      expect(mutator).nthCalledWith(
+        2,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.properties.b',
+        expect.anything()
+      );
     });
   });
 
@@ -53,7 +80,17 @@ describe("traverse paths", () => {
       const testSchema: any = {
         additionalProperties: true
       };
-      test(testSchema, ["$", "$.additionalProperties"]);
+
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+      expect(mutator).nthCalledWith(
+        1,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.additionalProperties',
+        expect.anything(),
+      );
     });
 
     it("allows subschema", () => {
@@ -66,11 +103,45 @@ describe("traverse paths", () => {
         },
       };
 
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+
+      expect(mutator).nthCalledWith(
+        1,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.additionalProperties.properties.c',
+        expect.anything(),
+      );
+      expect(mutator).nthCalledWith(
+        2,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.additionalProperties.properties.d',
+        expect.anything()
+      );
+
+      expect(mutator).nthCalledWith(
+        3,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.additionalProperties',
+        expect.anything()
+      );
+
+      expect(mutator).nthCalledWith(
+        4,
+        expect.anything(),
+        expect.any(Boolean),
+        '$',
+        undefined
+      );
       test(testSchema, [
-        "$",
-        "$.additionalProperties",
         "$.additionalProperties.properties.c",
         "$.additionalProperties.properties.d",
+        "$.additionalProperties",
+        "$",
       ]);
     });
   });
@@ -80,7 +151,18 @@ describe("traverse paths", () => {
       const testSchema: any = {
         additionalItems: true
       };
-      test(testSchema, ["$", "$.additionalItems"]);
+
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+
+      expect(mutator).nthCalledWith(
+        1,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.additionalItems',
+        expect.anything(),
+      );
     });
 
     it("allows subschema", () => {
@@ -93,11 +175,15 @@ describe("traverse paths", () => {
         },
       };
 
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+
       test(testSchema, [
-        "$",
-        "$.additionalItems",
         "$.additionalItems.properties.c",
         "$.additionalItems.properties.d",
+        "$.additionalItems",
+        "$",
       ]);
     });
   });
@@ -111,7 +197,25 @@ describe("traverse paths", () => {
           { type: "number" },
         ]
       } as JSONSchema;
-      test(testSchema, ["$.items[0]"]);
+
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+
+      expect(mutator).nthCalledWith(
+        1,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.items[0]',
+        expect.anything(),
+      );
+      expect(mutator).nthCalledWith(
+        2,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.items[1]',
+        expect.anything()
+      );
     });
 
     it("allows a schema", () => {
@@ -120,7 +224,24 @@ describe("traverse paths", () => {
         items: { type: "number" },
       } as JSONSchema;
 
-      test(testSchema, ["$.items"]);
+      const mutator = jest.fn((s) => s);
+
+      traverse(testSchema, mutator);
+
+      expect(mutator).nthCalledWith(
+        1,
+        expect.anything(),
+        expect.any(Boolean),
+        '$.items',
+        expect.anything(),
+      );
+      expect(mutator).nthCalledWith(
+        2,
+        expect.anything(),
+        expect.any(Boolean),
+        '$',
+        undefined
+      );
     });
   });
 });
