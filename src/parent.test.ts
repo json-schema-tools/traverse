@@ -196,9 +196,9 @@ describe("traverse parent", () => {
       expect(mutation).nthCalledWith(
         5,
         s.items,
-        expect.any(Boolean),
+        true,
         expect.any(String),
-        s
+        s // this is the vital part of whats under test - the parent of the cycle is s, not `s.items.items[0]`
       );
     });
   });
