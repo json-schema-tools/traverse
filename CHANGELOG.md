@@ -1,3 +1,10 @@
+## [1.10.4](https://github.com/json-schema-tools/traverse/compare/1.10.3...1.10.4) (2024-05-07)
+
+
+### Bug Fixes
+
+* update node and bump meta-schema ([a9480cd](https://github.com/json-schema-tools/traverse/commit/a9480cdd90641b8c00f33c0671d89802675e6f02))
+
 ## [1.10.3](https://github.com/json-schema-tools/traverse/compare/1.10.2...1.10.3) (2024-03-12)
 
 
