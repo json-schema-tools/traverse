@@ -71,38 +71,18 @@ const last = (i: JSONSchema[], skip = 1): JSONSchema => {
   return i[i.length - skip];
 };
 
-/**
- * Traverse all subschema of a schema, calling the mutator function with each.
- * The mutator is called on leaf nodes first.
- *
- * @param schema the schema to traverse
- * @param mutation the function to pass each node in the subschema tree.
- * @param traverseOptions a set of options for traversal.
- * @param depth For internal use. Tracks the current recursive depth in the tree. This is used to implement
- *              some of the options.
- *
- */
-export default function traverse(
+
+const _traverse = (
   schema: JSONSchema,
   mutation: MutationFunction,
-  traverseOptions = defaultOptions,
+  opts: TraverseOptions,
   depth = 0,
   recursiveStack: JSONSchema[] = [],
   mutableStack: JSONSchema[] = [],
   pathStack: string[] = [],
   prePostMap: Array<[JSONSchema, JSONSchema]> = [],
   cycleSet: JSONSchema[] = [],
-): JSONSchema {
-  const opts = { ...defaultOptions, ...traverseOptions }; // would be nice to make an 'entry' func when we get around to optimizations
-
-  // booleans are a bit messed. Since all other schemas are objects (non-primitive type
-  // which gets a new address in mem) for each new JS refer to one of 2 memory addrs, and
-  // thus adding it to the recursive stack will prevent it from being explored if the
-  // boolean is seen in a further nested schema.
-  if (depth === 0) {
-    pathStack = [""];
-  }
-
+) => {
   if (typeof schema === "boolean" || schema instanceof Boolean) {
     if (opts.skipFirstMutation === true && depth === 0) {
       return schema;
@@ -161,10 +141,10 @@ export default function traverse(
     }
 
     // else
-    return traverse(
+    return _traverse(
       s,
       mutation,
-      traverseOptions,
+      opts,
       depth + 1,
       recursiveStack,
       mutableStack,
@@ -216,10 +196,10 @@ export default function traverse(
             mutableSchema.items = cycledMutableSchema;
           }
         } else {
-          mutableSchema.items = traverse(
+          mutableSchema.items = _traverse(
             schema.items,
             mutation,
-            traverseOptions,
+            opts,
             depth + 1,
             recursiveStack,
             mutableStack,
@@ -282,4 +262,40 @@ export default function traverse(
       last(mutableStack)
     );
   }
+};
+
+
+/**
+ * Traverse all subschema of a schema, calling the mutator function with each.
+ * The mutator is called on leaf nodes first.
+ *
+ * @param schema the schema to traverse
+ * @param mutation the function to pass each node in the subschema tree.
+ * @param traverseOptions a set of options for traversal.
+ * @param depth For internal use. Tracks the current recursive depth in the tree. This is used to implement
+ *              some of the options.
+ *
+ */
+export default function traverse(
+  schema: JSONSchema,
+  mutation: MutationFunction,
+  traverseOptions = defaultOptions,
+): JSONSchema {
+  const opts = { ...defaultOptions, ...traverseOptions }; // would be nice to make an 'entry' func when we get around to optimizations
+
+  return _traverse(
+    schema,
+    mutation,
+    opts,
+    0,
+    [],
+    [],
+    // booleans are a bit messed. Since all other schemas are objects (non-primitive type
+    // which gets a new address in mem) for each new JS refer to one of 2 memory addrs, and
+    // thus adding it to the recursive stack will prevent it from being explored if the
+    // boolean is seen in a further nested schema.
+    [""],
+    [],
+    [],
+  );
 }
