@@ -217,6 +217,20 @@ export default function traverse(
       );
     }
 
+    if (schema.contains !== undefined) {
+      mutableSchema.contains = rec(
+        schema.contains,
+        [...pathStack, "contains"],
+      );
+    }
+
+    if (schema.unevaluatedItems !== undefined) {
+      mutableSchema.unevaluatedItems = rec(
+        schema.unevaluatedItems,
+        [...pathStack, "unevaluatedItems"],
+      );
+    }
+
     if (schema.properties !== undefined) {
       const sProps: { [key: string]: JSONSchema } = schema.properties;
       const mutableProps: { [key: string]: JSONSchema } = {};
@@ -241,6 +255,20 @@ export default function traverse(
 
     if (schema.additionalProperties !== undefined && !!schema.additionalProperties === true) {
       mutableSchema.additionalProperties = rec(schema.additionalProperties, [...pathStack, "additionalProperties"]);
+    }
+
+    if (schema.propertyNames !== undefined) {
+      mutableSchema.propertyNames = rec(
+        schema.propertyNames,
+        [...pathStack, "propertyNames"],
+      );
+    }
+
+    if (schema.unevaluatedProperties !== undefined && !!schema.unevaluatedProperties === true) {
+      mutableSchema.unevaluatedProperties = rec(
+        schema.unevaluatedProperties,
+        [...pathStack, "unevaluatedProperties"],
+      );
     }
   }
 
