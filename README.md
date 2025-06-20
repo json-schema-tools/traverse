@@ -54,9 +54,29 @@ traverse(mySchema, (schemaOrSubschema) => {
 });
 ```
 
+### Advanced Options
+
+`traverse` accepts an optional options object as the third argument. Some useful
+flags include:
+
+- `bfs` - process schemas in a breadth first order
+- `skipFirstMutation` - do not call the mutation function on the root schema
+- `mergeNotMutate` - merge the mutation result back into the original schema
+
+```js
+traverse(mySchema, (schemaOrSubschema) => {
+  console.log(schemaOrSubschema.title);
+}, {
+  bfs: true,
+  skipFirstMutation: true,
+  mergeNotMutate: true,
+});
+```
+
 ## API Docs
 
-https://json-schema-tools.github.io/traverse/
+The full TypeDoc generated API documentation is available at
+[https://json-schema-tools.github.io/traverse/](https://json-schema-tools.github.io/traverse/).
 
 ### Contributing
 
