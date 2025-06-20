@@ -1143,6 +1143,57 @@ describe("traverse", () => {
       testCalls(mockMutation, testSchema.properties.foo.items[0], false, 3);
       testCalls(mockMutation, testSchema.properties.foo.items[1], false, 4);
     });
+
+    it("handles basic cycles when bfs is true", () => {
+      const schema = { type: "object", properties: { foo: {} } } as any;
+      schema.properties.foo = schema;
+      const mockMutation = jest.fn((s) => s);
+
+      traverse(schema as JSONSchema, mockMutation, { bfs: true });
+
+      expect(mockMutation).toHaveBeenCalledTimes(1);
+    });
+
+    it("handles chained cycles when bfs is true", () => {
+      const schema = {
+        title: "1",
+        type: "object",
+        properties: {
+          foo: {
+            title: "2",
+            items: [
+              {
+                title: "3",
+                type: "array",
+                items: { title: "4" },
+              },
+            ],
+          },
+        },
+      } as any;
+      schema.properties.foo.items[0].items = schema;
+      const mockMutation = jest.fn((s) => s);
+
+      traverse(schema as JSONSchema, mockMutation, { bfs: true });
+
+      expect(mockMutation).toHaveBeenCalledTimes(3);
+    });
+
+    it("bfs still calls mutation for root cycles when skipFirstMutation is true", () => {
+      const schema: any = { title: "a", items: {} };
+      schema.items = schema;
+      const mockMutation = jest.fn((s) => s);
+
+      traverse(schema as JSONSchema, mockMutation, { bfs: true, skipFirstMutation: true, mutable: true });
+
+      expect(mockMutation).toHaveBeenCalledTimes(1);
+      expect(mockMutation).toHaveBeenCalledWith(
+        schema,
+        true,
+        expect.any(String),
+        schema
+      );
+    });
   });
 describe("Mutability settings", () => {
   it("defaults to being immutable", () => {
