@@ -622,6 +622,109 @@ describe("traverse", () => {
     });
   });
 
+    it("traverses contains", () => {
+      const testSchema: any = {
+        contains: { type: "string" }
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).nthCalledWith(
+        1,
+        testSchema.contains,
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+      );
+      expect(mockMutation).nthCalledWith(
+        2,
+        testSchema,
+        expect.anything(),
+        expect.anything(),
+        undefined,
+      );
+
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+    });
+
+    it("traverses propertyNames", () => {
+      const testSchema: any = {
+        propertyNames: { type: "string" }
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).nthCalledWith(
+        1,
+        testSchema.propertyNames,
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+      );
+      expect(mockMutation).nthCalledWith(
+        2,
+        testSchema,
+        expect.anything(),
+        expect.anything(),
+        undefined,
+      );
+
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+    });
+
+    it("traverses unevaluatedItems as boolean", () => {
+      const testSchema: any = {
+        unevaluatedItems: false,
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).nthCalledWith(
+        1,
+        testSchema.unevaluatedItems,
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+      );
+      expect(mockMutation).nthCalledWith(
+        2,
+        testSchema,
+        expect.anything(),
+        expect.anything(),
+        undefined,
+      );
+
+      expect(mockMutation).toHaveBeenCalledTimes(2);
+    });
+
+    it("traverses unevaluatedProperties as schema", () => {
+      const testSchema: any = {
+        unevaluatedProperties: { type: "string" },
+      };
+      const mockMutation = jest.fn((mockS) => mockS);
+
+      traverse(testSchema, mockMutation);
+
+      expect(mockMutation).nthCalledWith(
+        1,
+        testSchema.unevaluatedProperties,
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+      );
+      expect(mockMutation).nthCalledWith(
+        2,
+        testSchema,
+        expect.anything(),
+        expect.anything(),
+        undefined,
+      );
+
+    expect(mockMutation).toHaveBeenCalledTimes(2);
+  });
 
   describe("schema.type being an array", () => {
     it("allows type to be an array", () => {
@@ -1041,8 +1144,6 @@ describe("traverse", () => {
       testCalls(mockMutation, testSchema.properties.foo.items[1], false, 4);
     });
   });
-});
-
 describe("Mutability settings", () => {
   it("defaults to being immutable", () => {
     const s = {
@@ -1214,4 +1315,5 @@ describe("Mutability settings", () => {
       expect((result.properties as Properties).foo).toBe(s.properties.foo);
     });
   });
+});
 });
