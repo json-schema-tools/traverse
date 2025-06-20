@@ -1041,6 +1041,18 @@ describe("traverse", () => {
       testCalls(mockMutation, testSchema.properties.foo.items[1], false, 4);
     });
   });
+
+  describe("entry wrapper", () => {
+    it("wraps internal recursion", () => {
+      const mod = require("./");
+      const spy = jest.spyOn(mod, "default");
+      const schema = { anyOf: [{}] };
+      const mutation = jest.fn((s) => s);
+      mod.default(schema as JSONSchema, mutation);
+      expect(spy).toHaveBeenCalledTimes(1);
+      spy.mockRestore();
+    });
+  });
 });
 
 describe("Mutability settings", () => {

@@ -61,10 +61,10 @@ export const defaultOptions: TraverseOptions = {
  *              some of the options.
  *
  */
-export default function traverse(
+export function traverseInternal(
   schema: JSONSchema,
   mutation: MutationFunction,
-  traverseOptions = defaultOptions,
+  traverseOptions: TraverseOptions,
   depth = 0,
   recursiveStack: JSONSchema[] = [],
   mutableStack: JSONSchema[] = [],
@@ -72,7 +72,7 @@ export default function traverse(
   prePostMap: Array<[JSONSchema, JSONSchema]> = [],
   cycleSet: JSONSchema[] = [],
 ): JSONSchema {
-  const opts = { ...defaultOptions, ...traverseOptions }; // would be nice to make an 'entry' func when we get around to optimizations
+  const opts = traverseOptions;
 
   // booleans are a bit messed. Since all other schemas are objects (non-primitive type
   // which gets a new address in mem) for each new JS refer to one of 2 memory addrs, and
@@ -140,7 +140,7 @@ export default function traverse(
     }
 
     // else
-    return traverse(
+    return traverseInternal(
       s,
       mutation,
       traverseOptions,
@@ -195,7 +195,7 @@ export default function traverse(
             mutableSchema.items = cycledMutableSchema;
           }
         } else {
-          mutableSchema.items = traverse(
+          mutableSchema.items = traverseInternal(
             schema.items,
             mutation,
             traverseOptions,
@@ -261,4 +261,23 @@ export default function traverse(
       last(mutableStack)
     );
   }
+}
+
+export default function traverse(
+  schema: JSONSchema,
+  mutation: MutationFunction,
+  traverseOptions: TraverseOptions = defaultOptions,
+) {
+  const opts = { ...defaultOptions, ...traverseOptions };
+  return traverseInternal(
+    schema,
+    mutation,
+    opts,
+    0,
+    [],
+    [],
+    [],
+    [],
+    [],
+  );
 }
