@@ -78,13 +78,6 @@ traverse(mySchema, (schemaOrSubschema) => {
 The full TypeDoc generated API documentation is available at
 [https://json-schema-tools.github.io/traverse/](https://json-schema-tools.github.io/traverse/).
 
-## Features Todo
-
- - unevaluatedItems (https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.1.3)
- - unevaluatedProperties (https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.2.4)
- - contains (https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.1.4)
- - propertyNames (https://json-schema.org/draft/2019-09/json-schema-core.html#rfc.section.9.3.2.5)
-
 ### Contributing
 
 How to contribute, build and release are outlined in [CONTRIBUTING.md](CONTRIBUTING.md), [BUILDING.md](BUILDING.md) and [RELEASING.md](RELEASING.md) respectively. Commits in this repository follow the [CONVENTIONAL_COMMITS.md](CONVENTIONAL_COMMITS.md) specification.
