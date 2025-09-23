@@ -1,0 +1,19 @@
+.{
+    .name = .json_schema_tools_traverse,
+    .version = "0.1.0",
+    .minimum_zig_version = "0.15.1",
+    .fingerprint = 0xdc55529fca69e6d3,
+    .dependencies = .{
+        .json_schema_tools_meta_schema = .{
+            .url = "git+https://github.com/json-schema-tools/meta-schema.git#8e0731146411f54cbbf0dcefb170edb03d4b1133",
+            .hash = "json_schema_tools_meta_schema-0.1.0-nJj301WrAACO_BcmVMKtbIzCEYNsFsnNv4y5NwlXi8Bq",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "zig/traverse.zig",
+        "zig/traverse_test.zig",
+        "zig/README.md",
+    },
+}
