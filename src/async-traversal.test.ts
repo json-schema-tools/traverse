@@ -160,7 +160,7 @@ describe("conditional async traversal", () => {
         mutable, bfs,
         additionalSubschemas: node => node["x-map"] ? [
           { path: ["x-map", "schemas", 0] }, { path: ["x-map", "schemas", "0"] },
-          // Explicitly select items:false, which the current built-in walker skips.
+          // Overlap the built-in items location to verify deduplication.
           { path: ["x-map", "schemas", 0, "items"] },
         ] : [],
       }));
