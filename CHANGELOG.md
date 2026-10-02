@@ -5,6 +5,25 @@
 
 * support additional schema keywords ([6c0a7fa](https://github.com/json-schema-tools/traverse/commit/6c0a7fa714a2640ba6da7bfa3f2597ff42ffe71c))
 
+## [1.12.0](https://github.com/json-schema-tools/traverse/compare/1.11.1...1.12.0) (2026-10-02)
+
+
+### Features
+
+* preserve own special keys in schema maps ([e38d59a](https://github.com/json-schema-tools/traverse/commit/e38d59adfcb854b268c1137e156d0a24be4ef4aa))
+* preserve own special keys in schema maps ([b084049](https://github.com/json-schema-tools/traverse/commit/b0840495bd64fe2f8fc8e326f13018b564741142)), closes [#825](https://github.com/json-schema-tools/traverse/issues/825)
+* retain DFS replacements across shared schema references ([ec10f3b](https://github.com/json-schema-tools/traverse/commit/ec10f3bcd732da9e05605f61bf0d2b8f4cb8e5c6))
+* retain DFS replacements across shared schema references ([bdca7b6](https://github.com/json-schema-tools/traverse/commit/bdca7b6c40cf4956d7ad0064dd8dbc3bb22e4a77)), closes [#824](https://github.com/json-schema-tools/traverse/issues/824)
+
+
+### Bug Fixes
+
+* copy skipped root cycles before immutable mutation ([db16afe](https://github.com/json-schema-tools/traverse/commit/db16afe9ba43833f1e91bf0e6f9c7c05e7fae301))
+* copy skipped root cycles before immutable mutation ([4fd8345](https://github.com/json-schema-tools/traverse/commit/4fd83450480d934c6717ffd5b85fe8c8efd5aa73)), closes [#823](https://github.com/json-schema-tools/traverse/issues/823)
+* exclude test helper artifacts from npm package ([#845](https://github.com/json-schema-tools/traverse/issues/845)) ([b2821f4](https://github.com/json-schema-tools/traverse/commit/b2821f42ff7dfed7eb95d002e1de2bd2513145fd))
+* report the items edge path for skipped root cycles ([0390578](https://github.com/json-schema-tools/traverse/commit/0390578f05ea704a5d3a6b3270d401f7a5ed63d4))
+* report the items edge path for skipped root cycles ([255e6f8](https://github.com/json-schema-tools/traverse/commit/255e6f80bfb25cef94da3b55368a6262e7e7ab4c)), closes [#832](https://github.com/json-schema-tools/traverse/issues/832)
+
 ## [1.11.1](https://github.com/json-schema-tools/traverse/compare/1.11.0...1.11.1) (2026-10-02)
 
 
