@@ -2,13 +2,13 @@ import traverse from "./";
 import { JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse paths", () => {
-  const test = (s: JSONSchema, paths: string[], isRoot = false) => {
+  const test = (s: JSONSchema, paths: string[]) => {
     const mutator = jest.fn((s) => s);
 
     traverse(s, mutator);
 
     paths.forEach((path, i) => {
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         i + 1,
         expect.anything(),
         expect.any(Boolean),
@@ -21,7 +21,7 @@ describe("traverse paths", () => {
   describe("schema is a boolean", () => {
     it("allows root schema as boolean", () => {
       const testSchema: any = true;
-      test(testSchema, ["$"], true);
+      test(testSchema, ["$"]);
     });
   });
 
@@ -37,14 +37,14 @@ describe("traverse paths", () => {
       const mutator = jest.fn((s) => s);
 
       traverse(testSchema, mutator);
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         1,
         expect.anything(),
         expect.any(Boolean),
         '$.properties.a',
         expect.anything(),
       );
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         2,
         expect.anything(),
         expect.any(Boolean),
@@ -58,14 +58,14 @@ describe("traverse paths", () => {
       const mutator = jest.fn((s) => s);
 
       traverse(testSchema, mutator);
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         1,
         expect.anything(),
         expect.any(Boolean),
         '$.properties.a',
         expect.anything(),
       );
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         2,
         expect.anything(),
         expect.any(Boolean),
@@ -84,7 +84,7 @@ describe("traverse paths", () => {
       const mutator = jest.fn((s) => s);
 
       traverse(testSchema, mutator);
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         1,
         expect.anything(),
         expect.any(Boolean),
@@ -107,14 +107,14 @@ describe("traverse paths", () => {
 
       traverse(testSchema, mutator);
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         1,
         expect.anything(),
         expect.any(Boolean),
         '$.additionalProperties.properties.c',
         expect.anything(),
       );
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         2,
         expect.anything(),
         expect.any(Boolean),
@@ -122,7 +122,7 @@ describe("traverse paths", () => {
         expect.anything()
       );
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         3,
         expect.anything(),
         expect.any(Boolean),
@@ -130,7 +130,7 @@ describe("traverse paths", () => {
         expect.anything()
       );
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         4,
         expect.anything(),
         expect.any(Boolean),
@@ -156,7 +156,7 @@ describe("traverse paths", () => {
 
       traverse(testSchema, mutator);
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         1,
         expect.anything(),
         expect.any(Boolean),
@@ -202,14 +202,14 @@ describe("traverse paths", () => {
 
       traverse(testSchema, mutator);
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         1,
         expect.anything(),
         expect.any(Boolean),
         '$.items[0]',
         expect.anything(),
       );
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         2,
         expect.anything(),
         expect.any(Boolean),
@@ -228,14 +228,14 @@ describe("traverse paths", () => {
 
       traverse(testSchema, mutator);
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         1,
         expect.anything(),
         expect.any(Boolean),
         '$.items',
         expect.anything(),
       );
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         2,
         expect.anything(),
         expect.any(Boolean),

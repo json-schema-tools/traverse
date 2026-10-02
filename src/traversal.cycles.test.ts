@@ -258,14 +258,14 @@ describe("traverse", () => {
 
       traverse(testSchema as JSONSchema, mockMutation, { mutable: false });
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         testSchema.oneOf[0],
         false,
         expect.any(String),
         testSchema
       );
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         testSchema,
         true,

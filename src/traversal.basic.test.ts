@@ -1,5 +1,5 @@
 import traverse, { MutationFunction } from "./";
-import { Properties, JSONSchemaObject, JSONSchema } from "@json-schema-tools/meta-schema";
+import { JSONSchemaObject, JSONSchema } from "@json-schema-tools/meta-schema";
 
 describe("traverse", () => {
   const testCalls = (
@@ -171,7 +171,7 @@ describe("traverse", () => {
       traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         schema.patternProperties['*.'],
         expect.anything(),
@@ -179,7 +179,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         schema.patternProperties['x-^'],
         expect.anything(),
@@ -196,7 +196,7 @@ describe("traverse", () => {
       traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(3);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         schema.properties.a,
         expect.anything(),
@@ -204,7 +204,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         schema.properties.b,
         expect.anything(),
@@ -212,7 +212,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         3,
         schema,
         expect.anything(),
@@ -238,7 +238,7 @@ describe("traverse", () => {
       const mockMutation = jest.fn((s) => s);
       traverse(schema as JSONSchema, mockMutation);
       expect(mockMutation).toHaveBeenCalledTimes(2);
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         schema.items,
         expect.anything(),
@@ -246,7 +246,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         schema,
         expect.anything(),
@@ -284,7 +284,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         testSchema.properties.a,
         expect.anything(),
@@ -292,7 +292,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         testSchema.properties.b,
         expect.anything(),
@@ -300,7 +300,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         3,
         testSchema,
         expect.anything(),
@@ -319,7 +319,7 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         testSchema.additionalProperties,
         expect.anything(),
@@ -327,7 +327,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         testSchema,
         expect.anything(),
@@ -350,14 +350,14 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         testSchema.additionalProperties.properties.c,
         expect.anything(),
         expect.anything(),
         expect.anything(),
       );
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         testSchema.additionalProperties.properties.d,
         expect.anything(),
@@ -365,7 +365,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         3,
         testSchema.additionalProperties,
         expect.anything(),
@@ -373,7 +373,7 @@ describe("traverse", () => {
         expect.anything(),
       );
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         4,
         testSchema,
         expect.anything(),
@@ -393,14 +393,14 @@ describe("traverse", () => {
 
         traverse(testSchema, mockMutation);
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           1,
           testSchema.additionalItems,
           expect.anything(),
           expect.anything(),
           expect.anything(),
         );
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           2,
           testSchema,
           expect.anything(),
@@ -420,14 +420,14 @@ describe("traverse", () => {
         traverse(testSchema, mockMutation);
 
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           1,
           testSchema.additionalItems,
           expect.anything(),
           expect.anything(),
           expect.anything(),
         );
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           2,
           testSchema,
           expect.anything(),
@@ -447,7 +447,7 @@ describe("traverse", () => {
 
         traverse(testSchema, mockMutation);
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           1,
           testSchema.items[0],
           expect.anything(),
@@ -455,7 +455,7 @@ describe("traverse", () => {
           expect.anything(),
         );
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           2,
           testSchema.additionalItems,
           expect.anything(),
@@ -463,7 +463,7 @@ describe("traverse", () => {
           expect.anything(),
         );
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           3,
           testSchema,
           expect.anything(),
@@ -483,7 +483,7 @@ describe("traverse", () => {
 
         traverse(testSchema, mockMutation);
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           1,
           testSchema.items,
           expect.anything(),
@@ -491,7 +491,7 @@ describe("traverse", () => {
           expect.anything(),
         );
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           2,
           testSchema.additionalItems,
           expect.anything(),
@@ -499,7 +499,7 @@ describe("traverse", () => {
           expect.anything(),
         );
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           3,
           testSchema,
           expect.anything(),
@@ -525,14 +525,14 @@ describe("traverse", () => {
         traverse(testSchema, mockMutation);
 
         expect(mockMutation).toHaveBeenCalledTimes(5);
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           1,
           testSchema.items[0],
           expect.anything(),
           expect.anything(),
           expect.anything(),
         );
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           2,
           testSchema.additionalItems.properties.c,
           false,
@@ -540,14 +540,14 @@ describe("traverse", () => {
           expect.anything(),
         );
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           3,
           testSchema.additionalItems.properties.d,
           false,
           expect.anything(),
           expect.anything(),
         );
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           4,
           testSchema.additionalItems,
           false,
@@ -555,7 +555,7 @@ describe("traverse", () => {
           expect.anything(),
         );
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           5,
           testSchema,
           false,
@@ -580,14 +580,14 @@ describe("traverse", () => {
         traverse(testSchema, mockMutation);
         expect(mockMutation).toHaveBeenCalledTimes(5);
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           1,
           testSchema.items,
           expect.anything(),
           expect.anything(),
           expect.anything(),
         );
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           2,
           testSchema.additionalItems.properties.c,
           false,
@@ -595,14 +595,14 @@ describe("traverse", () => {
           expect.anything(),
         );
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           3,
           testSchema.additionalItems.properties.d,
           false,
           expect.anything(),
           expect.anything(),
         );
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           4,
           testSchema.additionalItems,
           false,
@@ -610,7 +610,7 @@ describe("traverse", () => {
           expect.anything(),
         );
 
-        expect(mockMutation).nthCalledWith(
+        expect(mockMutation).toHaveBeenNthCalledWith(
           5,
           testSchema,
           false,
@@ -630,14 +630,14 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         testSchema.contains,
         expect.anything(),
         expect.anything(),
         expect.anything(),
       );
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         testSchema,
         expect.anything(),
@@ -656,14 +656,14 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         testSchema.propertyNames,
         expect.anything(),
         expect.anything(),
         expect.anything(),
       );
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         testSchema,
         expect.anything(),
@@ -682,14 +682,14 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         testSchema.unevaluatedItems,
         expect.anything(),
         expect.anything(),
         expect.anything(),
       );
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         testSchema,
         expect.anything(),
@@ -708,14 +708,14 @@ describe("traverse", () => {
 
       traverse(testSchema, mockMutation);
 
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         1,
         testSchema.unevaluatedProperties,
         expect.anything(),
         expect.anything(),
         expect.anything(),
       );
-      expect(mockMutation).nthCalledWith(
+      expect(mockMutation).toHaveBeenNthCalledWith(
         2,
         testSchema,
         expect.anything(),
