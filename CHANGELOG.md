@@ -5,6 +5,13 @@
 
 * support additional schema keywords ([6c0a7fa](https://github.com/json-schema-tools/traverse/commit/6c0a7fa714a2640ba6da7bfa3f2597ff42ffe71c))
 
+## [1.14.0](https://github.com/json-schema-tools/traverse/compare/1.13.0...1.14.0) (2026-10-02)
+
+
+### Features
+
+* support additional subschema locations ([#853](https://github.com/json-schema-tools/traverse/issues/853)) ([a68ce74](https://github.com/json-schema-tools/traverse/commit/a68ce745090c62b40681c7ea096c03bdc8cfbc07))
+
 ## [1.13.0](https://github.com/json-schema-tools/traverse/compare/1.12.0...1.13.0) (2026-10-02)
 
 
