@@ -1,5 +1,6 @@
 import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-tools/meta-schema";
 import { jsonPathStringify, isCycle, last } from "./utils";
+import { reconnectReferences } from "./references";
 
 /**
  * Signature of the mutation method passed to traverse.
@@ -71,6 +72,7 @@ export default function traverse(
   pathStack: string[] = [],
   prePostMap: Array<[JSONSchema, JSONSchema]> = [],
   cycleSet: JSONSchema[] = [],
+  replacements: Map<JSONSchema, JSONSchema> = new Map(),
 ): JSONSchema {
   const opts = { ...defaultOptions, ...traverseOptions }; // would be nice to make an 'entry' func when we get around to optimizations
 
@@ -114,32 +116,48 @@ export default function traverse(
   }
 
   recursiveStack.push(schema);
-  prePostMap.push([schema, mutableSchema]);
+  const schemaPair: [JSONSchema, JSONSchema] = [schema, mutableSchema];
+  prePostMap.push(schemaPair);
+  if (schema !== mutableSchema) {
+    replacements.set(schema, mutableSchema);
+  }
+
+  const replace = (pair: [JSONSchema, JSONSchema], result: JSONSchema) => {
+    const previous = pair[1];
+    if (typeof previous === "object" && previous !== result) {
+      replacements.set(previous, result);
+    }
+    if (pair[0] !== result) {
+      replacements.set(pair[0], result);
+    } else {
+      replacements.delete(pair[0]);
+    }
+    pair[1] = result;
+    return result;
+  };
 
   const rec = (s: JSONSchema, path: string[]): JSONSchema => {
     const foundCycle = isCycle(s, recursiveStack);
     if (foundCycle) {
       cycleSet.push(foundCycle);
 
-      // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
-      // If we don't, it will never happen.
-      if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-        return mutation(
-          s,
-          true,
-          jsonPathStringify(path),
-          last(mutableStack), // should we be popping here?
-        );
-      }
-
-      const [, cycledMutableSchema] = prePostMap.find(
+      const pair = prePostMap.find(
         ([orig]) => foundCycle === orig,
       ) as [JSONSchema, JSONSchema];
 
-      return cycledMutableSchema;
+      // A skipped root still needs a callback when reached through a cycle.
+      if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
+        return replace(pair, mutation(
+          pair[1],
+          true,
+          jsonPathStringify(path),
+          last(mutableStack),
+        ));
+      }
+
+      return pair[1];
     }
 
-    // else
     return traverse(
       s,
       mutation,
@@ -150,6 +168,7 @@ export default function traverse(
       path,
       prePostMap,
       cycleSet,
+      replacements,
     );
   };
 
@@ -158,135 +177,114 @@ export default function traverse(
       const result = rec(x, [...pathStack, `anyOf[${i}]`]);
       return result;
     });
-  } else if (schema.allOf) {
+  }
+  if (schema.allOf) {
     mutableSchema.allOf = schema.allOf.map((x, i) => {
       const result = rec(x, [...pathStack, `allOf[${i}]`]);
       return result;
     });
-  } else if (schema.oneOf) {
+  }
+  if (schema.oneOf) {
     mutableSchema.oneOf = schema.oneOf.map((x, i) => {
       const result = rec(x, [...pathStack, `oneOf[${i}]`]);
       return result;
     });
-  } else {
-    if (schema.items) {
-      if (schema.items instanceof Array) {
-        mutableSchema.items = schema.items.map((x, i) => {
-          const result = rec(x, [...pathStack, `items[${i}]`]);
-          return result;
-        });
-      } else {
-        const foundCycle = isCycle(schema.items, recursiveStack);
-        if (foundCycle) {
-          cycleSet.push(foundCycle);
-
-          if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-            mutableSchema.items = mutation(
-              schema.items,
-              true,
-              jsonPathStringify(pathStack),
-              last(mutableStack)
-            );
-          } else {
-            const [, cycledMutableSchema] = prePostMap.find(
-              ([orig]) => foundCycle === orig,
-            ) as [JSONSchema, JSONSchema];
-
-            mutableSchema.items = cycledMutableSchema;
-          }
-        } else {
-          mutableSchema.items = traverse(
-            schema.items,
-            mutation,
-            traverseOptions,
-            depth + 1,
-            recursiveStack,
-            mutableStack,
-            [...pathStack, "items"],
-            prePostMap,
-            cycleSet,
-          );
-        }
-      }
-    }
-
-    if (schema.additionalItems !== undefined) {
-      mutableSchema.additionalItems = rec(
-        schema.additionalItems,
-        [...pathStack, "additionalItems"]
-      );
-    }
-
-    if (schema.contains !== undefined) {
-      mutableSchema.contains = rec(
-        schema.contains,
-        [...pathStack, "contains"],
-      );
-    }
-
-    if (schema.unevaluatedItems !== undefined) {
-      mutableSchema.unevaluatedItems = rec(
-        schema.unevaluatedItems,
-        [...pathStack, "unevaluatedItems"],
-      );
-    }
-
-    if (schema.properties !== undefined) {
-      const sProps: { [key: string]: JSONSchema } = schema.properties;
-      const mutableProps: { [key: string]: JSONSchema } = {};
-
-      Object.keys(schema.properties).forEach((schemaPropKey: string) => {
-        mutableProps[schemaPropKey] = rec(sProps[schemaPropKey], [...pathStack, "properties", schemaPropKey.toString()]);
+  }
+  if (schema.items) {
+    if (schema.items instanceof Array) {
+      mutableSchema.items = schema.items.map((x, i) => {
+        const result = rec(x, [...pathStack, `items[${i}]`]);
+        return result;
       });
-
-      mutableSchema.properties = mutableProps;
-    }
-
-    if (schema.patternProperties !== undefined) {
-      const sProps = schema.patternProperties;
-      const mutableProps: PatternProperties = {};
-
-      Object.keys(schema.patternProperties).forEach((regex: string) => {
-        mutableProps[regex] = rec(sProps[regex], [...pathStack, "patternProperties", regex.toString()]);
-      });
-
-      mutableSchema.patternProperties = mutableProps;
-    }
-
-    if (schema.additionalProperties !== undefined && !!schema.additionalProperties === true) {
-      mutableSchema.additionalProperties = rec(schema.additionalProperties, [...pathStack, "additionalProperties"]);
-    }
-
-    if (schema.propertyNames !== undefined) {
-      mutableSchema.propertyNames = rec(
-        schema.propertyNames,
-        [...pathStack, "propertyNames"],
-      );
-    }
-
-    if (schema.unevaluatedProperties !== undefined && !!schema.unevaluatedProperties === true) {
-      mutableSchema.unevaluatedProperties = rec(
-        schema.unevaluatedProperties,
-        [...pathStack, "unevaluatedProperties"],
-      );
+    } else {
+      mutableSchema.items = rec(schema.items, [...pathStack, "items"]);
     }
   }
 
+  if (schema.additionalItems !== undefined) {
+    mutableSchema.additionalItems = rec(
+      schema.additionalItems,
+      [...pathStack, "additionalItems"]
+    );
+  }
+
+  if (schema.contains !== undefined) {
+    mutableSchema.contains = rec(
+      schema.contains,
+      [...pathStack, "contains"],
+    );
+  }
+
+  if (schema.unevaluatedItems !== undefined) {
+    mutableSchema.unevaluatedItems = rec(
+      schema.unevaluatedItems,
+      [...pathStack, "unevaluatedItems"],
+    );
+  }
+
+  if (schema.properties !== undefined) {
+    const sProps: { [key: string]: JSONSchema } = schema.properties;
+    const mutableProps: { [key: string]: JSONSchema } = {};
+
+    Object.keys(schema.properties).forEach((schemaPropKey: string) => {
+      Object.defineProperty(mutableProps, schemaPropKey, {
+        value: rec(sProps[schemaPropKey], [...pathStack, "properties", schemaPropKey.toString()]),
+        enumerable: true, configurable: true, writable: true,
+      });
+    });
+
+    mutableSchema.properties = mutableProps;
+  }
+
+  if (schema.patternProperties !== undefined) {
+    const sProps = schema.patternProperties;
+    const mutableProps: PatternProperties = {};
+
+    Object.keys(schema.patternProperties).forEach((regex: string) => {
+      Object.defineProperty(mutableProps, regex, {
+        value: rec(sProps[regex], [...pathStack, "patternProperties", regex.toString()]),
+        enumerable: true, configurable: true, writable: true,
+      });
+    });
+
+    mutableSchema.patternProperties = mutableProps;
+  }
+
+  if (schema.additionalProperties !== undefined && !!schema.additionalProperties === true) {
+    mutableSchema.additionalProperties = rec(schema.additionalProperties, [...pathStack, "additionalProperties"]);
+  }
+
+  if (schema.propertyNames !== undefined) {
+    mutableSchema.propertyNames = rec(
+      schema.propertyNames,
+      [...pathStack, "propertyNames"],
+    );
+  }
+
+  if (schema.unevaluatedProperties !== undefined && !!schema.unevaluatedProperties === true) {
+    mutableSchema.unevaluatedProperties = rec(
+      schema.unevaluatedProperties,
+      [...pathStack, "unevaluatedProperties"],
+    );
+  }
+
   if (opts.skipFirstMutation === true && depth === 0) {
-    return mutableSchema;
+    mutableStack.pop();
+    return reconnectReferences(schemaPair[1], replacements);
   }
 
   if (opts.bfs === true) {
     mutableStack.pop();
-    return mutableSchema;
+    return depth === 0 ? reconnectReferences(mutableSchema, replacements) : mutableSchema;
   } else {
     const isCycleNode = cycleSet.indexOf(schema) !== -1
     mutableStack.pop();
-    return mutation(
+    const result = replace(schemaPair, mutation(
       mutableSchema,
       isCycleNode,
       jsonPathStringify(pathStack),
       last(mutableStack)
-    );
+    ));
+    return depth === 0 ? reconnectReferences(result, replacements) : result;
   }
 }
