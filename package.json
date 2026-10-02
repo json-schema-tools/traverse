@@ -38,6 +38,6 @@
     "jest-it-up": "^4.0.1",
     "ts-jest": "^29.0.3",
     "typedoc": "^0.26.10",
-    "typescript": "^5.4.4"
+    "typescript": "^7.0.2"
   }
 }
