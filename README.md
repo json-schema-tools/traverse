@@ -50,8 +50,14 @@ const mySchema = {
 
 traverse(mySchema, (schemaOrSubschema) => {
   console.log(schemaOrSubschema.title);
+  return schemaOrSubschema;
 });
 ```
+
+The callback must return a schema on every call, even when it only reads or logs
+the node. Return the supplied schema to keep it, or return another schema
+(including `true` or `false`) to replace it. Omitting the return produces
+`undefined`, which is not a valid schema and can cause traversal to fail.
 
 ### Advanced Options
 
@@ -59,13 +65,16 @@ traverse(mySchema, (schemaOrSubschema) => {
 flags include:
 
 - `pathFormat` - `"jsonpath"` (default) or `"jsonpointer"` for callback paths
-- `bfs` - process schemas in a breadth first order
+- `bfs` - call the callback before visiting a schema's children (preorder).
+  Despite its name, this currently uses depth-first traversal, not level-by-level
+  breadth-first traversal. The default calls the callback after the children.
 - `skipFirstMutation` - do not call the mutation function on the root schema
 - `mergeNotMutate` - merge the mutation result back into the original schema
 
 ```js
 traverse(mySchema, (schemaOrSubschema) => {
   console.log(schemaOrSubschema.title);
+  return schemaOrSubschema;
 }, {
   bfs: true,
   skipFirstMutation: true,

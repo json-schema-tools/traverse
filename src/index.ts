@@ -4,11 +4,14 @@ import { reconnectReferences } from "./references";
 
 /**
  * Signature of the mutation method passed to traverse.
+ * The callback must return a schema on every call. Return the supplied schema
+ * to keep it, even when the callback only reads or logs the node.
  *
  * @param schema The schema or subschema node being traversed
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  * @param path Location of the visited schema in the selected pathFormat. JSONPath (default) uses `$` for the root; JSON Pointer uses the empty string. Pointers are relative to the input schema, not the instance being validated. URI-fragment encoding is not applied.
  * @param parent A reference to JSONSchema that is the parent of the `schema` param. If the `schema` is the root schema, `parent` will be `undefined`. when schema is a cycle, parent is the parent of the referenced cycle (once again, if the cycled schema is the root, the parent will be undefined).
+ * @returns The schema to keep or use as a replacement, including boolean schemas.
  */
 export type MutationFunction = (
   schema: JSONSchema,
@@ -42,8 +45,8 @@ export interface TraverseOptions {
   mutable?: boolean;
 
   /**
-   * true if you want to traverse in a breadth-first manner. This will cause the mutation function to be called first with
-   * the root schema, moving down the subschemas until the terminal subschemas.
+   * true to call the mutation function before visiting each schema's children.
+   * Despite the name, this is preorder depth-first traversal, not level-by-level breadth-first traversal.
    */
   bfs?: boolean;
 }
