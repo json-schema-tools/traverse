@@ -5,6 +5,13 @@
 
 * support additional schema keywords ([6c0a7fa](https://github.com/json-schema-tools/traverse/commit/6c0a7fa714a2640ba6da7bfa3f2597ff42ffe71c))
 
+## [1.15.0](https://github.com/json-schema-tools/traverse/compare/1.14.0...1.15.0) (2026-10-02)
+
+
+### Features
+
+* support conditional async mutators ([#855](https://github.com/json-schema-tools/traverse/issues/855)) ([c318055](https://github.com/json-schema-tools/traverse/commit/c31805540373e2b59208181c8051838aa4348782)), closes [#51](https://github.com/json-schema-tools/traverse/issues/51)
+
 ## [1.14.0](https://github.com/json-schema-tools/traverse/compare/1.13.0...1.14.0) (2026-10-02)
 
 
