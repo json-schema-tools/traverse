@@ -5,6 +5,14 @@
 
 * support additional schema keywords ([6c0a7fa](https://github.com/json-schema-tools/traverse/commit/6c0a7fa714a2640ba6da7bfa3f2597ff42ffe71c))
 
+## [1.11.1](https://github.com/json-schema-tools/traverse/compare/1.11.0...1.11.1) (2026-10-02)
+
+
+### Bug Fixes
+
+* traverse sibling schemas alongside composition keywords ([d145870](https://github.com/json-schema-tools/traverse/commit/d145870becf9407196e6ccd9b09ed85b18334f07))
+* traverse sibling schemas alongside composition keywords ([0182ba4](https://github.com/json-schema-tools/traverse/commit/0182ba46a4ff12a588eace30d40319d7f02eaa82)), closes [#822](https://github.com/json-schema-tools/traverse/issues/822)
+
 ## [1.10.4](https://github.com/json-schema-tools/traverse/compare/1.10.3...1.10.4) (2024-05-07)
 
 
