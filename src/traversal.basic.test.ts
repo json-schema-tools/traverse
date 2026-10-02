@@ -750,3 +750,22 @@ describe("traverse", () => {
     });
   });
 });
+
+
+describe("entry wrapper", () => {
+  it("normalizes options once while preserving recursive paths and defaults", () => {
+    const readBfs = jest.fn(() => false);
+    const options = { get bfs() { return readBfs(); } };
+    const schema = { properties: { foo: { items: { type: "string" } } } };
+    const paths: string[] = [];
+    const result = traverse(schema as JSONSchema, (node, cycle, path) => {
+      paths.push(path);
+      return node;
+    }, options);
+
+    expect(readBfs).toHaveBeenCalledTimes(1);
+    expect(paths).toEqual(["$.properties.foo.items", "$.properties.foo", "$"]);
+    expect(result).toEqual(schema);
+    expect(result).not.toBe(schema);
+  });
+});
