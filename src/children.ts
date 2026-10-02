@@ -25,7 +25,7 @@ export function builtInChildren(schema: JSONSchemaObject): Child[] {
   };
   for (const keyword of ["anyOf", "allOf", "oneOf", "items"]) {
     const value = schema[keyword];
-    if (value) {
+    if (value !== undefined) {
       if (Array.isArray(value)) {
         value.forEach((child, index) => add([keyword, index], child));
       } else {
@@ -43,13 +43,13 @@ export function builtInChildren(schema: JSONSchemaObject): Child[] {
       Object.keys(schema[keyword]).forEach(key => add([keyword, key], schema[keyword][key]));
     }
   }
-  if (schema.additionalProperties) {
+  if (schema.additionalProperties !== undefined) {
     add(["additionalProperties"], schema.additionalProperties);
   }
   if (schema.propertyNames !== undefined) {
     add(["propertyNames"], schema.propertyNames);
   }
-  if (schema.unevaluatedProperties) {
+  if (schema.unevaluatedProperties !== undefined) {
     add(["unevaluatedProperties"], schema.unevaluatedProperties);
   }
   for (const keyword of ["not", "if", "then", "else"]) {
