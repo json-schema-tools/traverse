@@ -122,17 +122,17 @@ export default function traverse(
     replacements.set(schema, mutableSchema);
   }
 
-  const replace = (result: JSONSchema): JSONSchema => {
-    const previous = schemaPair[1];
+  const replace = (pair: [JSONSchema, JSONSchema], result: JSONSchema): JSONSchema => {
+    const previous = pair[1];
     if (typeof previous === "object" && previous !== result) {
       replacements.set(previous, result);
     }
-    if (schema !== result) {
-      replacements.set(schema, result);
+    if (pair[0] !== result) {
+      replacements.set(pair[0], result);
     } else {
-      replacements.delete(schema);
+      replacements.delete(pair[0]);
     }
-    schemaPair[1] = result;
+    pair[1] = result;
     return result;
   };
 
@@ -144,12 +144,13 @@ export default function traverse(
       // if the cycle is a ref to the root schema && skipFirstMutation is try we need to call mutate.
       // If we don't, it will never happen.
       if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-        return mutation(
-          s,
+        const rootPair = prePostMap[0];
+        return replace(rootPair, mutation(
+          rootPair[1],
           true,
           jsonPathStringify(path),
           last(mutableStack), // should we be popping here?
-        );
+        ));
       }
 
       const [, cycledMutableSchema] = prePostMap.find(
@@ -204,12 +205,13 @@ export default function traverse(
         cycleSet.push(foundCycle);
 
         if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
-          mutableSchema.items = mutation(
-            schema.items,
+          const rootPair = prePostMap[0];
+          mutableSchema.items = replace(rootPair, mutation(
+            rootPair[1],
             true,
             jsonPathStringify([...pathStack, "items"]),
             last(mutableStack)
-          );
+          ));
         } else {
           const [, cycledMutableSchema] = prePostMap.find(
             ([orig]) => foundCycle === orig,
@@ -302,7 +304,7 @@ export default function traverse(
   }
 
   if (opts.skipFirstMutation === true && depth === 0) {
-    return mutableSchema;
+    return reconnectReferences(schemaPair[1], replacements);
   }
 
   if (opts.bfs === true) {
@@ -311,7 +313,7 @@ export default function traverse(
   } else {
     const isCycleNode = cycleSet.indexOf(schema) !== -1
     mutableStack.pop();
-    const result = replace(mutation(
+    const result = replace(schemaPair, mutation(
       mutableSchema,
       isCycleNode,
       jsonPathStringify(pathStack),
