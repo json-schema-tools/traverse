@@ -80,3 +80,10 @@ The full TypeDoc generated API documentation is available at
 ### Contributing
 
 How to contribute, build and release are outlined in [CONTRIBUTING.md](CONTRIBUTING.md), [BUILDING.md](BUILDING.md) and [RELEASING.md](RELEASING.md) respectively. Commits in this repository follow the [CONVENTIONAL_COMMITS.md](CONVENTIONAL_COMMITS.md) specification.
+
+### Callback paths
+
+The callback's third argument is a JSONPath identifying the visited schema.
+Simple member names use dot notation (`$.properties.foo`), array indices use
+brackets (`$.items[0]`), and other names use JSON-escaped double-quoted brackets
+(`$.properties["a.b"]`). The root path is `$`.

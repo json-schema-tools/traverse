@@ -1,15 +1,18 @@
 import { JSONSchema } from "@json-schema-tools/meta-schema";
 
-export const jsonPathStringify = (s: string[]): string => {
-  return s
-    .map((i) => {
-      if (i === "") {
-        return "$";
-      } else {
-        return `.${i}`;
-      }
-    })
-    .join("");
+export type PathSegment = string | number;
+
+/** Format raw member names and array indices without interpreting names as syntax. */
+export const jsonPathStringify = (segments: PathSegment[]): string => {
+  return "$" + segments.map((segment) => {
+    if (typeof segment === "number") {
+      return `[${segment}]`;
+    }
+    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(segment)) {
+      return `.${segment}`;
+    }
+    return `[${JSON.stringify(segment)}]`;
+  }).join("");
 };
 
 export const isCycle = (
