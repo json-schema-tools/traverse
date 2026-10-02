@@ -2,8 +2,7 @@
 
 <center>
   <span>
-    <img alt="CircleCI branch" src="https://img.shields.io/circleci/project/github/json-schema-tools/traverse/master.svg">
-    <img src="https://codecov.io/gh/json-schema-tools/traverse/branch/master/graph/badge.svg" />
+    <img alt="GitHub Actions CI" src="https://github.com/json-schema-tools/traverse/actions/workflows/ci.yml/badge.svg?branch=master">
     <img alt="npm" src="https://img.shields.io/npm/dt/@json-schema-tools/traverse.svg" />
     <img alt="GitHub release" src="https://img.shields.io/github/release/json-schema-tools/traverse.svg" />
     <img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/json-schema-tools/traverse/latest.svg" />
