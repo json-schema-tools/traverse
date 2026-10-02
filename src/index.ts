@@ -238,7 +238,10 @@ export default function traverse(
     const mutableProps: { [key: string]: JSONSchema } = {};
 
     Object.keys(schema.properties).forEach((schemaPropKey: string) => {
-      mutableProps[schemaPropKey] = rec(sProps[schemaPropKey], [...pathStack, "properties", schemaPropKey.toString()]);
+      Object.defineProperty(mutableProps, schemaPropKey, {
+        value: rec(sProps[schemaPropKey], [...pathStack, "properties", schemaPropKey.toString()]),
+        enumerable: true, configurable: true, writable: true,
+      });
     });
 
     mutableSchema.properties = mutableProps;
@@ -249,7 +252,10 @@ export default function traverse(
     const mutableProps: PatternProperties = {};
 
     Object.keys(schema.patternProperties).forEach((regex: string) => {
-      mutableProps[regex] = rec(sProps[regex], [...pathStack, "patternProperties", regex.toString()]);
+      Object.defineProperty(mutableProps, regex, {
+        value: rec(sProps[regex], [...pathStack, "patternProperties", regex.toString()]),
+        enumerable: true, configurable: true, writable: true,
+      });
     });
 
     mutableSchema.patternProperties = mutableProps;
