@@ -1,5 +1,5 @@
 import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-tools/meta-schema";
-import { jsonPathStringify, isCycle, last } from "./utils";
+import { jsonPathStringify, isCycle, last, PathSegment } from "./utils";
 import { reconnectReferences } from "./references";
 
 /**
@@ -7,7 +7,7 @@ import { reconnectReferences } from "./references";
  *
  * @param schema The schema or subschema node being traversed
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
- * @param path json-path string in dot-notation as per [draft-goessner-dispatch-jsonpath-00](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html#name-overview-of-jsonpath-expres)
+ * @param path JSONPath string using dot notation for simple names and quoted brackets for other names, as per [draft-goessner-dispatch-jsonpath-00](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html#name-overview-of-jsonpath-expres)
  * @param parent A reference to JSONSchema that is the parent of the `schema` param. If the `schema` is the root schema, `parent` will be `undefined`. when schema is a cycle, parent is the parent of the referenced cycle (once again, if the cycled schema is the root, the parent will be undefined).
  */
 export type MutationFunction = (
@@ -69,7 +69,7 @@ export function traverseInternal(
   depth: number,
   recursiveStack: JSONSchema[],
   mutableStack: JSONSchema[],
-  pathStack: string[],
+  pathStack: PathSegment[],
   prePostMap: Array<[JSONSchema, JSONSchema]>,
   cycleSet: JSONSchema[],
   replacements: Map<JSONSchema, JSONSchema>,
@@ -81,7 +81,7 @@ export function traverseInternal(
   // thus adding it to the recursive stack will prevent it from being explored if the
   // boolean is seen in a further nested schema.
   if (depth === 0) {
-    pathStack = [""];
+    pathStack = [];
   }
 
   if (typeof schema === "boolean" || schema instanceof Boolean) {
@@ -136,7 +136,7 @@ export function traverseInternal(
     return result;
   };
 
-  const rec = (s: JSONSchema, path: string[]): JSONSchema => {
+  const rec = (s: JSONSchema, path: PathSegment[]): JSONSchema => {
     const foundCycle = isCycle(s, recursiveStack);
     if (foundCycle) {
       cycleSet.push(foundCycle);
@@ -177,26 +177,26 @@ export function traverseInternal(
 
   if (schema.anyOf) {
     mutableSchema.anyOf = schema.anyOf.map((x, i) => {
-      const result = rec(x, [...pathStack, `anyOf[${i}]`]);
+      const result = rec(x, [...pathStack, "anyOf", i]);
       return result;
     });
   }
   if (schema.allOf) {
     mutableSchema.allOf = schema.allOf.map((x, i) => {
-      const result = rec(x, [...pathStack, `allOf[${i}]`]);
+      const result = rec(x, [...pathStack, "allOf", i]);
       return result;
     });
   }
   if (schema.oneOf) {
     mutableSchema.oneOf = schema.oneOf.map((x, i) => {
-      const result = rec(x, [...pathStack, `oneOf[${i}]`]);
+      const result = rec(x, [...pathStack, "oneOf", i]);
       return result;
     });
   }
   if (schema.items) {
     if (schema.items instanceof Array) {
       mutableSchema.items = schema.items.map((x, i) => {
-        const result = rec(x, [...pathStack, `items[${i}]`]);
+        const result = rec(x, [...pathStack, "items", i]);
         return result;
       });
     } else {
