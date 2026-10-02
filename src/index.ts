@@ -1,5 +1,6 @@
 import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import { jsonPathStringify, jsonPointerStringify, isCycle, last, PathSegment } from "./utils";
+import { breadthFirst } from "./breadth-first";
 import { reconnectReferences } from "./references";
 import { runTraversal } from "./async";
 import { discoverChildren, AdditionalSubschemas, copyContainer, writeChild } from "./children";
@@ -75,8 +76,7 @@ export interface TraverseOptions {
   mutable?: boolean;
 
   /**
-   * true to call the mutation function before visiting each schema's children.
-   * Despite the name, this is preorder depth-first traversal, not level-by-level breadth-first traversal.
+   * true to visit schemas level by level, calling each parent before its children.
    */
   bfs?: boolean;
 }
@@ -114,6 +114,9 @@ export function traverseInternal(
   childLocations: Map<JSONSchema, PathSegment[][]> = new Map(),
   additionalPaths: PathSegment[][] = [],
 ): JSONSchema | Promise<JSONSchema> {
+  if (traverseOptions.bfs === true) {
+    return runTraversal(breadthFirst(schema, mutation, traverseOptions));
+  }
   return runTraversal(traverseGenerator(
     schema, mutation, traverseOptions, depth, recursiveStack, mutableStack,
     pathStack, prePostMap, cycleSet, replacements, childLocations, additionalPaths,
@@ -182,28 +185,11 @@ function* traverseGenerator(
 
   mutableStack.push(mutableSchema);
 
-  if (opts.bfs === true) {
-    if (opts.skipFirstMutation === false || depth !== 0) {
-      mutableSchema = (yield* mutate(
-        mutableSchema,
-        false,
-        stringifyPath(pathStack),
-        last(mutableStack, 2)
-      )) as JSONSchemaObject;
-    }
-  }
-
-  mutableStack[mutableStack.length - 1] = mutableSchema;
   recursiveStack.push(schema);
   const schemaPair: [JSONSchema, JSONSchema] = [schema, mutableSchema];
   prePostMap.push(schemaPair);
   if (schema !== mutableSchema) {
     replacements.set(schema, mutableSchema);
-  }
-  // A preorder boolean replacement is a leaf, regardless of input children.
-  if (typeof mutableSchema === "boolean") {
-    mutableStack.pop();
-    return mutableSchema;
   }
   const children = discoverChildren(schema, opts.additionalSubschemas, additionalPaths, pathStack, stringifyPath);
   childLocations.set(mutableSchema, children.map(({ path }) => path));
@@ -284,20 +270,15 @@ function* traverseGenerator(
     return reconnectReferences(schemaPair[1], replacements, childLocations);
   }
 
-  if (opts.bfs === true) {
-    mutableStack.pop();
-    return depth === 0 ? reconnectReferences(mutableSchema, replacements, childLocations) : mutableSchema;
-  } else {
-    const isCycleNode = cycleSet.indexOf(schema) !== -1
-    mutableStack.pop();
-    const result = replace(schemaPair, yield* mutate(
-      mutableSchema,
-      isCycleNode,
-      stringifyPath(pathStack),
-      last(mutableStack)
-    ));
-    return depth === 0 ? reconnectReferences(result, replacements, childLocations) : result;
-  }
+  const isCycleNode = cycleSet.indexOf(schema) !== -1
+  mutableStack.pop();
+  const result = replace(schemaPair, yield* mutate(
+    mutableSchema,
+    isCycleNode,
+    stringifyPath(pathStack),
+    last(mutableStack)
+  ));
+  return depth === 0 ? reconnectReferences(result, replacements, childLocations) : result;
 }
 
 /** Return the completed schema immediately when every invoked callback is synchronous. */
