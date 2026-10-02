@@ -1,6 +1,7 @@
 import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import { jsonPathStringify, jsonPointerStringify, isCycle, last, PathSegment } from "./utils";
 import { reconnectReferences } from "./references";
+import { runTraversal } from "./async";
 import { discoverChildren, AdditionalSubschemas, copyContainer, writeChild } from "./children";
 
 export type { AdditionalSubschema, AdditionalSubschemas } from "./children";
@@ -15,14 +16,23 @@ export type { PathSegment } from "./utils";
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  * @param path Location of the visited schema in the selected pathFormat. JSONPath (default) uses `$` for the root; JSON Pointer uses the empty string. Pointers are relative to the input schema, not the instance being validated. URI-fragment encoding is not applied.
  * @param parent A reference to JSONSchema that is the parent of the `schema` param. If the `schema` is the root schema, `parent` will be `undefined`. when schema is a cycle, parent is the parent of the referenced cycle (once again, if the cycled schema is the root, the parent will be undefined).
- * @returns A schema, including boolean schemas, or void when allowUndefinedReturn is enabled.
+ * @returns A schema or a promise/thenable resolving to one, including boolean schemas.
+ * Undefined (sync or resolved) keeps the node only with allowUndefinedReturn enabled.
  */
 export type MutationFunction = (
   schema: JSONSchema,
   isCycle: boolean,
   path: string,
   parent: JSONSchema,
-) => JSONSchema | void;
+) => MutationResult;
+
+/** A synchronous or asynchronous mutation result. */
+export type MutationResult = JSONSchema | void | PromiseLike<JSONSchema | void>;
+
+/** A callback whose result is always synchronous. */
+export type SyncMutationFunction = (...args: Parameters<MutationFunction>) => JSONSchema | void;
+
+type MutationIterator = Generator<MutationResult, JSONSchema, JSONSchema | void>;
 
 /**
  * The options you can use when traversing.
@@ -46,7 +56,8 @@ export interface TraverseOptions {
 
   /**
    * Allow callbacks to return undefined (or nothing) to keep the node passed to them,
-   * including any in-place edits. When false (the default), an undefined return
+   * including any in-place edits. This also applies to promises resolving to undefined.
+   * When false (the default), an undefined return
    * throws a TypeError with the node path. This option does not remove nodes.
    */
   allowUndefinedReturn?: boolean;
@@ -102,16 +113,36 @@ export function traverseInternal(
   replacements: Map<JSONSchema, JSONSchema>,
   childLocations: Map<JSONSchema, PathSegment[][]> = new Map(),
   additionalPaths: PathSegment[][] = [],
-): JSONSchema {
+): JSONSchema | Promise<JSONSchema> {
+  return runTraversal(traverseGenerator(
+    schema, mutation, traverseOptions, depth, recursiveStack, mutableStack,
+    pathStack, prePostMap, cycleSet, replacements, childLocations, additionalPaths,
+  ));
+}
+
+function* traverseGenerator(
+  schema: JSONSchema,
+  mutation: MutationFunction,
+  traverseOptions: TraverseOptions,
+  depth: number,
+  recursiveStack: JSONSchema[],
+  mutableStack: JSONSchema[],
+  pathStack: PathSegment[],
+  prePostMap: Array<[JSONSchema, JSONSchema]>,
+  cycleSet: JSONSchema[],
+  replacements: Map<JSONSchema, JSONSchema>,
+  childLocations: Map<JSONSchema, PathSegment[][]>,
+  additionalPaths: PathSegment[][],
+): MutationIterator {
   const opts = traverseOptions;
   const stringifyPath = opts.pathFormat === "jsonpointer" ? jsonPointerStringify : jsonPathStringify;
-  const mutate = (
+  const mutate = function* (
     node: JSONSchema,
     isCycleNode: boolean,
     path: string,
     parent: JSONSchema,
-  ): JSONSchema => {
-    const result = mutation(node, isCycleNode, path, parent);
+  ): MutationIterator {
+    const result = yield mutation(node, isCycleNode, path, parent);
     if (result === undefined) {
       if (opts.allowUndefinedReturn === true) {
         return node;
@@ -135,7 +166,7 @@ export function traverseInternal(
     if (opts.skipFirstMutation === true && depth === 0) {
       return schema;
     } else {
-      return mutate(
+      return yield* mutate(
         schema,
         false,
         stringifyPath(pathStack),
@@ -153,17 +184,15 @@ export function traverseInternal(
 
   if (opts.bfs === true) {
     if (opts.skipFirstMutation === false || depth !== 0) {
-      mutableSchema = mutate(
+      mutableSchema = (yield* mutate(
         mutableSchema,
         false,
         stringifyPath(pathStack),
         last(mutableStack, 2)
-      ) as JSONSchemaObject;
+      )) as JSONSchemaObject;
     }
   }
 
-  const children = discoverChildren(schema, opts.additionalSubschemas, additionalPaths, pathStack, stringifyPath);
-  childLocations.set(mutableSchema, children.map(({ path }) => path));
   mutableStack[mutableStack.length - 1] = mutableSchema;
   recursiveStack.push(schema);
   const schemaPair: [JSONSchema, JSONSchema] = [schema, mutableSchema];
@@ -171,6 +200,13 @@ export function traverseInternal(
   if (schema !== mutableSchema) {
     replacements.set(schema, mutableSchema);
   }
+  // A preorder boolean replacement is a leaf, regardless of input children.
+  if (typeof mutableSchema === "boolean") {
+    mutableStack.pop();
+    return mutableSchema;
+  }
+  const children = discoverChildren(schema, opts.additionalSubschemas, additionalPaths, pathStack, stringifyPath);
+  childLocations.set(mutableSchema, children.map(({ path }) => path));
 
   const replace = (pair: [JSONSchema, JSONSchema], result: JSONSchema): JSONSchema => {
     const previous = pair[1];
@@ -187,7 +223,7 @@ export function traverseInternal(
     return result;
   };
 
-  const rec = (s: JSONSchema, path: PathSegment[], nestedPaths: PathSegment[][]): JSONSchema => {
+  const rec = function* (s: JSONSchema, path: PathSegment[], nestedPaths: PathSegment[][]): MutationIterator {
     const foundCycle = isCycle(s, recursiveStack);
     if (foundCycle) {
       cycleSet.push(foundCycle);
@@ -196,7 +232,7 @@ export function traverseInternal(
       // If we don't, it will never happen.
       if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
         const rootPair = prePostMap[0];
-        return replace(rootPair, mutate(
+        return replace(rootPair, yield* mutate(
           rootPair[1],
           true,
           stringifyPath(path),
@@ -212,7 +248,7 @@ export function traverseInternal(
     }
 
     // else
-    return traverseInternal(
+    return yield* traverseGenerator(
       s,
       mutation,
       traverseOptions,
@@ -240,7 +276,7 @@ export function traverseInternal(
   }
 
   for (const child of children) {
-    const result = rec(child.schema, [...pathStack, ...child.path], child.additionalPaths);
+    const result = yield* rec(child.schema, [...pathStack, ...child.path], child.additionalPaths);
     writeChild(mutableSchema, child.path, result, opts.mutable !== true || mutableSchema !== schema, ownedContainers, schema);
   }
 
@@ -254,7 +290,7 @@ export function traverseInternal(
   } else {
     const isCycleNode = cycleSet.indexOf(schema) !== -1
     mutableStack.pop();
-    const result = replace(schemaPair, mutate(
+    const result = replace(schemaPair, yield* mutate(
       mutableSchema,
       isCycleNode,
       stringifyPath(pathStack),
@@ -264,11 +300,27 @@ export function traverseInternal(
   }
 }
 
+/** Return the completed schema immediately when every invoked callback is synchronous. */
+export default function traverse(
+  schema: JSONSchema,
+  mutation: SyncMutationFunction,
+  traverseOptions?: TraverseOptions,
+): JSONSchema;
+/**
+ * Return a promise only when an invoked callback returns a promise or thenable.
+ * Callbacks run sequentially; each resolved result is applied before continuing.
+ * Errors throw before the first promise and reject after it. Mutable edits are not rolled back.
+ */
+export default function traverse(
+  schema: JSONSchema,
+  mutation: MutationFunction,
+  traverseOptions?: TraverseOptions,
+): JSONSchema | Promise<JSONSchema>;
 export default function traverse(
   schema: JSONSchema,
   mutation: MutationFunction,
   traverseOptions: TraverseOptions = defaultOptions,
-) {
+): JSONSchema | Promise<JSONSchema> {
   const opts = { ...defaultOptions, ...traverseOptions };
   return traverseInternal(
     schema,

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "downlevelIteration": true,
     "ignoreDeprecations": "6.0",
     "rootDir": "./src",
     "types": ["node", "jest"],
