@@ -1,9 +1,11 @@
 import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
+import { builtInChildren, ChildLocations, readChild, writeChild } from "./children";
 
 /** Reconnect back-references after callbacks replace objects still being visited. */
 export function reconnectReferences(
   root: JSONSchema,
   replacements: Map<JSONSchema, JSONSchema>,
+  childLocations: ChildLocations = new Map(),
 ): JSONSchema {
   if (replacements.size === 0) {
     return root;
@@ -23,49 +25,22 @@ export function reconnectReferences(
     visited.add(node);
 
     const object = node as JSONSchemaObject;
-    for (const keyword of ["anyOf", "allOf", "oneOf", "items"]) {
-      const children = object[keyword];
-      if (Array.isArray(children)) {
-        const updated = children.map(reconnect);
-        if (updated.some((child, index) => child !== children[index])) {
-          object[keyword] = updated;
-        }
-      }
-    }
-
-    for (const keyword of [
-      "items", "additionalItems", "contains", "unevaluatedItems",
-      "additionalProperties", "propertyNames", "unevaluatedProperties",
-    ]) {
-      const child = object[keyword];
-      if (child !== undefined && !Array.isArray(child)) {
-        const updated = reconnect(child);
-        if (updated !== child) {
-          object[keyword] = updated;
-        }
-      }
-    }
-
-    for (const keyword of ["properties", "patternProperties"]) {
-      const children = object[keyword];
-      if (children !== undefined) {
-        let updated = children;
-        for (const key of Object.keys(children)) {
-          const child = reconnect(children[key]);
-          if (child !== children[key]) {
-            // A replacement can share this container with the input object.
-            // Copy the container before redirecting one of its references.
-            if (updated === children) {
-              updated = { ...children };
-            }
-            Object.defineProperty(updated, key, {
-              value: child, enumerable: true, configurable: true, writable: true,
-            });
-          }
-        }
-        if (updated !== children) {
-          object[keyword] = updated;
-        }
+    const paths = [
+      ...builtInChildren(object).map(({ path }) => path),
+      ...(childLocations.get(node) || []),
+    ];
+    const seen = new Set<string>();
+    const ownedContainers = new WeakSet<object>();
+    for (const path of paths) {
+      const key = JSON.stringify(path.map(String));
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const child = readChild(object, path);
+      // Callbacks may remove a selected location or replace its container.
+      if (child === undefined) continue;
+      const updated = reconnect(child as JSONSchema);
+      if (updated !== child) {
+        writeChild(object, path, updated, true, ownedContainers, object);
       }
     }
     return node;

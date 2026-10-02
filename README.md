@@ -83,6 +83,7 @@ flags include:
 - `allowUndefinedReturn` - keep the callback's node when it returns `undefined`
   or nothing. Defaults to `false`, which throws an error for undefined returns.
 - `skipFirstMutation` - do not call the mutation function on the root schema
+- `additionalSubschemas` - select custom subschemas using paths relative to each object schema
 - `mergeNotMutate` - merge the mutation result back into the original schema
 
 ```js
@@ -95,6 +96,63 @@ traverse(mySchema, (schemaOrSubschema) => {
   mergeNotMutate: true,
 });
 ```
+
+### Custom subschemas
+
+Use `additionalSubschemas` to declare schema locations under custom keywords.
+Each descriptor has a non-empty `path` of literal property names and array
+indices, relative to the object schema passed to the selector:
+
+```ts
+const schema = {
+  type: "object",
+  properties: { ordinary: { type: "string" } },
+  "x-models": {
+    response: { type: "array", items: { type: "number" } },
+    disabled: false,
+  },
+};
+
+traverse(schema, (subschema, isCycle, path, parent) => {
+  console.log(path);
+  return subschema;
+}, {
+  additionalSubschemas(node) {
+    return Object.keys(node["x-models"] ?? {}).map(name => ({
+      path: ["x-models", name],
+    }));
+  },
+});
+```
+
+This visits the ordinary property, both custom schemas, the response's `items`,
+and the root. The `x-models` map is a container, so it does not receive a mutation
+callback. Custom children use the same mutation, path formatting, parent schema,
+and cycle/shared-reference behavior as built-in children. Array entries can be
+selected with paths such as `["x-models", "responses", 0]`.
+
+The selector runs once for each visited object schema, on the input node after
+the preorder callback (when `bfs: true`) and before its children are mutated.
+Boolean schemas do not invoke the selector. Treat the selector's input as
+read-only. Custom children are visited recursively; each object child can select
+more custom children. Built-in children are discovered first, followed by custom
+children in selector order. Overlapping ancestor/descendant selections are
+forwarded through the ancestor so each location is visited once.
+
+Duplicate paths, including overlaps with built-in locations, do not cause extra
+visits. Numeric array indices and their string equivalents identify the same
+location. Paths are independent of `pathFormat`; names containing dots, slashes,
+or tildes are literal names, not JSONPath or JSON Pointer expressions.
+
+Every target must exist as an own property and be an object or boolean schema.
+Missing paths, invalid segments, and targets such as arrays, strings, numbers,
+or `null` throw a `TypeError` with the location. Intermediate objects and arrays
+are copied as needed in immutable mode. Unselected extension data is preserved
+without being traversed. Selecting a value explicitly declares it to be a
+schema; this option does not validate its contents or dereference `$ref` values.
+
+The `AdditionalSubschema` and `AdditionalSubschemas` types are exported for typed
+selectors. Omit the option to retain the existing traversal behavior.
 
 ## API Docs
 
