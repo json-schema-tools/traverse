@@ -1,4 +1,5 @@
 import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-tools/meta-schema";
+import { jsonPathStringify, isCycle, last } from "./utils";
 
 /**
  * Signature of the mutation method passed to traverse.
@@ -47,28 +48,6 @@ export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
   mutable: false,
   bfs: false,
-};
-
-const jsonPathStringify = (s: string[]) => {
-  return s.map((i) => {
-    if (i === "") {
-      return '$';
-    } else {
-      return `.${i}`;
-    }
-  }).join("");
-};
-
-const isCycle = (s: JSONSchema, recursiveStack: JSONSchema[]): JSONSchema | false => {
-  const foundInRecursiveStack = recursiveStack.find((recSchema) => recSchema === s);
-  if (foundInRecursiveStack) {
-    return foundInRecursiveStack;
-  }
-  return false;
-};
-
-const last = (i: JSONSchema[], skip = 1): JSONSchema => {
-  return i[i.length - skip];
 };
 
 /**
@@ -238,6 +217,20 @@ export default function traverse(
       );
     }
 
+    if (schema.contains !== undefined) {
+      mutableSchema.contains = rec(
+        schema.contains,
+        [...pathStack, "contains"],
+      );
+    }
+
+    if (schema.unevaluatedItems !== undefined) {
+      mutableSchema.unevaluatedItems = rec(
+        schema.unevaluatedItems,
+        [...pathStack, "unevaluatedItems"],
+      );
+    }
+
     if (schema.properties !== undefined) {
       const sProps: { [key: string]: JSONSchema } = schema.properties;
       const mutableProps: { [key: string]: JSONSchema } = {};
@@ -263,6 +256,20 @@ export default function traverse(
     if (schema.additionalProperties !== undefined && !!schema.additionalProperties === true) {
       mutableSchema.additionalProperties = rec(schema.additionalProperties, [...pathStack, "additionalProperties"]);
     }
+
+    if (schema.propertyNames !== undefined) {
+      mutableSchema.propertyNames = rec(
+        schema.propertyNames,
+        [...pathStack, "propertyNames"],
+      );
+    }
+
+    if (schema.unevaluatedProperties !== undefined && !!schema.unevaluatedProperties === true) {
+      mutableSchema.unevaluatedProperties = rec(
+        schema.unevaluatedProperties,
+        [...pathStack, "unevaluatedProperties"],
+      );
+    }
   }
 
   if (opts.skipFirstMutation === true && depth === 0) {
@@ -273,11 +280,11 @@ export default function traverse(
     mutableStack.pop();
     return mutableSchema;
   } else {
-    const isCycle = cycleSet.indexOf(schema) !== -1
+    const isCycleNode = cycleSet.indexOf(schema) !== -1
     mutableStack.pop();
     return mutation(
       mutableSchema,
-      isCycle,
+      isCycleNode,
       jsonPathStringify(pathStack),
       last(mutableStack)
     );

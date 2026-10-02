@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/json-schema-tools/traverse/compare/1.10.4...1.11.0) (2025-06-20)
+
+
+### Features
+
+* support additional schema keywords ([6c0a7fa](https://github.com/json-schema-tools/traverse/commit/6c0a7fa714a2640ba6da7bfa3f2597ff42ffe71c))
+
 ## [1.10.4](https://github.com/json-schema-tools/traverse/compare/1.10.3...1.10.4) (2024-05-07)
 
 
