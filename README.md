@@ -50,7 +50,25 @@ const mySchema = {
 
 traverse(mySchema, (schemaOrSubschema) => {
   console.log(schemaOrSubschema.title);
+  return schemaOrSubschema;
 });
+```
+
+By default, the callback must return a schema on every call, even when it only
+reads or logs the node. Return the supplied schema to keep it, or return another
+schema (including `true` or `false`) to replace it. Returning `undefined` or
+omitting the return throws a `TypeError` that includes the node path.
+
+To allow callbacks that only inspect or edit nodes in place, set
+`allowUndefinedReturn: true`. An undefined return then keeps the node passed to
+the callback, including any in-place edits. With immutable traversal (the
+default), this keeps the working copy rather than the original input node.
+Returning `undefined` never removes a subschema.
+
+```js
+traverse(mySchema, (schemaOrSubschema, isCycle, path) => {
+  console.log(path);
+}, { allowUndefinedReturn: true });
 ```
 
 ### Advanced Options
@@ -59,13 +77,18 @@ traverse(mySchema, (schemaOrSubschema) => {
 flags include:
 
 - `pathFormat` - `"jsonpath"` (default) or `"jsonpointer"` for callback paths
-- `bfs` - process schemas in a breadth first order
+- `bfs` - call the callback before visiting a schema's children (preorder).
+  Despite its name, this currently uses depth-first traversal, not level-by-level
+  breadth-first traversal. The default calls the callback after the children.
+- `allowUndefinedReturn` - keep the callback's node when it returns `undefined`
+  or nothing. Defaults to `false`, which throws an error for undefined returns.
 - `skipFirstMutation` - do not call the mutation function on the root schema
 - `mergeNotMutate` - merge the mutation result back into the original schema
 
 ```js
 traverse(mySchema, (schemaOrSubschema) => {
   console.log(schemaOrSubschema.title);
+  return schemaOrSubschema;
 }, {
   bfs: true,
   skipFirstMutation: true,

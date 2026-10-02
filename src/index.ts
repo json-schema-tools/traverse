@@ -4,18 +4,21 @@ import { reconnectReferences } from "./references";
 
 /**
  * Signature of the mutation method passed to traverse.
+ * Return a schema to keep or replace the node. With allowUndefinedReturn enabled,
+ * returning undefined (or nothing) keeps the schema passed to the callback.
  *
  * @param schema The schema or subschema node being traversed
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
  * @param path Location of the visited schema in the selected pathFormat. JSONPath (default) uses `$` for the root; JSON Pointer uses the empty string. Pointers are relative to the input schema, not the instance being validated. URI-fragment encoding is not applied.
  * @param parent A reference to JSONSchema that is the parent of the `schema` param. If the `schema` is the root schema, `parent` will be `undefined`. when schema is a cycle, parent is the parent of the referenced cycle (once again, if the cycled schema is the root, the parent will be undefined).
+ * @returns A schema, including boolean schemas, or void when allowUndefinedReturn is enabled.
  */
 export type MutationFunction = (
   schema: JSONSchema,
   isCycle: boolean,
   path: string,
   parent: JSONSchema,
-) => JSONSchema;
+) => JSONSchema | void;
 
 /**
  * The options you can use when traversing.
@@ -30,6 +33,13 @@ export interface TraverseOptions {
   skipFirstMutation?: boolean;
 
   /**
+   * Allow callbacks to return undefined (or nothing) to keep the node passed to them,
+   * including any in-place edits. When false (the default), an undefined return
+   * throws a TypeError with the node path. This option does not remove nodes.
+   */
+  allowUndefinedReturn?: boolean;
+
+  /**
    * Set this to true if you want to merge the returned value of the mutation function into
    * the original schema.
    */
@@ -42,8 +52,8 @@ export interface TraverseOptions {
   mutable?: boolean;
 
   /**
-   * true if you want to traverse in a breadth-first manner. This will cause the mutation function to be called first with
-   * the root schema, moving down the subschemas until the terminal subschemas.
+   * true to call the mutation function before visiting each schema's children.
+   * Despite the name, this is preorder depth-first traversal, not level-by-level breadth-first traversal.
    */
   bfs?: boolean;
 }
@@ -53,6 +63,7 @@ export const defaultOptions: TraverseOptions = {
   skipFirstMutation: false,
   mutable: false,
   bfs: false,
+  allowUndefinedReturn: false,
 };
 
 /**
@@ -80,6 +91,23 @@ export function traverseInternal(
 ): JSONSchema {
   const opts = traverseOptions;
   const stringifyPath = opts.pathFormat === "jsonpointer" ? jsonPointerStringify : jsonPathStringify;
+  const mutate = (
+    node: JSONSchema,
+    isCycleNode: boolean,
+    path: string,
+    parent: JSONSchema,
+  ): JSONSchema => {
+    const result = mutation(node, isCycleNode, path, parent);
+    if (result === undefined) {
+      if (opts.allowUndefinedReturn === true) {
+        return node;
+      }
+      throw new TypeError(
+        `Traversal callback returned undefined at ${path}; return a schema or set allowUndefinedReturn: true.`,
+      );
+    }
+    return result;
+  };
 
   // booleans are a bit messed. Since all other schemas are objects (non-primitive type
   // which gets a new address in mem) for each new JS refer to one of 2 memory addrs, and
@@ -93,7 +121,7 @@ export function traverseInternal(
     if (opts.skipFirstMutation === true && depth === 0) {
       return schema;
     } else {
-      return mutation(
+      return mutate(
         schema,
         false,
         stringifyPath(pathStack),
@@ -111,7 +139,7 @@ export function traverseInternal(
 
   if (opts.bfs === true) {
     if (opts.skipFirstMutation === false || depth !== 0) {
-      mutableSchema = mutation(
+      mutableSchema = mutate(
         mutableSchema,
         false,
         stringifyPath(pathStack),
@@ -150,7 +178,7 @@ export function traverseInternal(
       // If we don't, it will never happen.
       if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
         const rootPair = prePostMap[0];
-        return replace(rootPair, mutation(
+        return replace(rootPair, mutate(
           rootPair[1],
           true,
           stringifyPath(path),
@@ -211,7 +239,7 @@ export function traverseInternal(
 
         if (opts.skipFirstMutation === true && foundCycle === recursiveStack[0]) {
           const rootPair = prePostMap[0];
-          mutableSchema.items = replace(rootPair, mutation(
+          mutableSchema.items = replace(rootPair, mutate(
             rootPair[1],
             true,
             stringifyPath([...pathStack, "items"]),
@@ -318,7 +346,7 @@ export function traverseInternal(
   } else {
     const isCycleNode = cycleSet.indexOf(schema) !== -1
     mutableStack.pop();
-    const result = replace(schemaPair, mutation(
+    const result = replace(schemaPair, mutate(
       mutableSchema,
       isCycleNode,
       stringifyPath(pathStack),
