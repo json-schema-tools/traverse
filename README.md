@@ -74,6 +74,11 @@ traverse(mySchema, (schemaOrSubschema, isCycle, path) => {
 
 ### Async mutators
 
+With `bfs: true`, `isCycle` reports back-reference targets discovered in the
+input's built-in subschema graph before callbacks run. Shared references without
+a cycle do not set the flag. Annotation values and `$ref` strings are excluded
+from discovery; mutations introduced by callbacks do not change this snapshot.
+
 The same `traverse` function supports synchronous, asynchronous, and mixed
 callbacks. It returns a schema immediately when every invoked callback returns
 synchronously. Once a callback returns a promise or thenable, it returns a
