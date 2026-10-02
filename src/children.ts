@@ -52,6 +52,25 @@ export function builtInChildren(schema: JSONSchemaObject): Child[] {
   if (schema.unevaluatedProperties !== undefined) {
     add(["unevaluatedProperties"], schema.unevaluatedProperties);
   }
+  for (const keyword of ["not", "if", "then", "else"]) {
+    if (schema[keyword] !== undefined) {
+      add([keyword], schema[keyword]);
+    }
+  }
+  for (const keyword of ["definitions", "$defs", "dependencies", "dependentSchemas"]) {
+    if (schema[keyword] !== undefined) {
+      Object.keys(schema[keyword]).forEach(key => {
+        const value = schema[keyword][key];
+        // Legacy dependencies also permits arrays of property names, which are data.
+        if (keyword !== "dependencies" || !Array.isArray(value)) {
+          add([keyword, key], value);
+        }
+      });
+    }
+  }
+  if (schema.prefixItems !== undefined) {
+    schema.prefixItems.forEach((child: JSONSchema, index: number) => add(["prefixItems", index], child));
+  }
   return children;
 }
 

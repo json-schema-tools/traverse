@@ -147,6 +147,12 @@ traverse(mySchema, (schemaOrSubschema) => {
 
 ### Custom subschemas
 
+Standard subschemas are visited automatically, including `not`, `if`, `then`,
+`else`, `definitions`, `$defs`, `dependencies`, `dependentSchemas`, and
+`prefixItems`. Only schema-valued legacy `dependencies` entries are visited;
+arrays of property names remain data. Traversal does not dereference `$ref`
+or visit annotation values such as `default`, `examples`, or `enum`.
+
 Use `additionalSubschemas` to declare schema locations under custom keywords.
 Each descriptor has a non-empty `path` of literal property names and array
 indices, relative to the object schema passed to the selector:
