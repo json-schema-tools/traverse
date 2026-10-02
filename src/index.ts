@@ -207,7 +207,7 @@ export default function traverse(
           mutableSchema.items = mutation(
             schema.items,
             true,
-            jsonPathStringify(pathStack),
+            jsonPathStringify([...pathStack, "items"]),
             last(mutableStack)
           );
         } else {
