@@ -25,7 +25,9 @@
   "license": "Apache-2.0",
   "files": [
     "build",
-    "!build/**/*.test.*"
+    "!build/**/*.test.*",
+    "!build/test-helpers.js",
+    "!build/test-helpers.d.ts"
   ],
   "devDependencies": {
     "@eslint/js": "^10.0.1",
