@@ -14,7 +14,8 @@ This package exports a method that will traverse a JSON-Schema, calling a "mutat
 ## Features
 
  - circular reference detection & handling
- - synchronous - doesn't touch the filesystem or make network requests.
+ - synchronous unless a mutation callback returns a promise or thenable
+ - doesn't touch the filesystem or make network requests itself
  - easily perform schema mutations while traversing
  - optional mutability (toggle updating original schema object)
  - returns [JSONPaths](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html) as it traverses
@@ -70,6 +71,53 @@ traverse(mySchema, (schemaOrSubschema, isCycle, path) => {
   console.log(path);
 }, { allowUndefinedReturn: true });
 ```
+
+### Async mutators
+
+The same `traverse` function supports synchronous, asynchronous, and mixed
+callbacks. It returns a schema immediately when every invoked callback returns
+synchronously. Once a callback returns a promise or thenable, it returns a
+promise that resolves to the completed root schema, including replacements:
+
+```ts
+// Synchronous callbacks keep the synchronous API.
+const result = traverse(mySchema, node => node);
+
+// Awaiting works for both synchronous and asynchronous traversals.
+const enriched = await traverse(mySchema, async node => {
+  const title = await lookupTitle(node);
+  return typeof node === "boolean" ? node : { ...node, title };
+});
+
+// Only visits needing asynchronous work return a promise.
+const mixed = traverse(mySchema, node => {
+  if (typeof node === "object" && node["x-model"]) {
+    return enrichModel(node);
+  }
+  return node;
+});
+```
+
+Traversal awaits each callback before continuing to the next node. By default,
+parents receive their children's resolved replacements. With `bfs: true`, the
+parent callback finishes before child discovery starts. A preorder replacement
+of `true` or `false` ends traversal of that node's children. Callback order,
+paths, custom subschemas, and cycle/shared-reference handling are preserved.
+An async callback that is never invoked (for example, on a skipped leaf root)
+does not cause a promise return. The `additionalSubschemas` selector itself
+remains synchronous.
+
+Returning a promise that resolves to `undefined` follows the same
+`allowUndefinedReturn` policy as a synchronous undefined return. A failure before
+the first promise throws synchronously; failures after traversal becomes
+asynchronous reject the returned promise and stop further callbacks. With
+`mutable: true`, edits completed before a failure are not rolled back.
+
+TypeScript infers `JSONSchema` for synchronous callbacks and
+`JSONSchema | Promise<JSONSchema>` for callbacks that can return promises. The
+union also covers traversals where every async callback is skipped. The exported
+`MutationFunction` accepts both kinds of callback; `SyncMutationFunction` keeps
+the synchronous return type for explicitly annotated callbacks.
 
 ### Advanced Options
 
