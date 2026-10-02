@@ -5,6 +5,13 @@
 
 * support additional schema keywords ([6c0a7fa](https://github.com/json-schema-tools/traverse/commit/6c0a7fa714a2640ba6da7bfa3f2597ff42ffe71c))
 
+## [1.15.1](https://github.com/json-schema-tools/traverse/compare/1.15.0...1.15.1) (2026-10-02)
+
+
+### Bug Fixes
+
+* traverse false schemas in items and property fallbacks ([#857](https://github.com/json-schema-tools/traverse/issues/857)) ([f6444dd](https://github.com/json-schema-tools/traverse/commit/f6444dddc190c30c63d94b50f44e90322ba6ace5))
+
 ## [1.15.0](https://github.com/json-schema-tools/traverse/compare/1.14.0...1.15.0) (2026-10-02)
 
 
