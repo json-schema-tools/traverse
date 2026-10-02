@@ -15,6 +15,13 @@ export const jsonPathStringify = (segments: PathSegment[]): string => {
   }).join("");
 };
 
+/** RFC 6901 string representation; the root is the empty string. */
+export const jsonPointerStringify = (segments: PathSegment[]): string => {
+  return segments.map((segment) => {
+    return "/" + String(segment).replace(/~/g, "~0").replace(/\//g, "~1");
+  }).join("");
+};
+
 export const isCycle = (
   s: JSONSchema,
   recursiveStack: JSONSchema[],

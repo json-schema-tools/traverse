@@ -1,5 +1,5 @@
 import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-tools/meta-schema";
-import { jsonPathStringify, isCycle, last, PathSegment } from "./utils";
+import { jsonPathStringify, jsonPointerStringify, isCycle, last, PathSegment } from "./utils";
 import { reconnectReferences } from "./references";
 
 /**
@@ -7,7 +7,7 @@ import { reconnectReferences } from "./references";
  *
  * @param schema The schema or subschema node being traversed
  * @param isCycle false if the schema passed is not the root of a detected cycle. Useful for special handling of cycled schemas.
- * @param path JSONPath string using dot notation for simple names and quoted brackets for other names, as per [draft-goessner-dispatch-jsonpath-00](https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html#name-overview-of-jsonpath-expres)
+ * @param path Location of the visited schema in the selected pathFormat. JSONPath (default) uses `$` for the root; JSON Pointer uses the empty string. Pointers are relative to the input schema, not the instance being validated. URI-fragment encoding is not applied.
  * @param parent A reference to JSONSchema that is the parent of the `schema` param. If the `schema` is the root schema, `parent` will be `undefined`. when schema is a cycle, parent is the parent of the referenced cycle (once again, if the cycled schema is the root, the parent will be undefined).
  */
 export type MutationFunction = (
@@ -21,6 +21,9 @@ export type MutationFunction = (
  * The options you can use when traversing.
  */
 export interface TraverseOptions {
+  /** Callback path format. Defaults to JSONPath; JSON Pointer uses RFC 6901 strings with an empty root path. */
+  pathFormat?: "jsonpath" | "jsonpointer";
+
   /**
    * Set this to true if you don't want to call the mutator function on the root schema.
    */
@@ -46,6 +49,7 @@ export interface TraverseOptions {
 }
 
 export const defaultOptions: TraverseOptions = {
+  pathFormat: "jsonpath",
   skipFirstMutation: false,
   mutable: false,
   bfs: false,
@@ -75,6 +79,7 @@ export function traverseInternal(
   replacements: Map<JSONSchema, JSONSchema>,
 ): JSONSchema {
   const opts = traverseOptions;
+  const stringifyPath = opts.pathFormat === "jsonpointer" ? jsonPointerStringify : jsonPathStringify;
 
   // booleans are a bit messed. Since all other schemas are objects (non-primitive type
   // which gets a new address in mem) for each new JS refer to one of 2 memory addrs, and
@@ -91,7 +96,7 @@ export function traverseInternal(
       return mutation(
         schema,
         false,
-        jsonPathStringify(pathStack),
+        stringifyPath(pathStack),
         last(mutableStack)
       );
     }
@@ -109,7 +114,7 @@ export function traverseInternal(
       mutableSchema = mutation(
         mutableSchema,
         false,
-        jsonPathStringify(pathStack),
+        stringifyPath(pathStack),
         last(mutableStack, 2)
       ) as JSONSchemaObject;
     }
@@ -148,7 +153,7 @@ export function traverseInternal(
         return replace(rootPair, mutation(
           rootPair[1],
           true,
-          jsonPathStringify(path),
+          stringifyPath(path),
           last(mutableStack), // should we be popping here?
         ));
       }
@@ -209,7 +214,7 @@ export function traverseInternal(
           mutableSchema.items = replace(rootPair, mutation(
             rootPair[1],
             true,
-            jsonPathStringify([...pathStack, "items"]),
+            stringifyPath([...pathStack, "items"]),
             last(mutableStack)
           ));
         } else {
@@ -316,7 +321,7 @@ export function traverseInternal(
     const result = replace(schemaPair, mutation(
       mutableSchema,
       isCycleNode,
-      jsonPathStringify(pathStack),
+      stringifyPath(pathStack),
       last(mutableStack)
     ));
     return depth === 0 ? reconnectReferences(result, replacements) : result;
