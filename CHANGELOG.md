@@ -5,6 +5,20 @@
 
 * support additional schema keywords ([6c0a7fa](https://github.com/json-schema-tools/traverse/commit/6c0a7fa714a2640ba6da7bfa3f2597ff42ffe71c))
 
+## [1.13.0](https://github.com/json-schema-tools/traverse/compare/1.12.0...1.13.0) (2026-10-02)
+
+
+### Features
+
+* add allowUndefinedReturn option and validate callback returns ([#846](https://github.com/json-schema-tools/traverse/issues/846)) ([75f592b](https://github.com/json-schema-tools/traverse/commit/75f592b16f1536c8ad40ca00f14b92efd979707f))
+* add JSON Pointer callback path format ([#848](https://github.com/json-schema-tools/traverse/issues/848)) ([a48820b](https://github.com/json-schema-tools/traverse/commit/a48820b12654a27a78950c4b99f7f45f0643d73f))
+
+
+### Bug Fixes
+
+* escape JSONPath schema member names ([#847](https://github.com/json-schema-tools/traverse/issues/847)) ([ed8afe1](https://github.com/json-schema-tools/traverse/commit/ed8afe16016f9c0e1112302ea2517edf671b8768))
+* install meta-schema types for consumers ([#851](https://github.com/json-schema-tools/traverse/issues/851)) ([572b653](https://github.com/json-schema-tools/traverse/commit/572b65345568585526a3ffca9137fb7a2e85846b))
+
 ## [1.12.0](https://github.com/json-schema-tools/traverse/compare/1.11.1...1.12.0) (2026-10-02)
 
 
