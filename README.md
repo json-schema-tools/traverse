@@ -58,6 +58,7 @@ traverse(mySchema, (schemaOrSubschema) => {
 `traverse` accepts an optional options object as the third argument. Some useful
 flags include:
 
+- `pathFormat` - `"jsonpath"` (default) or `"jsonpointer"` for callback paths
 - `bfs` - process schemas in a breadth first order
 - `skipFirstMutation` - do not call the mutation function on the root schema
 - `mergeNotMutate` - merge the mutation result back into the original schema
@@ -87,3 +88,19 @@ The callback's third argument is a JSONPath identifying the visited schema.
 Simple member names use dot notation (`$.properties.foo`), array indices use
 brackets (`$.items[0]`), and other names use JSON-escaped double-quoted brackets
 (`$.properties["a.b"]`). The root path is `$`.
+
+Select JSON Pointer with `pathFormat: "jsonpointer"`:
+
+```js
+traverse(mySchema, (schema, isCycle, path) => {
+  console.log(path); // e.g. /properties/foo/items
+  return schema;
+}, { pathFormat: "jsonpointer" });
+```
+
+JSON Pointer paths use the [RFC 6901](https://www.rfc-editor.org/rfc/rfc6901)
+string representation: the root is `""`, array indices are separate tokens
+(`/items/0`), and member names escape `~` as `~0` and `/` as `~1`.
+An empty property name is preserved (`/properties/`). These paths identify
+locations within the input schema; they are not instance paths or URI fragments.
+Omitting `pathFormat` preserves JSONPath output.
