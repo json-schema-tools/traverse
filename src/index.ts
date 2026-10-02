@@ -1,5 +1,6 @@
 import { JSONSchema, JSONSchemaObject, PatternProperties } from "@json-schema-tools/meta-schema";
 import { jsonPathStringify, isCycle, last } from "./utils";
+import { reconnectReferences } from "./references";
 
 /**
  * Signature of the mutation method passed to traverse.
@@ -71,6 +72,7 @@ export default function traverse(
   pathStack: string[] = [],
   prePostMap: Array<[JSONSchema, JSONSchema]> = [],
   cycleSet: JSONSchema[] = [],
+  replacements: Map<JSONSchema, JSONSchema> = new Map(),
 ): JSONSchema {
   const opts = { ...defaultOptions, ...traverseOptions }; // would be nice to make an 'entry' func when we get around to optimizations
 
@@ -114,7 +116,25 @@ export default function traverse(
   }
 
   recursiveStack.push(schema);
-  prePostMap.push([schema, mutableSchema]);
+  const schemaPair: [JSONSchema, JSONSchema] = [schema, mutableSchema];
+  prePostMap.push(schemaPair);
+  if (schema !== mutableSchema) {
+    replacements.set(schema, mutableSchema);
+  }
+
+  const replace = (result: JSONSchema): JSONSchema => {
+    const previous = schemaPair[1];
+    if (typeof previous === "object" && previous !== result) {
+      replacements.set(previous, result);
+    }
+    if (schema !== result) {
+      replacements.set(schema, result);
+    } else {
+      replacements.delete(schema);
+    }
+    schemaPair[1] = result;
+    return result;
+  };
 
   const rec = (s: JSONSchema, path: string[]): JSONSchema => {
     const foundCycle = isCycle(s, recursiveStack);
@@ -150,6 +170,7 @@ export default function traverse(
       path,
       prePostMap,
       cycleSet,
+      replacements,
     );
   };
 
@@ -207,6 +228,7 @@ export default function traverse(
           [...pathStack, "items"],
           prePostMap,
           cycleSet,
+          replacements,
         );
       }
     }
@@ -289,11 +311,12 @@ export default function traverse(
   } else {
     const isCycleNode = cycleSet.indexOf(schema) !== -1
     mutableStack.pop();
-    return mutation(
+    const result = replace(mutation(
       mutableSchema,
       isCycleNode,
       jsonPathStringify(pathStack),
       last(mutableStack)
-    );
+    ));
+    return depth === 0 ? reconnectReferences(result, replacements) : result;
   }
 }
