@@ -1,11 +1,11 @@
 import { JSONSchema } from "@json-schema-tools/meta-schema";
 
 export const testCalls = (
-  mockMutation: any,
+  mockMutation: unknown,
   schema: JSONSchema,
-  isCycle: any = expect.any(Boolean),
+  isCycle: unknown = expect.any(Boolean),
   nth?: number,
-  parent: any = expect.anything(),
+  parent: unknown = expect.anything(),
 ) => {
   if (parent === false) { parent = undefined; }
   if (nth) {

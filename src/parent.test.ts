@@ -36,7 +36,7 @@ describe("traverse parent", () => {
       const mutation = jest.fn((s) => s);
 
       traverse(s as JSONSchema, mutation, { bfs: true, skipFirstMutation: true });
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         1,
         s.properties.foo,
         expect.any(Boolean),
@@ -44,7 +44,7 @@ describe("traverse parent", () => {
         s
       );
 
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         2,
         s.properties.foo.items[0],
         expect.any(Boolean),
@@ -52,7 +52,7 @@ describe("traverse parent", () => {
         s.properties.foo
       );
 
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         3,
         s.properties.foo.items[1],
         expect.any(Boolean),
@@ -86,8 +86,8 @@ describe("traverse parent", () => {
       const mutation = jest.fn((s) => s);
 
       traverse(s as JSONSchema, mutation, { skipFirstMutation: true });
-      expect(mutation).toBeCalledTimes(6);
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenCalledTimes(6);
+      expect(mutation).toHaveBeenNthCalledWith(
         1,
         s.items[0].properties.foo,
         expect.any(Boolean),
@@ -95,7 +95,7 @@ describe("traverse parent", () => {
         s.items[0]
       );
 
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         2,
         s.items[0],
         expect.any(Boolean),
@@ -103,7 +103,7 @@ describe("traverse parent", () => {
         s
       );
 
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         3,
         s.items[1],
         expect.any(Boolean),
@@ -111,7 +111,7 @@ describe("traverse parent", () => {
         s
       );
 
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         4,
         s.items[2].items[0],
         expect.any(Boolean),
@@ -119,7 +119,7 @@ describe("traverse parent", () => {
         s.items[2],
       );
 
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         5,
         s.items[2].items[1],
         expect.any(Boolean),
@@ -127,7 +127,7 @@ describe("traverse parent", () => {
         s.items[2],
       );
 
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         6,
         s.items[2],
         expect.any(Boolean),
@@ -163,29 +163,29 @@ describe("traverse parent", () => {
       const mutation = jest.fn((s) => s);
 
       traverse(s as JSONSchema, mutation, { skipFirstMutation: true });
-      expect(mutation).toBeCalledTimes(5); // this really should probably be 6, indicating a potential bug
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenCalledTimes(5); // this really should probably be 6, indicating a potential bug
+      expect(mutation).toHaveBeenNthCalledWith(
         1,
         s.items.items[0].properties.baz,
         expect.any(Boolean),
         expect.any(String),
         s.items.items[0]
       );
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         2,
         s.items.items[0].properties.bar.properties.a,
         expect.any(Boolean),
         expect.any(String),
         s.items.items[0].properties.bar
       );
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         3,
         s.items.items[0].properties.bar,
         expect.any(Boolean),
         expect.any(String),
         s.items.items[0]
       );
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         4,
         s.items.items[0],
         expect.any(Boolean),
@@ -193,7 +193,7 @@ describe("traverse parent", () => {
         s.items
       );
 
-      expect(mutation).nthCalledWith(
+      expect(mutation).toHaveBeenNthCalledWith(
         5,
         s.items,
         true,
@@ -286,7 +286,7 @@ describe("traverse parent", () => {
 
       traverse(testSchema, mutator);
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         1,
         testSchema.additionalItems.properties.c,
         expect.any(Boolean),
@@ -294,7 +294,7 @@ describe("traverse parent", () => {
         testSchema.additionalItems
       );
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         2,
         testSchema.additionalItems.properties.d,
         expect.any(Boolean),
@@ -302,7 +302,7 @@ describe("traverse parent", () => {
         testSchema.additionalItems
       );
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         3,
         testSchema.additionalItems.properties.e.properties.f,
         expect.any(Boolean),
@@ -310,7 +310,7 @@ describe("traverse parent", () => {
         testSchema.additionalItems.properties.e
       );
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         4,
         testSchema.additionalItems.properties.e,
         expect.any(Boolean),
@@ -318,7 +318,7 @@ describe("traverse parent", () => {
         testSchema.additionalItems
       );
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         5,
         testSchema.additionalItems,
         expect.any(Boolean),
@@ -326,7 +326,7 @@ describe("traverse parent", () => {
         testSchema
       );
 
-      expect(mutator).nthCalledWith(
+      expect(mutator).toHaveBeenNthCalledWith(
         6,
         testSchema,
         expect.any(Boolean),
