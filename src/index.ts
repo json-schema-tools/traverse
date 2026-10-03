@@ -1,7 +1,7 @@
 import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import { jsonPathStringify, jsonPointerStringify, isCycle, last, PathSegment } from "./utils";
 import { reconnectReferences } from "./references";
-import { runTraversal } from "./async";
+import { runTraversal, withMerge } from "./async";
 import { discoverChildren, AdditionalSubschemas, copyContainer, writeChild } from "./children";
 
 export type { AdditionalSubschema, AdditionalSubschemas } from "./children";
@@ -63,8 +63,9 @@ export interface TraverseOptions {
   allowUndefinedReturn?: boolean;
 
   /**
-   * Set this to true if you want to merge the returned value of the mutation function into
-   * the original schema.
+   * Shallowly merge object callback results into the working schema, overwriting
+   * specified fields and preserving the rest. Boolean schemas use replacement.
+   * Immutable mode merges into a copy; replacement remains the default.
    */
   mergeNotMutate?: boolean;
 
@@ -322,6 +323,7 @@ export default function traverse(
   traverseOptions: TraverseOptions = defaultOptions,
 ): JSONSchema | Promise<JSONSchema> {
   const opts = { ...defaultOptions, ...traverseOptions };
+  if (opts.mergeNotMutate === true) mutation = withMerge(mutation);
   return traverseInternal(
     schema,
     mutation,
