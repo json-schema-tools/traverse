@@ -1,3 +1,4 @@
+import { withCycleFlags } from "./cycle-flags";
 import { JSONSchema, JSONSchemaObject } from "@json-schema-tools/meta-schema";
 import { jsonPathStringify, jsonPointerStringify, isCycle, last, PathSegment } from "./utils";
 import { reconnectReferences } from "./references";
@@ -324,7 +325,7 @@ export default function traverse(
   const opts = { ...defaultOptions, ...traverseOptions };
   return traverseInternal(
     schema,
-    mutation,
+    opts.bfs === true ? withCycleFlags(schema, mutation, opts) : mutation,
     opts,
     0,
     [],
