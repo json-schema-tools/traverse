@@ -100,9 +100,10 @@ const mixed = traverse(mySchema, node => {
 
 Traversal awaits each callback before continuing to the next node. By default,
 parents receive their children's resolved replacements. With `bfs: true`, the
-parent callback finishes before child discovery starts. A preorder replacement
-of `true` or `false` ends traversal of that node's children. Callback order,
-paths, custom subschemas, and cycle/shared-reference handling are preserved.
+parent callback finishes before child discovery starts, and siblings are visited
+before grandchildren. A replacement of `true` or `false` ends traversal of that
+node's children. Paths, custom subschemas, and cycle/shared-reference handling
+are preserved.
 An async callback that is never invoked (for example, on a skipped leaf root)
 does not cause a promise return. The `additionalSubschemas` selector itself
 remains synchronous.
@@ -125,9 +126,9 @@ the synchronous return type for explicitly annotated callbacks.
 flags include:
 
 - `pathFormat` - `"jsonpath"` (default) or `"jsonpointer"` for callback paths
-- `bfs` - call the callback before visiting a schema's children (preorder).
-  Despite its name, this currently uses depth-first traversal, not level-by-level
-  breadth-first traversal. The default calls the callback after the children.
+- `bfs` - visit schemas level by level, calling parents before children and
+  siblings before grandchildren. Results are applied sequentially, including
+  awaited results. The default remains depth-first postorder.
 - `allowUndefinedReturn` - keep the callback's node when it returns `undefined`
   or nothing. Defaults to `false`, which throws an error for undefined returns.
 - `skipFirstMutation` - do not call the mutation function on the root schema
@@ -180,7 +181,7 @@ and cycle/shared-reference behavior as built-in children. Array entries can be
 selected with paths such as `["x-models", "responses", 0]`.
 
 The selector runs once for each visited object schema, on the input node after
-the preorder callback (when `bfs: true`) and before its children are mutated.
+the parent callback (when `bfs: true`) and before its children are mutated.
 Boolean schemas do not invoke the selector. Treat the selector's input as
 read-only. Custom children are visited recursively; each object child can select
 more custom children. Built-in children are discovered first, followed by custom
