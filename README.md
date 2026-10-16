@@ -66,6 +66,12 @@ the callback, including any in-place edits. With immutable traversal (the
 default), this keeps the working copy rather than the original input node.
 Returning `undefined` never removes a subschema.
 
+Set `mergeNotMutate: true` to shallowly merge object callback results into the
+working schema. Specified fields overwrite existing values; other keywords and
+traversed children are preserved. Immutable mode merges into a copy, and
+`mutable: true` merges into the input node. Boolean results or boolean input
+nodes use replacement. Synchronous and async callbacks follow the same rules.
+
 ```js
 traverse(mySchema, (schemaOrSubschema, isCycle, path) => {
   console.log(path);
@@ -132,7 +138,7 @@ flags include:
   or nothing. Defaults to `false`, which throws an error for undefined returns.
 - `skipFirstMutation` - do not call the mutation function on the root schema
 - `additionalSubschemas` - select custom subschemas using paths relative to each object schema
-- `mergeNotMutate` - merge the mutation result back into the original schema
+- `mergeNotMutate` - shallowly merge object callback results into the working schema
 
 ```js
 traverse(mySchema, (schemaOrSubschema) => {
