@@ -5,6 +5,13 @@
 
 * support additional schema keywords ([6c0a7fa](https://github.com/json-schema-tools/traverse/commit/6c0a7fa714a2640ba6da7bfa3f2597ff42ffe71c))
 
+## [1.15.2](https://github.com/json-schema-tools/traverse/compare/1.15.1...1.15.2) (2026-10-23)
+
+
+### Bug Fixes
+
+* merge object callback results when requested ([#862](https://github.com/json-schema-tools/traverse/issues/862)) ([459784d](https://github.com/json-schema-tools/traverse/commit/459784d99c0c325ebdba1a769c5d5c4c921210ed))
+
 ## [1.15.1](https://github.com/json-schema-tools/traverse/compare/1.15.0...1.15.1) (2026-10-02)
 
 
