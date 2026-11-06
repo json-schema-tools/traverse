@@ -33,6 +33,6 @@ export const isCycle = (
   return false;
 };
 
-export const last = (i: JSONSchema[], skip = 1): JSONSchema => {
-  return i[i.length - skip];
+export const last = (i: JSONSchema[]): JSONSchema => {
+  return i[i.length - 1];
 };
